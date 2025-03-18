@@ -53,17 +53,17 @@ export type ChangePassRequest = {
 export const loginApi = async (
   params: LoginRequest
 ): Promise<AxiosResponse<MfResponse<LoginResponse>>> => {
-  return await api.post('auths/login', params)
+  return await api.post('auth/token', params)
 }
 
-export const logoutApi = async (): Promise<AxiosResponse<MfResponse<Object>>> => {
-  return await api.post('auths/logout')
+export const logoutApi = async (token: string): Promise<AxiosResponse<MfResponse<Object>>> => {
+  return await api.post('auth/logout', { token })
 }
 
 export const registerApi = async (
   params: RegisterRequest
 ): Promise<AxiosResponse<MfResponse<Object>>> => {
-  return await api.post('auths/register', { ...params, phoneNumber: params.phoneNumber.toString() })
+  return await api.post('auth/register', { ...params, phoneNumber: params.phoneNumber.toString() })
 }
 
 export const changePassApi = async (
@@ -79,7 +79,7 @@ export const forgotPassApi = async (email: string): Promise<AxiosResponse<MfResp
 export const verifyTokenApi = async (
   params: VerifyPasswordTokenRequest
 ): Promise<AxiosResponse<MfResponse<Object>>> => {
-  return await api.get('auths/verify-token', { params })
+  return await api.get('auth/refresh', { params })
 }
 
 export const activeAccountApi = async (
@@ -101,5 +101,5 @@ export const refreshTokenApi = async (
 }
 
 export const getMeApi = async (): Promise<AxiosResponse<MfResponse<Identity>>> => {
-  return await api.post('auths/me')
+  return await api.get('users/my-info')
 }

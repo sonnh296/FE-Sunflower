@@ -2,10 +2,11 @@ export type Product = {
   id: number
   name: string
   description: string
+  productItem: ProductItem[]
 }
 
 export type ProductItem = {
-  id: number
+  id?: number
   price: string
   category: string
   gender: string

@@ -2,9 +2,9 @@
   <div class="bg-white p-10 rounded-md mb-2">
     <h1 class="text-center text-xl font-semibold mb-8">Đăng nhập</h1>
     <div class="h-20">
-      <h1 class="font-medium">Email</h1>
+      <h1 class="font-medium">Username</h1>
       <InputGroup>
-        <InputText v-model="username" name="username" placeholder="Nhập email" />
+        <InputText v-model="username" name="username" placeholder="Nhập username" />
       </InputGroup>
       <small class="text-red-400 flex items-start">{{ errors.username }}</small>
     </div>
@@ -67,8 +67,8 @@ const { t } = useI18n()
 defineEmits<(e: 'changeMode', id: 'forgot' | 'register') => void>()
 
 const schema = yup.object({
-  email: yup.string().required(t('validation.required')),
-  password: yup.string().required(t('validation.required')).min(8, t('validation.passwordLength'))
+  username: yup.string().required(t('validation.required')),
+  password: yup.string().required(t('validation.required'))
 })
 
 const { meta, errors, defineField, handleSubmit } = useForm({

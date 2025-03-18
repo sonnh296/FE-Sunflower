@@ -37,28 +37,28 @@ const toast = useToast()
 
 const notificationStore = useNotificationStore()
 const locationStore = useLocationStore()
-watchEffect(() => {
-  const newNotification = notificationStore.latestNotification
-  if (newNotification) {
-    toast.add({
-      severity: 'secondary',
-      summary: newNotification.title,
-      detail: newNotification.content,
-      group: 'bl'
-    })
-  }
-})
+// watchEffect(() => {
+//   const newNotification = notificationStore.latestNotification
+//   if (newNotification) {
+//     toast.add({
+//       severity: 'secondary',
+//       summary: newNotification.title,
+//       detail: newNotification.content,
+//       group: 'bl'
+//     })
+//   }
+// })
 
-onMounted(async () => {
-  const accessToken = Cookies.get(ACCESS_TOKEN_KEY)
-  if (accessToken) {
-    notificationStore.startConnection(NOTIFICATION_HUB)
-  }
-  if (!locationStore.enableLocation) {
-    await locationStore.getCurrentLocation()
-  }
-  if (locationStore.allProvince.length === 0) {
-    await locationStore.getAllProvinces()
-  }
-})
+// onMounted(async () => {
+//   const accessToken = Cookies.get(ACCESS_TOKEN_KEY)
+//   if (accessToken) {
+//     notificationStore.startConnection(NOTIFICATION_HUB)
+//   }
+//   if (!locationStore.enableLocation) {
+//     await locationStore.getCurrentLocation()
+//   }
+//   if (locationStore.allProvince.length === 0) {
+//     await locationStore.getAllProvinces()
+//   }
+// })
 </script>

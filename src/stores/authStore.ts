@@ -57,7 +57,7 @@ export const useAuthStore = defineStore({
         this.isLoggingIn = true
         const { data } = await loginApi(params)
         this.isLoggingIn = false
-        await this.loginSuccessfully(data.data)
+        await this.loginSuccessfully(data.result)
       } catch (e: unknown) {
         console.error(e)
         this.messageError = (e as AxiosError<BadRequestResponse>).response?.data.message
@@ -67,20 +67,24 @@ export const useAuthStore = defineStore({
     },
 
     async logout() {
-      if (this.identity && Cookies.get(ACCESS_TOKEN_KEY)) await logoutApi()
+      console.log(Cookies.get(ACCESS_TOKEN_KEY))
+      if (this.identity && Cookies.get(ACCESS_TOKEN_KEY))
+        await logoutApi(Cookies.get(ACCESS_TOKEN_KEY) + '')
       Cookies.remove(ACCESS_TOKEN_KEY)
       Cookies.remove(REFRESH_TOKEN_KEY)
+      Cookies.remove(ROLE)
+      Cookies.remove(USER_ID)
       localStorage.clear()
-      const notificationStore = useNotificationStore()
-      notificationStore.stopConnection()
       this.identified = false
       window.location.replace(this.rootUrl)
     },
 
     async getMe() {
       const { data } = await getMeApi()
+      if (data.code) this.identity = data.result
 
-      if (data.success) this.identity = data.data
+      console.log(this.identity)
+      return this.identity
     },
 
     async register(params: RegisterRequest) {
@@ -124,27 +128,21 @@ export const useAuthStore = defineStore({
     },
 
     async loginSuccessfully(data: LoginResponse) {
-      console.log('succeeded')
-
       Cookies.set(ACCESS_TOKEN_KEY, data.token)
-      Cookies.set(REFRESH_TOKEN_KEY, data.refreshToken)
-      Cookies.set(ROLE, data.user.roleName)
-      Cookies.set(USER_ID, data.user.id + '')
-      const notificationStore = useNotificationStore()
-      notificationStore.startConnection(NOTIFICATION_HUB)
+      Cookies.set(REFRESH_TOKEN_KEY, data.token)
       await this.getMe()
-      localStorage.setItem(NAME, data.user?.userName ?? '')
-      this.name = data.user?.userName ?? ''
+
+      const role = this.identity?.user_roles[0].role.roleName
+      Cookies.set(ROLE, role + '')
+      Cookies.set(USER_ID, this.identity?.id + '')
+      localStorage.setItem(NAME, this.identity?.fullName ?? '')
+      this.name = this.identity?.fullName ?? ''
       this.identified = true
-      localStorage.setItem('avatar', data.user?.avatar ?? '/noavatar.png')
-      if (this.identity?.roleName === 'Player') {
+      localStorage.setItem('avatar', this.identity?.avatarUrl ?? '/noavatar.png')
+      if (role === 'user') {
         router.push('/user/home')
-        const paymentStore = usePaymentStoreUser()
-        paymentStore.getCurrentBalance()
       }
-      if (this.identity?.roleName === 'Admin') router.push('/admin/home')
-      if (this.identity?.roleName === 'Field') router.push('/field/home')
-      if (this.identity?.roleName === 'Staff') router.push('/staff/home')
+      if (role === 'admin') router.push('/admin/home')
     }
   }
 })

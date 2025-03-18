@@ -1,219 +1,106 @@
 <template>
   <div class="flex flex-col bg-header bg-contain !object-cover pt-24 h-auto">
     <!-- Search bar -->
-    <div class="w-full h-[400px] mx-auto">
-      <div
-        class="bg-white p-4 bg-opacity-20 mt-4 w-full lg:w-[1000px] mx-auto rounded-md flex justify-center"
-      >
-        <div class="w-[70%] mx-auto">
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6 text-white">
-            <div class="lg:col-span-1">
-              <CustomCalendar
-                class="w-full"
-                label="Chọn ngày"
-                v-model="selectedDate"
-                isBlueBorder
-              />
-            </div>
-
-            <div class="lg:col-span-1">
-              <TimeInput
-                class="w-full"
-                label="Chọn giờ"
-                v-model="selectedTime"
-                isBlueBorder
-                :initValue="changeSecondToHour(selectedTime.toString())"
-              />
-            </div>
-
-            <div class="flex flex-col lg:col-span-1">
-              <span class="font-medium">Thời lượng</span>
-              <Dropdown
-                class="w-full rounded-lg border-[3px] border-blue-300"
-                v-model="selectedDuration"
-                :options="durationOptions"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Select Duration"
-              />
-            </div>
-
-            <div class="flex items-end lg:col-span-1">
-              <Button
-                class="w-full flex flex-col !bg-blue-300 border-[3px] !border-blue-400"
-                value="search"
-                @click="submit"
-              >
-                <div class="flex items-center justify-center">
-                  <i class="pi pi-search mr-2" />Tìm kiếm
-                </div>
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <ProgressBar
-          v-if="fieldStoreUser.loadingSuperSearch"
-          mode="indeterminate"
-          style="height: 6px"
-        ></ProgressBar>
+    <div class="w-full h-[400px] relative mx-auto">
+      <div class="absolute top-0 w-96 h-96 bg-white opacity-90 rounded-md left-12 p-10">
+        <h1 class="text-2xl font-bold text-pink-400">Sử dụng AI để thử đồ</h1>
+        <p class="text-gray-600">
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
+          been the industry's standard dummy text ever since the 1500s, when an unknown printer took
+          a galley of type and scrambled it to make a type specimen book. It has survived not only
+          five centuries, but also the leap into electronic typesetting, remaining essentially
+        </p>
       </div>
+    </div>
+    <!-- Featured Products -->
+    <div class="bg-[#FEF1F6] w-full rounded-t-[50px] p-5 flex flex-col lg:px-24 pt-10">
+      <div class="flex gap-4">
+        <!-- 
+        <div class="items-center w-full flex flex-col pt-16">
+          <h1 class="text-3xl font-extrabold text-white mb-2">
+            Thời trang phong cách, giá cả hợp lý
+          </h1>
 
-      <div class="items-center w-full flex flex-col pt-16">
-        <div class="mx-auto flex items-center">
-          <InputText
-            type="text"
-            class="bg-transparent text-white !rounded-full w-96 mx-auto border-2 border-white !placeholder-slate-300"
-            v-model="freeSearchKeyword"
-            placeholder="Tìm bằng tên, địa chỉ, số điện thoại"
+          <div class="mx-auto flex items-center">
+            <InputText
+              type="text"
+              class="bg-transparent text-white !rounded-full w-96 mx-auto border-2 border-white !placeholder-slate-300"
+              v-model="searchKeyword"
+              placeholder="Tìm kiếm quần áo..."
+            />
+            <i
+              class="pi pi-search ml-2 text-white cursor-pointer"
+              @click="onSearch"
+              style="font-size: 1.5rem"
+            ></i>
+          </div>
+        </div> -->
+      </div>
+      <h2 class="text-3xl font-bold mb-8 text-center text-pink-400 mt-10">Sản phẩm</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div
+          v-for="product in productStore.products"
+          :key="product.id"
+          class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300"
+        >
+          <img
+            :src="product.productItem[0].url"
+            :alt="product.name"
+            class="w-full h-48 object-cover"
           />
-          <i
-            class="pi pi-search ml-2 text-white cursor-pointer"
-            @click="onSearch"
-            style="font-size: 1.5rem"
-          ></i>
+          <div class="p-4">
+            <h3 class="font-semibold text-lg mb-2">{{ product.name }}</h3>
+            <p class="text-gray-600 mb-2">{{ product.productItem[0].price }} đ</p>
+            <Button label="Thêm vào giỏ" icon="pi pi-shopping-cart" class="w-full" />
+          </div>
         </div>
       </div>
     </div>
   </div>
+
   <hr />
-  <main class="px-44 mt-20">
-    <div class="my-20">
-      <h1 class="font-semibold text-xl text-center w-full text-gray-600 whitespace-nowrap mx-2">
-        Những sân được đánh giá cao nhất
-        <i class="pi pi-crown text-green-400" style="font-size: 1rem"></i>
-      </h1>
-      <Carousel
-        :value="fieldStoreUser.mostStarFields"
-        :numVisible="3"
-        :numScroll="1"
-        circular
-        :autoplayInterval="2000"
-      >
-        <template #item="slotProps">
-          <div
-            class="bg-white w-80 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300 cursor-pointer mx-auto flex flex-col"
-            @click="$router.push('/user/field/' + slotProps.data.id)"
-          >
-            <FieldPanel :field="slotProps.data" />
-          </div>
-        </template>
-      </Carousel>
-    </div>
-    <div
-      v-if="!fieldStoreUser.loading && fieldStoreUser.totalBooked === 0"
-      class="bg-gray-200 flex flex-col justify-center mx-5 h-20 rounded-md mt-5"
-    >
-      <h1 class="text-xl font-semibold text-center">
-        Chưa có booking nào được tạo, hãy khám phá ngay nhé! 😎
-      </h1>
-    </div>
 
-    <div
-      v-if="fieldStoreUser.loading"
-      class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 py-4 bg-white"
-    >
-      <Skeleton class="col-span-1" height="8rem"></Skeleton>
-      <Skeleton class="col-span-1" height="8rem"></Skeleton>
-      <Skeleton class="col-span-1" height="8rem"></Skeleton>
-      <Skeleton class="col-span-1" height="8rem"></Skeleton>
-    </div>
-
-    <!-- Most posts -->
-    <ListBlogPosts />
-
-    <!-- Recently booking -->
-    <div class="w-full bg-white">
-      <div
-        class="flex items-center mb-1 justify-between px-10"
-        v-if="fieldStoreUser.totalBooked > 0"
-      >
-        <h1 class="font-semibold text-lg text-center text-gray-600 whitespace-nowrap mx-2">
-          Bạn đã đặt
-          <span class="text-green-500 font-bold"> {{ fieldStoreUser.totalBooked }} </span> sân khác
-          nhau <i class="pi pi-sparkles text-green-400" style="font-size: 1rem"></i>
-        </h1>
-        <PagingElement
-          :limit="4"
-          :total="fieldStoreUser.totalBooked"
-          @change-page="fieldStoreUser.changePageRecentlyBooking"
-          v-model="fieldStoreUser.currentPage"
-        />
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-3 py-3">
-        <div
-          v-for="field in fieldStoreUser.bookedFields"
-          :key="field.id"
-          class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300 cursor-pointer flex flex-col"
-          @click="$router.push('/user/field/' + field.id)"
-        >
-          <FieldPanel :field="field" />
-        </div>
-      </div>
-    </div>
-  </main>
+  <div class="px-10 md:px-28 lg:px-44">
+    <h2 class="text-2xl font-bold my-8">Tin tức & Khuyến mãi</h2>
+    <hr class="border-pink-400 border-1" />
+    <h2>
+      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
+      been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+      galley of type and scrambled it to make a type specimen book. It has survived not only five
+      centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It
+      was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
+      passages, and more recently with desktop publishing software like Aldus PageMaker including
+      versions of Lorem Ipsum
+    </h2>
+    <!-- <ListBlogPosts /> -->
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import CustomCalendar from '@/components/calendar/CustomCalendar.vue'
-import PagingElement from '@/components/pagination/PagingElement.vue'
-import { useFieldStoreUser } from '@/stores/fieldStoreUser'
+import { ref, watch } from 'vue'
 import { onMounted } from 'vue'
-import Skeleton from 'primevue/skeleton'
 import Carousel from 'primevue/carousel'
 import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
 import router from '@/router'
-import { useLocationStore } from '@/stores/locationStore'
-import ProgressBar from 'primevue/progressbar'
-import TimeInput from '@/components/calendar/TimeInput.vue'
-import ListBlogPosts from '@/components/information/ListBlogPosts.vue'
 import Dropdown from 'primevue/dropdown'
-import { changeSecondToHour, getSecondsFromMidnightPlus2Hours } from '@/utils/timeUtil'
-import { getCurrentDate } from '@/utils/dateUtil'
-import FieldPanel from '@/components/panels/FieldPanel.vue'
+import { useProductStore } from '@/stores/productStore'
 
-const { t } = useI18n()
+const selectedCategory = ref()
+const selectedPriceRange = ref()
 
-const fieldStoreUser = useFieldStoreUser()
-const locationStore = useLocationStore()
+const productStore = useProductStore()
 
-const filteredProvince = ref<any[]>([])
-const selectedDate = ref(getCurrentDate())
-const selectedTime = ref(getSecondsFromMidnightPlus2Hours())
-const freeSearchKeyword = ref('')
-const selectedDuration = ref(5400)
-const durationOptions = [
-  { label: '60 phút', value: 3600 },
-  { label: '90 phút', value: 5400 },
-  { label: '120 phút', value: 7200 }
-]
 const submit = async () => {
-  if (router.currentRoute.value.name === 'free-search') return
-  router.push({ name: 'free-search' })
-  await fieldStoreUser.getSuperSearchFieldToFreeWordPage()
+  router.push({ name: 'search-results' })
 }
 
 const onSearch = async () => {
-  if (router.currentRoute.value.name === 'free-search') return
-  router.push({ name: 'free-search' })
-  await fieldStoreUser.searchFieldListFreeWord(freeSearchKeyword.value)
+  if (router.currentRoute.value.name === 'search-results') return
+  router.push({ name: 'search-results' })
 }
+
 onMounted(async () => {
-  console.log('????')
-  // fieldStoreUser.getRecentBookingFields()
-  // fieldStoreUser.getMostStarBookingFields()
-  // fieldStoreUser.getNearbyFields()
-  // await locationStore.fetchCurrentLocationDetails()
-  // if (locationStore.enableLocation) {
-  //   filteredProvince.value = locationStore.allProvince
-  //   filteredDistrict.value = locationStore.allDistrict
-  //   selectedProvince.value = locationStore.currentProvince
-  //   selectedDistrict.value = locationStore.currentDistrict
-  // }
+  await productStore.getProducts()
 })
 </script>
 

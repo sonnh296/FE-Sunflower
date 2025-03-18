@@ -1,6 +1,14 @@
 export type Identity = {
-  id: number
-  name?: string
-  status: string
-  roleName: 'Player' | 'Field' | 'Admin' | 'Staff'
+  id: string
+  fullName?: string
+  userName: string
+  email: string
+  user_roles: {
+    id: string
+    role: {
+      id: string
+      roleName: string
+    }
+  }[]
+  avatarUrl?: string
 }
