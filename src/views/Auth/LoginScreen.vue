@@ -27,7 +27,7 @@ const changeMode = (to: 'login' | 'forgot' | 'register') => {
 
 <style scoped>
 .bg-guest {
-  background-image: url(/bg-guest.jpg);
+  background-image: url(/bg-login.jpg);
   height: 100vh;
 }
 </style>
