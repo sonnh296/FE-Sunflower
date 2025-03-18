@@ -60,8 +60,6 @@
       </div>
 
       <div class="items-center w-full flex flex-col pt-16">
-        <h1 class="text-3xl font-extrabold text-white mb-2">Tìm sân, hợp đối trong tầm tay</h1>
-
         <div class="mx-auto flex items-center">
           <InputText
             type="text"
@@ -160,7 +158,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useFieldStore } from '@/stores/fieldStore'
 import CustomCalendar from '@/components/calendar/CustomCalendar.vue'
 import PagingElement from '@/components/pagination/PagingElement.vue'
 import { useFieldStoreUser } from '@/stores/fieldStoreUser'
@@ -181,14 +178,10 @@ import FieldPanel from '@/components/panels/FieldPanel.vue'
 
 const { t } = useI18n()
 
-const fieldStore = useFieldStore()
 const fieldStoreUser = useFieldStoreUser()
 const locationStore = useLocationStore()
 
 const filteredProvince = ref<any[]>([])
-const filteredDistrict = ref<any[]>([])
-const selectedProvince = ref()
-const selectedDistrict = ref()
 const selectedDate = ref(getCurrentDate())
 const selectedTime = ref(getSecondsFromMidnightPlus2Hours())
 const freeSearchKeyword = ref('')
@@ -202,16 +195,6 @@ const submit = async () => {
   if (router.currentRoute.value.name === 'free-search') return
   router.push({ name: 'free-search' })
   await fieldStoreUser.getSuperSearchFieldToFreeWordPage()
-}
-
-const searchProvince = async (event: any) => {
-  if (locationStore.allProvince.length > 0) {
-    filteredProvince.value = locationStore.allProvince.filter((item) =>
-      item.full_name.toLowerCase().includes(event.query.toLowerCase())
-    )
-  } else {
-    await locationStore.getAllProvinces()
-  }
 }
 
 const onSearch = async () => {

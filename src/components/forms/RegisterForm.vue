@@ -2,15 +2,6 @@
   <div class="bg-white p-10 rounded-md">
     <div>
       <h1 class="font-semibold text-center text-xl mb-2">Đăng ký tài khoản</h1>
-      <div class="flex w-full pb-2">
-        <SelectButton
-          v-model="userType"
-          :options="options"
-          aria-labelledby="basic"
-          :allowEmpty="false"
-          class="mx-auto"
-        />
-      </div>
       <div class="h-14">
         <InputGroup>
           <InputGroupAddon>
@@ -105,7 +96,6 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
-import SelectButton from 'primevue/selectbutton'
 import ProgressBar from 'primevue/progressbar'
 
 const authStore = useAuthStore()
@@ -115,7 +105,6 @@ const { t } = useI18n()
 const emit = defineEmits<(e: 'changeMode', id: 'login' | 'register') => void>()
 
 const userType = ref('Người dùng')
-const options = ref(['Người dùng', 'Chủ sân'])
 
 const registerSuccess = ref(false)
 const errorMessage = ref('')

@@ -13,7 +13,7 @@ import { getCurrentDate } from '@/utils/dateUtil'
             <img src="/logo.png" alt="" class="h-20 w-20 fill-white" />
           </div>
           <div class="ml-2">
-            <span class="te xt-3xl flex items-center text-xl font-bold">MatchFinder</span>
+            <span class="te xt-3xl flex items-center text-xl font-bold">Sunflower</span>
             <h1>{{ getCurrentDate().substring(0, 4) }}</h1>
           </div>
         </div>

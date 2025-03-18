@@ -6,12 +6,12 @@ import type { Identity } from '@/types/Identity'
 import type { LoginResponse } from './types/LoginResponse'
 
 export type LoginRequest = {
-  email: string
+  username: string
   password: string
 }
 
 export type LogoutRequest = {
-  email: string
+  username: string
   password: string
 }
 
@@ -26,7 +26,7 @@ export type ActiveAccountRequest = {
 }
 
 export type ResetPasswordRequest = {
-  email: string
+  username: string
   newPassword: string
   confirmPassword: string
 }
@@ -34,9 +34,7 @@ export type ResetPasswordRequest = {
 export type RegisterRequest = {
   userName: string
   email: string
-  role: number
   phoneNumber: string
-  confirmPassword: string
   password: string
 }
 

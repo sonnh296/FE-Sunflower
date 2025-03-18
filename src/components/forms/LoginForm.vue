@@ -2,11 +2,11 @@
   <div class="bg-white p-10 rounded-md mb-2">
     <h1 class="text-center text-xl font-semibold mb-8">Đăng nhập</h1>
     <div class="h-20">
-      <h1 class="font-medium">Email của bạn (Tên đăng nhập với nhân viên)</h1>
+      <h1 class="font-medium">Email</h1>
       <InputGroup>
-        <InputText v-model="email" name="email" placeholder="Nhập email" />
+        <InputText v-model="username" name="username" placeholder="Nhập email" />
       </InputGroup>
-      <small class="text-red-400 flex items-start">{{ errors.email }}</small>
+      <small class="text-red-400 flex items-start">{{ errors.username }}</small>
     </div>
     <div class="h-20 w-full flex flex-col">
       <h1 class="font-medium">Mật khẩu</h1>
@@ -57,7 +57,6 @@ import { useAuthStore } from '@/stores/authStore'
 import ActionButton from '../buttons/ActionButton.vue'
 import ProgressBar from 'primevue/progressbar'
 import InputGroup from 'primevue/inputgroup'
-import InputGroupAddon from 'primevue/inputgroupaddon'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 
@@ -74,18 +73,14 @@ const schema = yup.object({
 
 const { meta, errors, defineField, handleSubmit } = useForm({
   initialValues: {
-    email: '',
+    username: '',
     password: ''
   },
   validationSchema: schema
 })
 
-const [email] = defineField('email')
+const [username] = defineField('username')
 const [password] = defineField('password')
-
-const cancel = () => {
-  console.log('cancel')
-}
 
 const submit = handleSubmit((values) => {
   authStore.login(values)
