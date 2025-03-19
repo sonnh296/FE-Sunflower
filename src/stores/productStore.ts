@@ -4,8 +4,10 @@ import {
   crateProductApi,
   getProductByIdApi,
   getProductsApi,
+  updateProductApi,
   type ProductCreateRequest,
-  type ProductSearchRequest
+  type ProductSearchRequest,
+  type ProductUpdateRequest
 } from '@/api/productApi'
 import type { Product } from '@/types/Product'
 
@@ -16,6 +18,7 @@ interface State {
   loading: boolean
   loadingDetail: boolean
   creating: boolean
+  updating: boolean
   total: number
 }
 
@@ -31,6 +34,7 @@ export const useProductStore = defineStore('productStore', {
       loadingDetail: false,
       loading: false,
       creating: false,
+      updating: false,
       total: 0
     }
   },
@@ -49,6 +53,13 @@ export const useProductStore = defineStore('productStore', {
       this.creating = true
       const { data } = await crateProductApi(product)
       this.creating = false
+      return data
+    },
+
+    async updateProduct(product: ProductUpdateRequest) {
+      this.updating = true
+      const { data } = await updateProductApi(product)
+      this.updating = false
       return data
     },
 

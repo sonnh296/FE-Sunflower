@@ -15,13 +15,10 @@ export type ProductCreateRequest = {
   productItem: ProductItem[]
 }
 
-export type BlogPostUpdateRequest = {
+export type ProductUpdateRequest = {
   id: number
-  fieldId: number
-  title: string
-  content: string
-  isPinned: boolean
-  thumbnail: boolean
+  name: string
+  description: string
 }
 
 export type ProductResponse = {
@@ -50,17 +47,15 @@ export const getProductsApi = async (
 export const crateProductApi = async (
   value: ProductCreateRequest
 ): Promise<AxiosResponse<MfResponse<OneProductResponse>>> => {
-  return await api.post('/products', value, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  })
+  return await api.post('/products', value)
 }
 
 export const updateProductApi = async (
-  value: BlogPostUpdateRequest
+  value: ProductUpdateRequest
 ): Promise<AxiosResponse<MfResponse<OneProductResponse>>> => {
-  return await api.put('/products', value)
+  return await api.put('/products/' + value.id, value)
 }
 
-export const deletePostApi = async (id: number): Promise<AxiosResponse<MfResponse<BlogPost>>> => {
+export const deleteProductApi = async (id: number): Promise<AxiosResponse<MfResponse<Product>>> => {
   return await api.delete('/products/' + id)
 }

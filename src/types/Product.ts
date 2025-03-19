@@ -1,5 +1,5 @@
 export type Product = {
-  id: number
+  id: string
   name: string
   description: string
   productItem: ProductItem[]
@@ -7,7 +7,7 @@ export type Product = {
 
 export type ProductItem = {
   id?: string
-  price: string
+  price: number
   category: string
   gender: string
   size: string

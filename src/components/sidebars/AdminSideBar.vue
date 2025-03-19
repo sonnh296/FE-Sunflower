@@ -35,29 +35,14 @@ const items = ref([
     command: () => navigate('/home')
   },
   {
-    label: t('sidebar.admin.fields'),
-    icon: 'pi pi-money-bill',
-    command: () => navigate('/fields')
-  },
-  {
     label: t('sidebar.admin.users'),
     icon: 'pi pi-users',
-    command: () => navigate('/users')
+    command: () => navigate('/')
   },
   {
     label: t('sidebar.admin.posts'),
     icon: 'pi pi-align-center',
-    command: () => navigate('/posts')
-  },
-  {
-    label: t('sidebar.admin.system'),
-    icon: '',
-    command: () => navigate('/system')
-  },
-  {
-    label: t('sidebar.admin.reports'),
-    icon: 'pi pi-exclamation-circle',
-    command: () => navigate('/reports')
+    command: () => navigate('/')
   }
 ])
 

@@ -8,20 +8,26 @@ export type ProductItemSearchRequest = {
 }
 
 export type ProductItemCreateRequest = {
-  name: string
   price: number
-  description: string
-  quantity: number
+  category: string
   productId: string
+  gender: string
+  size: string
+  color: string
+  stockQuantity: number
+  url: string
 }
 
 export type ProductItemUpdateRequest = {
   id: string
-  name: string
   price: number
-  description: string
-  quantity: number
-  productId: string
+  category: string
+  gender: string
+  size: string
+  color: string
+  stockQuantity: number
+  isActive: boolean
+  url: string
 }
 
 export type ProductItemResponse = {
@@ -53,7 +59,7 @@ export const createProductItemApi = async (
 export const updateProductItemApi = async (
   value: ProductItemUpdateRequest
 ): Promise<AxiosResponse<MfResponse<ProductItem>>> => {
-  return await api.put('/product-items', value)
+  return await api.put('/product-items/' + value.id, value)
 }
 
 export const deleteProductItemApi = async (

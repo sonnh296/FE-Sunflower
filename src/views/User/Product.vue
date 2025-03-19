@@ -2,7 +2,7 @@
   <div class="mx-20">
     <!-- Product Items List -->
     <div class="bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-2xl font-bold mb-4">Sản phẩm</h2>
+      <h2 class="text-2xl font-bold mb-4">Các mẫu sản phẩm</h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
@@ -10,7 +10,11 @@
           :key="item.id"
           class="border rounded-lg p-4 hover:shadow-lg transition"
         >
-          <img :src="item.url" :alt="item.color" class="w-full h-48 object-cover rounded-md mb-3" />
+          <img
+            :src="item.url"
+            :alt="item.color"
+            class="w-full h-48 object-contain rounded-md mb-3"
+          />
 
           <div class="flex justify-between items-start mb-2">
             <h3 class="text-lg font-semibold">{{ item.gender }}</h3>
@@ -19,22 +23,22 @@
 
           <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ item.size }}</p>
 
+          <div class="flex items-center">
+            <span class="mr-2">Kho:</span>
+            <span class="mr-2">{{ item.stockQuantity }}</span>
+          </div>
           <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <span class="mr-2">Số lượng:</span>
-              <input
-                type="number"
-                v-model="item.stockQuantity"
-                min="1"
-                class="w-16 px-2 py-1 border rounded"
-              />
-            </div>
-
+            <Button
+              icon="pi pi-arrow-circle-right"
+              label="Thử đồ"
+              @click="routeToTryOn(item.id as string)"
+              class="p-button-success w-32 bg-pink-200 text-red-500 hover:bg-pink-300 hover:text-white"
+            />
             <Button
               icon="pi pi-shopping-cart"
-              label="Add to Cart"
+              label="Thêm"
               @click="addToCart(item)"
-              class="p-button-success"
+              class="p-button-success w-32"
             />
           </div>
         </div>
@@ -51,6 +55,7 @@ import { useProductItemStore } from '@/stores/productItemStore'
 import { useCartStore } from '@/stores/cartStore'
 import { useRoute } from 'vue-router'
 import type { ProductItem } from '@/types/Product'
+import router from '@/router'
 const toast = useToast()
 const productItemStore = useProductItemStore()
 const cartStore = useCartStore()
@@ -74,10 +79,14 @@ const addToCart = (item: ProductItem) => {
 
   toast.add({
     severity: 'success',
-    summary: 'Added to Cart',
-    detail: `1 x ${item.color} added to cart`,
+    summary: 'Thêm vào giỏ hàng',
+    detail: `${item.color} đã được thêm vào giỏ hàng`,
     life: 3000
   })
+}
+
+const routeToTryOn = (id: string) => {
+  router.push({ name: 'user-try-on', params: { id } })
 }
 
 onMounted(async () => {

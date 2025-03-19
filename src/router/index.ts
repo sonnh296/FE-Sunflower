@@ -66,6 +66,11 @@ const router = createRouter({
           component: () => import('../views/User/Product.vue')
         },
         {
+          path: 'try-on/:id',
+          name: 'user-try-on',
+          component: () => import('../views/User/TryOn.vue')
+        },
+        {
           path: 'forget-password',
           name: 'user-forget-password',
           component: () => import('../views/User/ForgetPassword.vue')
@@ -143,6 +148,11 @@ const router = createRouter({
           path: 'home',
           name: 'admin-home',
           component: () => import('../views/Admin/HomeAdmin.vue')
+        },
+        {
+          path: 'products/:id',
+          name: 'admin-products',
+          component: () => import('../views/Admin/ProductAdmin.vue')
         },
         {
           path: 'fields',

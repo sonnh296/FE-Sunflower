@@ -9,15 +9,6 @@
           <br />
           💡 Chỉ cần tải lên một bức ảnh, hệ thống AI của chúng tôi sẽ giúp bạn thử ngay những bộ
           trang phục yêu thích mà không cần đến cửa hàng.
-          <br />
-          <br />
-          <a
-            href="https://klingai.com/try-on/try-on/new"
-            target="_blank"
-            class="text-pink-400 font-bold"
-          >
-            Được hỗ trợ bởi Kling AI
-          </a>
         </p>
       </div>
     </div>
@@ -83,15 +74,29 @@
       <h2 class="text-3xl font-bold mb-8 text-center text-pink-400 mt-10">Sản phẩm nổi bật</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div
-          v-for="product in featuredProducts"
+          v-for="product in productStore.products"
           :key="product.id"
           class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300"
+          :class="product.productItem.length > 0 ? '' : 'hidden'"
         >
-          <img :src="product.image" :alt="product.name" class="w-full h-48 object-cover" />
-          <div class="p-4">
-            <h3 class="font-semibold text-lg mb-2">{{ product.name }}</h3>
-            <p class="text-gray-600 mb-2">{{ product.price }} đ</p>
-            <Button label="Thêm vào giỏ" icon="pi pi-shopping-cart" class="w-full" />
+          <div v-if="product.productItem.length > 0" class="flex flex-col w-full">
+            <img
+              :src="product.productItem[0].url"
+              :alt="product.name"
+              class="w-full h-48 object-contain mx-auto flex items-center justify-center"
+            />
+            <div class="p-4 flex flex-col justify-between">
+              <div>
+                <h3 class="font-semibold text-lg mb-2">{{ product.name }}</h3>
+                <p class="text-gray-600 mb-2">{{ product.productItem[0].price }} đ</p>
+              </div>
+              <Button
+                label="Chi tiết"
+                icon="pi pi-arrow-up-right"
+                class="w-full"
+                @click="router.push({ name: 'login-screen' })"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -165,27 +170,20 @@
 </template>
 
 <script setup lang="ts">
-import AutoComplete, { type AutoCompleteItemSelectEvent } from 'primevue/autocomplete'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { onMounted } from 'vue'
 import Carousel from 'primevue/carousel'
 import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
 import router from '@/router'
-import { useLocationStore } from '@/stores/locationStore'
-import ProgressBar from 'primevue/progressbar'
-import ListBlogPosts from '@/components/information/ListBlogPosts.vue'
 import Dropdown from 'primevue/dropdown'
+import { useProductStore } from '@/stores/productStore'
 
 const { t } = useI18n()
-const locationStore = useLocationStore()
+const productStore = useProductStore()
 
-const searchKeyword = ref('')
 const selectedCategory = ref()
 const selectedPriceRange = ref()
-const filteredProvince = ref<any[]>([])
-const selectedProvince = ref()
 
 const categoryOptions = [
   { label: 'Áo', value: 'shirts' },
@@ -218,17 +216,8 @@ const submit = async () => {
   router.push({ name: 'search-results' })
 }
 
-const onSearch = async () => {
-  if (router.currentRoute.value.name === 'search-results') return
-  router.push({ name: 'search-results' })
-}
-
 onMounted(async () => {
-  await locationStore.fetchCurrentLocationDetails()
-  if (locationStore.enableLocation) {
-    filteredProvince.value = locationStore.allProvince
-    selectedProvince.value = locationStore.currentProvince
-  }
+  await productStore.getProducts()
 })
 </script>
 
