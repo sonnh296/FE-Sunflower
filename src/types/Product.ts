@@ -6,7 +6,7 @@ export type Product = {
 }
 
 export type ProductItem = {
-  id?: number
+  id?: string
   price: string
   category: string
   gender: string

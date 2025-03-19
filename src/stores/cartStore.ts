@@ -1,75 +1,84 @@
 import { defineStore } from 'pinia'
-import { LIMIT_PER_PAGE } from '@/constants/tableValues'
 import {
-  crateProductApi,
-  getProductByIdApi,
-  getProductsApi,
-  type ProductCreateRequest,
-  type ProductSearchRequest
-} from '@/api/productApi'
-import type { Product } from '@/types/Product'
+  addToCartApi,
+  clearCartApi,
+  getCartApi,
+  removeFromCartApi,
+  updateCartItemApi,
+  type CartAddRequest,
+  type CartItem,
+  type CartUpdateRequest
+} from '@/api/cartApi'
 
 interface State {
-  search: ProductSearchRequest
-  products: Product[]
-  product: Product | undefined
+  cartItems: CartItem[]
   loading: boolean
-  loadingDetail: boolean
-  creating: boolean
-  total: number
+  totalPrice: number
+  totalItems: number
 }
 
-export const useProductStore = defineStore('productStore', {
+export const useCartStore = defineStore('cartStore', {
   state: (): State => {
     return {
-      search: {
-        pageSize: LIMIT_PER_PAGE,
-        pageNumber: 0
-      },
-      products: [],
-      product: undefined,
-      loadingDetail: false,
+      cartItems: [],
       loading: false,
-      creating: false,
-      total: 0
+      totalPrice: 0,
+      totalItems: 0
     }
   },
   actions: {
-    async getProducts() {
+    async getCart() {
       if (this.loading) return
       this.loading = true
-      const { data } = await getProductsApi(this.search)
-      this.products = data.result.content ?? []
+      const { data } = await getCartApi()
+      this.cartItems = data.result.content ?? []
+      this.totalPrice = data.result.content.reduce(
+        (acc, item: CartItem) => acc + Number(item.productItem.price ?? 0) * item.quantity,
+        0
+      )
+      this.totalItems = data.result.totalItems
       this.loading = false
-      this.total = data.result?.totalElements ?? 0
       return data
     },
 
-    async createProduct(product: ProductCreateRequest) {
-      this.creating = true
-      const { data } = await crateProductApi(product)
-      this.creating = false
+    async addToCart(request: CartAddRequest) {
+      this.loading = true
+      const { data } = await addToCartApi(request)
+      this.cartItems = data.result.content ?? []
+      this.totalPrice = data.result.totalPrice
+      this.totalItems = data.result.totalItems
+      this.loading = false
       return data
     },
 
-    async getProductById(id: string) {
-      if (this.loadingDetail) return
-      this.loadingDetail = true
-      this.product = undefined
-      const { data } = await getProductByIdApi(id)
-      this.product = data.result
-      this.loadingDetail = false
+    async updateCartItem(request: CartUpdateRequest) {
+      this.loading = true
+      const { data } = await updateCartItemApi(request)
+      this.cartItems = data.result.content ?? []
+      this.totalPrice = data.result.totalPrice
+      this.totalItems = data.result.totalItems
+      this.loading = false
       return data
     },
 
-    async changePageBlogPost(page: number) {
-      this.search.pageNumber = page
-      await this.getProducts()
+    async removeFromCart(cartItemId: string) {
+      this.loading = true
+      const { data } = await removeFromCartApi(cartItemId)
+      this.cartItems = data.result.content ?? []
+      this.totalPrice = data.result.totalPrice
+      this.totalItems = data.result.totalItems
+      this.loading = false
+      return data
+    },
+
+    async clearCart() {
+      this.loading = true
+      const { data } = await clearCartApi()
+      this.cartItems = []
+      this.totalPrice = 0
+      this.totalItems = 0
+      this.loading = false
+      return data
     }
-
-    // async deletePost(id: number) {
-    //   const { data } = await deletePostApi(id)
-    //   return data
-    // }
   }
 })

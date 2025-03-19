@@ -10,7 +10,7 @@
             icon="pi pi-shopping-cart"
             label="Giỏ hàng"
             class="bg-green-400 mx-2"
-            @click.stop="navigate('/map-search')"
+            @click.stop="navigate('/cart')"
           />
           <button ref="toggleProfile" class="relative">
             <div @click="openProfile = !openProfile" class="flex items-center pr-6 pb-1">
@@ -43,12 +43,11 @@
 <script setup lang="ts">
 import router from '@/router'
 import Menubar from 'primevue/menubar'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/authStore'
 import { onClickOutside } from '@vueuse/core'
 import LocationInfoDialog from '../dialogs/LocationInfoDialog.vue'
-import NotificationButton from '../buttons/NotificationButton.vue'
 import Button from 'primevue/button'
 const { t } = useI18n()
 
@@ -70,11 +69,6 @@ const items = ref([
     label: t('sidebar.user.bookingHistory'),
     icon: 'pi pi-history',
     command: () => navigate('/booking-history')
-  },
-  {
-    label: t('sidebar.user.favorite-field'),
-    icon: 'pi pi-heart',
-    command: () => navigate('/favorite-fields')
   }
 ])
 

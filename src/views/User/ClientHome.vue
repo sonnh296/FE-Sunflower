@@ -5,10 +5,19 @@
       <div class="absolute top-0 w-96 h-96 bg-white opacity-90 rounded-md left-12 p-10">
         <h1 class="text-2xl font-bold text-pink-400">Sử dụng AI để thử đồ</h1>
         <p class="text-gray-600">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-          been the industry's standard dummy text ever since the 1500s, when an unknown printer took
-          a galley of type and scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting, remaining essentially
+          Chào mừng bạn đến với Subflower – Nền tảng thời trang ứng dụng AI thử đồ hiện đại nhất!
+          <br />
+          💡 Chỉ cần tải lên một bức ảnh, hệ thống AI của chúng tôi sẽ giúp bạn thử ngay những bộ
+          trang phục yêu thích mà không cần đến cửa hàng.
+          <br />
+          <br />
+          <a
+            href="https://klingai.com/try-on/try-on/new"
+            target="_blank"
+            class="text-pink-400 font-bold"
+          >
+            Được hỗ trợ bởi Kling AI
+          </a>
         </p>
       </div>
     </div>
@@ -51,7 +60,12 @@
           <div class="p-4">
             <h3 class="font-semibold text-lg mb-2">{{ product.name }}</h3>
             <p class="text-gray-600 mb-2">{{ product.productItem[0].price }} đ</p>
-            <Button label="Thêm vào giỏ" icon="pi pi-shopping-cart" class="w-full" />
+            <Button
+              label="Chi tiết"
+              icon="pi pi-arrow-up-right"
+              class="w-full"
+              @click="goToProduct(product.id)"
+            />
           </div>
         </div>
       </div>
@@ -63,16 +77,20 @@
   <div class="px-10 md:px-28 lg:px-44">
     <h2 class="text-2xl font-bold my-8">Tin tức & Khuyến mãi</h2>
     <hr class="border-pink-400 border-1" />
-    <h2>
-      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-      been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-      galley of type and scrambled it to make a type specimen book. It has survived not only five
-      centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It
-      was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
-      passages, and more recently with desktop publishing software like Aldus PageMaker including
-      versions of Lorem Ipsum
+    <h2 class="text-xl my-8">
+      🎉 SIÊU SALE THÁNG 3 - GIẢM ĐẾN 50% 🎉 <br />
+      💥 Mừng tháng mới, săn sale cực sốc! <br />
+      🛍️ Giảm giá đến 50% tất cả sản phẩm thời trang nam & nữ. <br />
+      🔥 Mua 2 tặng 1 – Áp dụng cho các mẫu hot trend 2025! <br />
+      ⏳ Chương trình chỉ diễn ra từ 20/03 - 31/03, đừng bỏ lỡ!
     </h2>
-    <!-- <ListBlogPosts /> -->
+    <hr class="border-pink-400 border-1" />
+    <h2 class="text-xl my-8">
+      🛒 DEAL SỐC FLASH SALE - GIÁ CHỈ TỪ 99K<br />
+      🔔 Flash Sale mỗi ngày từ 12h - 14h và 20h - 22h!<br />
+      👗 Áo thun, sơ mi, quần jeans giá chỉ từ 99K!<br />
+      ⏳ Số lượng có hạn – Nhanh tay săn ngay!
+    </h2>
   </div>
 </template>
 
@@ -97,6 +115,10 @@ const submit = async () => {
 const onSearch = async () => {
   if (router.currentRoute.value.name === 'search-results') return
   router.push({ name: 'search-results' })
+}
+
+const goToProduct = (productId: string) => {
+  router.push({ name: 'user-product', params: { id: productId } })
 }
 
 onMounted(async () => {
