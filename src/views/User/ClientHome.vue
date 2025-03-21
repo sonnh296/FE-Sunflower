@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col bg-header bg-contain !object-cover pt-24 h-auto">
+  <div class="flex flex-col bg-header bg-contain !object-contain pt-24 h-auto">
     <!-- Search bar -->
     <div class="w-full h-[400px] relative mx-auto">
       <div class="absolute top-0 w-96 h-96 bg-white opacity-90 rounded-md left-12 p-10">
