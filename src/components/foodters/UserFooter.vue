@@ -10,7 +10,7 @@ import { getCurrentDate } from '@/utils/dateUtil'
       <div class="flex items-center text-white">
         <div class="flex items-center mr-10">
           <div class="bg-white rounded-lg">
-            <img src="/logo.png" alt="" class="h-20 w-20 fill-white" />
+            <img src="/sf_icon.png" alt="" class="h-20 w-20 fill-white" />
           </div>
           <div class="ml-2">
             <span class="te xt-3xl flex items-center text-xl font-bold">Sunflower</span>

@@ -84,6 +84,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+@font-face {
+  font-family: 'Dream Avenue';
+  src: url('@/assets/fonts/FontsFree-Net-Dream-Avenue.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 
 .p-3 {
   padding: 0.75rem;

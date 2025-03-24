@@ -29,7 +29,7 @@ const i18n = createI18n({
   }
 })
 const icon = useFavicon()
-icon.value = '/ball.png'
+icon.value = '/sf_icon.png'
 app.component('FontAwesomeIcon', FontAwesomeIcon)
 app.use(createPinia())
 app.use(router)

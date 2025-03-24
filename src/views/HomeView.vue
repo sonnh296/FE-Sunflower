@@ -1,56 +1,48 @@
 <template>
-  <div class="flex flex-col bg-header bg-contain !object-cover bg-no-repeat pt-24 h-auto">
+  <div class="pt-16">
+    <!-- <div class="flex flex-col bg-header bg-contain !object-cover bg-no-repeat pt-24 h-auto w-screen"> -->
+    <div class="flex flex-col bg-header bg-cover bg-center bg-no-repeat h-[75vh] w-screen">
+    </div>
+
     <!-- Search bar -->
-    <div class="w-full h-[400px] relative mx-auto">
-      <div class="absolute top-0 w-96 h-96 bg-white opacity-90 rounded-md left-12 p-10">
+    <div class="bg-[#FEF1F6] w-full p-5 flex flex-col lg:px-24 pt-10">
+      <div class="w-full relative mx-auto p-10 bg-white opacity-90 rounded-[50px] text-center">
         <h1 class="text-2xl font-bold text-pink-400">Sử dụng AI để thử đồ</h1>
         <p class="text-gray-600">
-          Chào mừng bạn đến với Subflower – Nền tảng thời trang ứng dụng AI thử đồ hiện đại nhất!
+          Chào mừng bạn đến với Sunflower – Nền tảng thời trang ứng dụng AI thử đồ hiện đại nhất!
           <br />
           💡 Chỉ cần tải lên một bức ảnh, hệ thống AI của chúng tôi sẽ giúp bạn thử ngay những bộ
           trang phục yêu thích mà không cần đến cửa hàng.
         </p>
       </div>
     </div>
+
+
     <!-- Featured Products -->
-    <div class="bg-[#FEF1F6] w-full rounded-t-[50px] p-5 flex flex-col lg:px-24 pt-10">
-      <div class="flex gap-4">
-        <div class="flex flex-col lg:col-span-1">
-          <span>Chọn danh mục</span>
-          <Dropdown
-            class="w-52 rounded-lg border-[3px] border-blue-300"
-            v-model="selectedCategory"
-            :options="categoryOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Chọn danh mục quần áo"
-          />
-        </div>
+    <div>
+      <div class="bg-[#FEF1F6] w-full rounded-t-[50px] p-5 flex flex-col lg:px-24 pt-10">
+        <div class="flex gap-4">
+          <div class="flex flex-col lg:col-span-1">
+            <span>Chọn danh mục</span>
+            <Dropdown class="w-52 rounded-lg border-[3px] border-blue-300" v-model="selectedCategory"
+              :options="categoryOptions" optionLabel="label" optionValue="value" placeholder="Chọn danh mục quần áo" />
+          </div>
 
-        <div class="flex flex-col lg:col-span-1">
-          <span>Khoảng giá</span>
-          <Dropdown
-            class="w-52 rounded-lg border-[3px] border-blue-300"
-            v-model="selectedPriceRange"
-            :options="priceRangeOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Chọn khoảng giá"
-          />
-        </div>
+          <div class="flex flex-col lg:col-span-1">
+            <span>Khoảng giá</span>
+            <Dropdown class="w-52 rounded-lg border-[3px] border-blue-300" v-model="selectedPriceRange"
+              :options="priceRangeOptions" optionLabel="label" optionValue="value" placeholder="Chọn khoảng giá" />
+          </div>
 
-        <div class="flex items-end lg:col-span-1">
-          <Button
-            class="w-52 flex flex-col !bg-blue-300 border-[3px] !border-blue-400"
-            value="search"
-            @click="submit"
-          >
-            <div class="flex items-center justify-center">
-              <i class="pi pi-search mr-2" />Tìm kiếm
-            </div>
-          </Button>
-        </div>
-        <!-- 
+          <div class="flex items-end lg:col-span-1">
+            <Button class="w-52 flex flex-col !bg-blue-300 border-[3px] !border-blue-400" value="search"
+              @click="submit">
+              <div class="flex items-center justify-center">
+                <i class="pi pi-search mr-2" />Tìm kiếm
+              </div>
+            </Button>
+          </div>
+          <!-- 
         <div class="items-center w-full flex flex-col pt-16">
           <h1 class="text-3xl font-extrabold text-white mb-2">
             Thời trang phong cách, giá cả hợp lý
@@ -70,103 +62,80 @@
             ></i>
           </div>
         </div> -->
-      </div>
-      <h2 class="text-3xl font-bold mb-8 text-center text-pink-400 mt-10">Sản phẩm nổi bật</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div
-          v-for="product in productStore.products"
-          :key="product.id"
-          class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300"
-          :class="product.productItem.length > 0 ? '' : 'hidden'"
-        >
-          <div v-if="product.productItem.length > 0" class="flex flex-col w-full">
-            <img
-              :src="product.productItem[0].url"
-              :alt="product.name"
-              class="w-full h-48 object-contain mx-auto flex items-center justify-center"
-            />
-            <div class="p-4 flex flex-col justify-between">
-              <div>
-                <h3 class="font-semibold text-lg mb-2">{{ product.name }}</h3>
-                <p class="text-gray-600 mb-2">{{ product.productItem[0].price }} đ</p>
+        </div>
+        <h2 class="text-3xl font-bold mb-8 text-center text-pink-400 mt-10">Sản phẩm nổi bật</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div v-for="product in productStore.products" :key="product.id"
+            class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300"
+            :class="product.productItem.length > 0 ? '' : 'hidden'">
+            <div v-if="product.productItem.length > 0" class="flex flex-col w-full">
+              <img :src="product.productItem[0].url" :alt="product.name"
+                class="w-full h-48 object-contain mx-auto flex items-center justify-center" />
+              <div class="p-4 flex flex-col justify-between">
+                <div>
+                  <h3 class="font-semibold text-lg mb-2">{{ product.name }}</h3>
+                  <p class="text-gray-600 mb-2">{{ product.productItem[0].price }} đ</p>
+                </div>
+                <Button label="Chi tiết" icon="pi pi-arrow-up-right" class="w-full"
+                  @click="router.push({ name: 'login-screen' })" />
               </div>
-              <Button
-                label="Chi tiết"
-                icon="pi pi-arrow-up-right"
-                class="w-full"
-                @click="router.push({ name: 'login-screen' })"
-              />
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+    <hr />
 
-  <hr />
-
-  <div class="px-10 md:px-28 lg:px-44">
-    <h2 class="text-2xl font-bold my-8">Tin tức & Khuyến mãi</h2>
-    <hr class="border-pink-400 border-1" />
-    <h2 class="text-xl my-8">
-      🎉 SIÊU SALE THÁNG 3 - GIẢM ĐẾN 50% 🎉 <br />
-      💥 Mừng tháng mới, săn sale cực sốc! <br />
-      🛍️ Giảm giá đến 50% tất cả sản phẩm thời trang nam & nữ. <br />
-      🔥 Mua 2 tặng 1 – Áp dụng cho các mẫu hot trend 2025! <br />
-      ⏳ Chương trình chỉ diễn ra từ 20/03 - 31/03, đừng bỏ lỡ!
-    </h2>
-    <hr class="border-pink-400 border-1" />
-    <h2 class="text-xl my-8">
-      🛒 DEAL SỐC FLASH SALE - GIÁ CHỈ TỪ 99K<br />
-      🔔 Flash Sale mỗi ngày từ 12h - 14h và 20h - 22h!<br />
-      👗 Áo thun, sơ mi, quần jeans giá chỉ từ 99K!<br />
-      ⏳ Số lượng có hạn – Nhanh tay săn ngay!
-    </h2>
-  </div>
-
-  <main class="px-44 mt-20">
-    <div class="my-20">
-      <h1
-        class="font-semibold mb-2 text-2xl text-center w-full text-pink-400 whitespace-nowrap mx-2"
-      >
-        <i class="pi pi-angle-double-up text-pink-400" style="font-size: 1rem"></i>
-        Xu hướng thời trang
-        <i class="pi pi-angle-double-up text-pink-400" style="font-size: 1rem"></i>
-      </h1>
-      <Carousel
-        :value="bestSellingProducts"
-        :numVisible="3"
-        :numScroll="1"
-        circular
-        :autoplayInterval="2000"
-      >
-        <template #item="slotProps">
-          <div
-            class="bg-white w-80 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300 cursor-pointer mx-auto"
-          >
-            <div class="relative h-44">
-              <img
-                :src="slotProps.data?.image"
-                :alt="slotProps.data?.name"
-                class="w-full h-full object-cover"
-              />
-              <div class="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 rounded-br-lg">
-                -{{ slotProps.data?.discount }}%
-              </div>
-            </div>
-            <div class="p-4">
-              <h3 class="font-bold text-lg mb-2">{{ slotProps.data?.name }}</h3>
-              <p class="text-gray-600 line-clamp-2 mb-2">{{ slotProps.data?.description }}</p>
-              <div class="flex justify-between items-center">
-                <span class="text-red-500 font-bold">{{ slotProps.data?.price }} đ</span>
-                <Button icon="pi pi-shopping-cart" class="p-button-rounded" />
-              </div>
-            </div>
-          </div>
-        </template>
-      </Carousel>
+    <div class="px-10 md:px-28 lg:px-44">
+      <h2 class="text-2xl font-bold my-8">Tin tức & Khuyến mãi</h2>
+      <hr class="border-pink-400 border-1" />
+      <h2 class="text-xl my-8">
+        🎉 SIÊU SALE THÁNG 3 - GIẢM ĐẾN 50% 🎉 <br />
+        💥 Mừng tháng mới, săn sale cực sốc! <br />
+        🛍️ Giảm giá đến 50% tất cả sản phẩm thời trang nam & nữ. <br />
+        🔥 Mua 2 tặng 1 – Áp dụng cho các mẫu hot trend 2025! <br />
+        ⏳ Chương trình chỉ diễn ra từ 20/03 - 31/03, đừng bỏ lỡ!
+      </h2>
+      <hr class="border-pink-400 border-1" />
+      <h2 class="text-xl my-8">
+        🛒 DEAL SỐC FLASH SALE - GIÁ CHỈ TỪ 99K<br />
+        🔔 Flash Sale mỗi ngày từ 12h - 14h và 20h - 22h!<br />
+        👗 Áo thun, sơ mi, quần jeans giá chỉ từ 99K!<br />
+        ⏳ Số lượng có hạn – Nhanh tay săn ngay!
+      </h2>
     </div>
-  </main>
+
+    <main class="px-44 mt-20">
+      <div class="my-20">
+        <h1 class="font-semibold mb-2 text-2xl text-center w-full text-pink-400 whitespace-nowrap mx-2">
+          <i class="pi pi-angle-double-up text-pink-400" style="font-size: 1rem"></i>
+          Xu hướng thời trang
+          <i class="pi pi-angle-double-up text-pink-400" style="font-size: 1rem"></i>
+        </h1>
+        <Carousel :value="bestSellingProducts" :numVisible="3" :numScroll="1" circular :autoplayInterval="2000">
+          <template #item="slotProps">
+            <div
+              class="bg-white w-80 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300 cursor-pointer mx-auto">
+              <div class="relative h-44">
+                <img :src="slotProps.data?.image" :alt="slotProps.data?.name" class="w-full h-full object-cover" />
+                <div class="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 rounded-br-lg">
+                  -{{ slotProps.data?.discount }}%
+                </div>
+              </div>
+              <div class="p-4">
+                <h3 class="font-bold text-lg mb-2">{{ slotProps.data?.name }}</h3>
+                <p class="text-gray-600 line-clamp-2 mb-2">{{ slotProps.data?.description }}</p>
+                <div class="flex justify-between items-center">
+                  <span class="text-red-500 font-bold">{{ slotProps.data?.price }} đ</span>
+                  <Button icon="pi pi-shopping-cart" class="p-button-rounded" />
+                </div>
+              </div>
+            </div>
+          </template>
+        </Carousel>
+      </div>
+    </main>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -223,6 +192,6 @@ onMounted(async () => {
 
 <style scoped>
 .bg-header {
-  background-image: url('/homepage.jpg');
+  background-image: url('/sf_banner.png');
 }
 </style>
