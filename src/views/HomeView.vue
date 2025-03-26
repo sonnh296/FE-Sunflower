@@ -1,7 +1,7 @@
 <template>
   <div class="pt-16">
     <!-- <div class="flex flex-col bg-header bg-contain !object-cover bg-no-repeat pt-24 h-auto w-screen"> -->
-    <div class="flex flex-col bg-header bg-cover bg-center bg-no-repeat h-[75vh] w-screen">
+    <div class="flex flex-col bg-header bg-cover bg-center bg-no-repeat h-[85vh] w-screen">
     </div>
 
     <!-- Search bar -->

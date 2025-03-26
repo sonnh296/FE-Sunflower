@@ -1,5 +1,5 @@
 <template>
-  <Toast />
+  <!-- <Toast />
   <Toast position="bottom-left" group="bl" />
   <ConfirmDialog class="w-fit" group="headless">
     <template #container="{ message, acceptCallback, rejectCallback }">
@@ -17,26 +17,26 @@
         </div>
       </div>
     </template>
-  </ConfirmDialog>
+  </ConfirmDialog> -->
   <RouterView />
 </template>
 
 <script setup lang="ts">
-import Toast from 'primevue/toast'
-import { useNotificationStore } from '@/stores/notificationStore'
-import { onMounted, watchEffect } from 'vue'
-import { useToast } from 'primevue/usetoast'
-import { ACCESS_TOKEN_KEY } from './constants/storage'
-import Cookies from 'js-cookie'
-import ConfirmDialog from 'primevue/confirmdialog'
-import Button from 'primevue/button'
-import { useLocationStore } from './stores/locationStore'
-import { NOTIFICATION_HUB } from './constants/env'
+// import Toast from 'primevue/toast'
+// import { useNotificationStore } from '@/stores/notificationStore'
+// import { onMounted, watchEffect } from 'vue'
+// import { useToast } from 'primevue/usetoast'
+// import { ACCESS_TOKEN_KEY } from './constants/storage'
+// import Cookies from 'js-cookie'
+// import ConfirmDialog from 'primevue/confirmdialog'
+// import Button from 'primevue/button'
+// import { useLocationStore } from './stores/locationStore'
+// import { NOTIFICATION_HUB } from './constants/env'
 
-const toast = useToast()
+// const toast = useToast()
 
-const notificationStore = useNotificationStore()
-const locationStore = useLocationStore()
+// const notificationStore = useNotificationStore()
+// const locationStore = useLocationStore()
 // watchEffect(() => {
 //   const newNotification = notificationStore.latestNotification
 //   if (newNotification) {

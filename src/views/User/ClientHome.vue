@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col bg-header bg-contain !object-contain pt-24 h-auto">
+  <div class="flex flex-col bg-header bg-cover bg-center bg-no-repeat h-[85vh] w-screen">
     <!-- Search bar -->
-    <div class="w-full h-[400px] relative mx-auto">
+    <!-- <div class="w-full h-[400px] relative mx-auto">
       <div class="absolute top-0 w-96 h-96 bg-white opacity-90 rounded-md left-12 p-10">
         <h1 class="text-2xl font-bold text-pink-400">Sử dụng AI để thử đồ</h1>
         <p class="text-gray-600">
@@ -20,7 +20,23 @@
           </a>
         </p>
       </div>
+    </div> -->
+    
+  </div>
+
+  <div class="bg-[#FEF1F6] w-full p-5 flex flex-col lg:px-24 pt-10">
+      <div class="w-full relative mx-auto p-10 bg-white opacity-90 rounded-[50px] text-center">
+        <h1 class="text-2xl font-bold text-pink-400">Sử dụng AI để thử đồ</h1>
+        <p class="text-gray-600">
+          Chào mừng bạn đến với Sunflower – Nền tảng thời trang ứng dụng AI thử đồ hiện đại nhất!
+          <br />
+          💡 Chỉ cần tải lên một bức ảnh, hệ thống AI của chúng tôi sẽ giúp bạn thử ngay những bộ
+          trang phục yêu thích mà không cần đến cửa hàng.
+        </p>
+      </div>
     </div>
+
+  <div>
     <!-- Featured Products -->
     <div class="bg-[#FEF1F6] w-full rounded-t-[50px] p-5 flex flex-col lg:px-24 pt-10">
       <div class="flex gap-4">
@@ -76,7 +92,6 @@
       </div>
     </div>
   </div>
-
   <hr />
 
   <div class="px-10 md:px-28 lg:px-44">
@@ -131,6 +146,6 @@ onMounted(async () => {
 
 <style scoped>
 .bg-header {
-  background-image: url('/homepage.jpg');
+  background-image: url('/sf_banner.png');
 }
 </style>
