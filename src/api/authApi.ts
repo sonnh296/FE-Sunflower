@@ -26,9 +26,10 @@ export type ActiveAccountRequest = {
 }
 
 export type ResetPasswordRequest = {
-  username: string
-  newPassword: string
-  confirmPassword: string
+  username?: string
+  newPassword?: string
+  confirmPassword?: string
+  email?: string
 }
 
 export type RegisterRequest = {
@@ -36,6 +37,7 @@ export type RegisterRequest = {
   email: string
   phoneNumber: string
   password: string
+  confirmPassword: string
 }
 
 export type RefreshRequest = {

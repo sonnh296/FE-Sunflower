@@ -34,11 +34,11 @@ import { onMounted } from 'vue'
 const authStore = useAuthStore()
 
 onMounted(() => {
-  authStore.identity = {
-    id: 1,
-    name: 'John Doe',
-    status: 'active',
-    roleName: 'Player'
-  }
+  // authStore.identity = {
+  //   id: 1,
+  //   name: 'John Doe',
+  //   status: 'active',
+  //   roleName: 'Player'
+  // }
 })
 </script>

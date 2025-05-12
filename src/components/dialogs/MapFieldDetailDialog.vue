@@ -39,7 +39,6 @@ import ActionButton from '@/components/buttons/ActionButton.vue'
 import { ref, watch } from 'vue'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import UserMainMap from '../maps/UserMainMap.vue'
 import { useFieldStore } from '@/stores/fieldStore'
 import { useLocationStore } from '@/stores/locationStore'
 
@@ -55,7 +54,7 @@ const props = defineProps<{
 }>()
 
 const isSearchLoading = ref(false)
-const userMainMapRef = ref<InstanceType<typeof UserMainMap> | null>(null)
+const userMainMapRef = ref<any>(null)
 
 const emit = defineEmits<(e: 'close') => void>()
 

@@ -427,7 +427,7 @@ const selectedCommune = ref()
 const filteredProvince = ref<any[]>()
 const filteredDistrict = ref<any[]>()
 const filteredCommune = ref<any[]>()
-const markerMapRef = ref<InstanceType<typeof MarkerMap> | null>(null)
+const markerMapRef = ref<any>(null)
 const isOpenAllDay = ref(false)
 
 const disableNextMap = computed(

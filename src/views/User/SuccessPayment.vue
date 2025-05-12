@@ -23,15 +23,13 @@
                   >
                 </p>
                 <p class="text-sm text-gray-600 mb-2">
-                  <strong>Ngày tạo: </strong
-                  >{{ formatDate(paymentStoreUser.myPaymentDetail?.createdAt ?? '') }}
+                  <strong>Ngày tạo: </strong>
                 </p>
                 <p
                   v-if="paymentStoreUser.myPaymentDetail?.lastUpdatedAt"
                   class="text-sm text-gray-600 mb-2"
                 >
-                  <strong>Cập nhật: </strong
-                  >{{ formatDate(paymentStoreUser.myPaymentDetail?.lastUpdatedAt ?? '') }}
+                  <strong>Cập nhật: </strong>
                 </p>
               </div>
             </div>
@@ -67,7 +65,6 @@
 <script setup lang="ts">
 import { PaymentStatus } from '@/constants/payment'
 import { usePaymentStoreUser } from '@/stores/paymentStoreUser'
-import { formatDate } from '@/utils/dateUtil'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import ProgressSpinner from 'primevue/progressspinner'

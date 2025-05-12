@@ -134,7 +134,7 @@ const schema = yup.object({
 const { meta, errors, defineField, handleSubmit } = useForm<RegisterRequest>({
   initialValues: {
     userName: '',
-    role: 3,
+    // role: 3,
     email: '',
     password: '',
     confirmPassword: '',
@@ -150,15 +150,13 @@ const [phoneNumber] = defineField('phoneNumber')
 const [confirmPassword] = defineField('confirmPassword')
 
 const submit = handleSubmit((values) => {
-  authStore
-    .register({ ...values, role: userType.value === 'Người dùng' ? 3 : 2 })
-    .then((response) => {
-      if (response.success) {
-        registerSuccess.value = true
-        errorMessage.value = ''
-      } else {
-        errorMessage.value = response.message
-      }
-    })
+  authStore.register({ ...values }).then((response) => {
+    if (response.success) {
+      registerSuccess.value = true
+      errorMessage.value = ''
+    } else {
+      errorMessage.value = response.message
+    }
+  })
 })
 </script>

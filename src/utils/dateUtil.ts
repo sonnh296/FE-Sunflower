@@ -93,6 +93,67 @@ export const formatDateVietnamese = (date: string | undefined | null) => {
   })
 }
 
+export const formatTimeAgo = (date: string | undefined | null) => {
+  if (!date) return ''
+  const now = dayjs()
+  const formattedDate = dayjs(date)
+  const diffInSeconds = now.diff(formattedDate, 'second') // Difference in seconds
+  const diffInMinutes = now.diff(formattedDate, 'minute') // Difference in minutes
+  const diffInHours = now.diff(formattedDate, 'hour') // Difference in hours
+  const diffInDays = now.diff(formattedDate, 'day') // Difference in days
+  const diffInMonths = now.diff(formattedDate, 'month') // Difference in months
+  const diffInYears = now.diff(formattedDate, 'year') // Difference in years
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds} giây trước`
+  } else if (diffInMinutes < 60) {
+    return `${diffInMinutes} phút trước`
+  } else if (diffInHours < 24) {
+    return `${diffInHours} giờ trước`
+  } else if (diffInDays < 30) {
+    return `${diffInDays} ngày trước`
+  } else if (diffInMonths < 12) {
+    return `${diffInMonths} tháng trước`
+  } else {
+    return `${diffInYears} năm trước`
+  }
+}
+
+export const formatDateWithoutHHmm = (date: string | undefined | null) => {
+  if (!date) return ''
+  const newDate = new Date(date)
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }
+  const formattedDate = new Intl.DateTimeFormat('en-US', options).format(newDate)
+  const parts = formattedDate.split('/')
+  const datePart = parts[0].split('/')
+  const monthPart = parts[1].split('/')
+  const formattedDateString = `${datePart[2]}-${monthPart[0]}-${monthPart[1]}`
+  return formattedDateString
+}
+
+export const formatDate = (date: string | undefined | null) => {
+  if (!date) return ''
+  const newDate = new Date(date)
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }
+  const formattedDate = new Intl.DateTimeFormat('en-US', options).format(newDate)
+  const parts = formattedDate.split(', ')
+  const datePart = parts[0].split('/')
+  const timePart = parts[1].split(':')
+  const formattedDateString = `${datePart[2]}-${datePart[0]}-${datePart[1]}T${timePart[0]}:${timePart[1]}`
+  return formattedDateString
+}
+
 export function getDateTimeFormatted(date: Date): string {
   const year = date.getFullYear()
   const month = (date.getMonth() + 1).toString().padStart(2, '0')

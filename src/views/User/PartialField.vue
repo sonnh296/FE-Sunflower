@@ -59,7 +59,6 @@
 </template>
 
 <script setup lang="ts">
-import UserMainMap from '@/components/maps/UserMainMap.vue'
 import AutoComplete from 'primevue/autocomplete'
 import Calendar from 'primevue/calendar'
 import * as yup from 'yup'

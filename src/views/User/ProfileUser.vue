@@ -29,7 +29,6 @@
     <div class="flex flex-col ml-10 m-5 flex-grow">
       <span class="font-medium text-4xl w-max mb-5">{{ userStore.user?.userName }}</span>
       <span class="mb-5">Email: {{ userStore.user?.email }}</span>
-      <span>Ngày đăng ký: {{ formatDate(userStore.user?.createdAt ?? '') }}</span>
     </div>
   </div>
 
@@ -122,7 +121,6 @@ import { useForm } from 'vee-validate'
 import { useToast } from 'primevue/usetoast'
 import Image from 'primevue/image'
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
-import { formatDate } from '@/utils/dateUtil'
 
 const layoutStore = useLayoutStore()
 const userStore = profileStore()

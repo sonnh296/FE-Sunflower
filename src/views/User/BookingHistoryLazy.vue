@@ -67,7 +67,7 @@ import { useI18n } from 'vue-i18n'
 import { useFieldStoreUser } from '@/stores/fieldStoreUser'
 import { useBookingStoreUser } from '@/stores/bookingStoreUser'
 import { BookingStatus } from '@/constants/booking'
-import { onUnmounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 
 const { t } = useI18n()
 
