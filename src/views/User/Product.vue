@@ -16,9 +16,9 @@
             class="w-full h-48 object-contain rounded-md mb-3"
           />
 
-          <div class="flex justify-between items-start mb-2">
+          <div class="flex justify-between items-center mb-2">
             <h3 class="text-lg font-semibold">{{ item.gender }}</h3>
-            <span class="text-lg font-bold text-green-600">${{ item.price }}</span>
+            <span class="text-lg font-bold text-green-600">{{ item.price }}đ</span>
           </div>
 
           <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ item.size }}</p>
@@ -29,10 +29,10 @@
           </div>
           <div class="flex items-center justify-between">
             <Button
-              icon="pi pi-arrow-circle-right"
+              icon="pi pi-sparkles"
               label="Thử đồ"
               @click="routeToTryOn(item.id as string)"
-              class="p-button-success w-32 bg-pink-200 text-red-500 hover:bg-pink-300 hover:text-white"
+              class="p-button-success w-32 bg-gradient-to-br from-primary to-blue-700 hover:from-blue-700 hover:to-primary text-white border-none cursor-pointer transition-allwhite"
             />
             <Button
               icon="pi pi-shopping-cart"

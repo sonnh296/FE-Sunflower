@@ -1,75 +1,90 @@
 <template>
-  <div class="mx-20">
-    <!-- Product Items List -->
-    <div class="bg-white p-6 rounded-lg shadow-md w-full">
-      <h2 class="text-2xl font-bold mb-4">Thử đồ</h2>
-
-      <div class="flex flex-col gap-4 items-center w-full">
-        <div class="flex gap-4 w-full">
-          <div
-            class="flex flex-col gap-4 w-1/3 items-center border-dashed border-2 border-gray-300 rounded-md p-4"
-          >
+  <div class="tryon-bg min-h-screen flex items-center justify-center py-10">
+    <div
+      class="tryon-card bg-white p-10 rounded-3xl shadow-2xl w-full max-w-4xl flex flex-col gap-8"
+    >
+      <h2 class="text-3xl font-extrabold text-center mb-2 tracking-tight text-blue-700">
+        Thử Đồ Ảo
+      </h2>
+      <div class="flex flex-col md:flex-row gap-8 items-stretch w-full">
+        <!-- Step 1: Product Image -->
+        <div
+          class="tryon-step flex-1 flex flex-col items-center gap-4 p-6 rounded-2xl border-2 border-blue-100 bg-blue-50 relative"
+        >
+          <div class="tryon-step-badge">1</div>
+          <span class="font-semibold text-blue-600">Sản phẩm</span>
+          <div class="tryon-img-frame">
             <Image
               :src="productItemStore.productItem?.url"
               alt="productItemStore.productItem?.size"
               width="180"
               height="180"
               preview
-              class="rounded-md w-1/3"
-            />
-          </div>
-
-          <div class="flex flex-col gap-4 items-center m-1 w-1/3">
-            <h1>Chọn ảnh để thử đồ</h1>
-            <FileUpload
-              mode="basic"
-              name="demo[]"
-              :showUploadButton="false"
-              accept="image/png, image/jpeg"
-              :maxFileSize="1000000"
-              @select="onImageSelect"
-              class="w-28 py-1"
-            />
-            <button
-              @click="generateImage"
-              :disabled="!selectedImage || tryOnStore.generating"
-              class="bg-blue-500 text-white px-4 py-1.5 disabled:opacity-50 w-28 rounded-md"
-            >
-              {{ tryOnStore.generating ? 'Đang tạo...' : 'Tạo' }}
-            </button>
-          </div>
-          <div
-            class="flex flex-col gap-4 w-1/3 items-center border-dashed border-2 border-gray-300 rounded-md p-4"
-          >
-            <Image
-              v-if="selectedImgTemp"
-              :src="selectedImgTemp"
-              alt="selectedImgTemp"
-              width="180"
-              height="180"
-              preview
-              class="rounded-md"
+              class="tryon-img"
+              :previewImageStyle="{ maxWidth: '90vw', maxHeight: '80vh', objectFit: 'contain' }"
             />
           </div>
         </div>
-        <ProgressBar
-          v-if="tryOnStore.generating"
-          mode="indeterminate"
-          style="height: 6px"
-        ></ProgressBar>
-
+        <!-- Step 2: Upload User Image -->
         <div
-          v-if="generatedImageUrl"
-          class="flex justify-center items-center w-full border-dashed border-2 border-blue-300 rounded-md p-4"
+          class="tryon-step flex-1 flex flex-col items-center gap-6 p-6 rounded-2xl border-2 border-blue-100 bg-blue-50 relative"
         >
+          <div class="tryon-step-badge">2</div>
+          <span class="font-semibold text-blue-600">Chọn ảnh của bạn</span>
+          <FileUpload
+            mode="basic"
+            name="demo[]"
+            :showUploadButton="false"
+            accept="image/png, image/jpeg"
+            :maxFileSize="1000000"
+            @select="onImageSelect"
+            class="w-32 py-2"
+          />
+          <div v-if="selectedImgTemp" class="mt-2 tryon-img-frame">
+            <Image
+              :src="selectedImgTemp"
+              alt="selectedImgTemp"
+              width="100"
+              height="100"
+              preview
+              class="tryon-img"
+              :previewImageStyle="{ maxWidth: '90vw', maxHeight: '80vh', objectFit: 'contain' }"
+            />
+          </div>
+        </div>
+      </div>
+      <!-- Button outside the steps -->
+      <div class="flex justify-center mt-2">
+        <button
+          @click="generateImage"
+          :disabled="!selectedImage || tryOnStore.generating"
+          class="tryon-btn w-40 py-2 rounded-lg text-lg font-semibold transition-all duration-200"
+        >
+          {{ tryOnStore.generating ? 'Đang tạo...' : 'Tạo ảnh' }}
+        </button>
+      </div>
+      <ProgressBar
+        v-if="tryOnStore.generating"
+        mode="indeterminate"
+        style="height: 6px"
+        class="mt-2"
+      ></ProgressBar>
+      <!-- Step 3: Result -->
+      <div
+        v-if="generatedImageUrl"
+        class="tryon-result flex flex-col items-center justify-center w-full border-4 border-blue-400 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 mt-2 shadow-lg animate-fade-in"
+      >
+        <div class="tryon-step-badge">3</div>
+        <span class="font-semibold text-blue-700 mb-2 text-lg">Kết quả thử đồ</span>
+        <div class="tryon-img-frame-large">
           <Image
-            v-if="generatedImageUrl"
             :src="generatedImageUrl"
             alt="Generated try-on image"
-            width="180"
-            height="180"
+            width="220"
+            height="220"
             preview
-            class="rounded-md"
+            class="tryon-img"
+            :previewImageStyle="{ maxHeight: '80vh', objectFit: 'contain' }"
           />
         </div>
       </div>
@@ -107,6 +122,7 @@ const generateImage = async () => {
     )
     generatedImageUrl.value = response.imageUrl
   } catch (error) {
+    console.error(error)
     toast.add({
       severity: 'error',
       summary: 'Error',
@@ -125,3 +141,90 @@ onMounted(async () => {
   await productItemStore.getProductItemById(route.params.id as string)
 })
 </script>
+
+<style scoped>
+.tryon-bg {
+  background: linear-gradient(135deg, #e0e7ff 0%, #f0f9ff 100%);
+}
+.tryon-card {
+  box-shadow: 0 8px 32px 0 rgba(31, 72, 182, 0.12);
+}
+.tryon-step {
+  min-height: 320px;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+.tryon-step-badge {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2563eb;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+  z-index: 2;
+}
+.tryon-btn {
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+}
+.tryon-btn:disabled {
+  background: #cbd5e1;
+  color: #64748b;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.tryon-img-frame {
+  width: 180px;
+  height: 180px;
+  background: #fff;
+  border: 2px solid #c7d2fe;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgba(37, 99, 235, 0.07);
+}
+.tryon-img-frame-large {
+  width: 220px;
+  height: 220px;
+  background: #fff;
+  border: 2.5px solid #60a5fa;
+  border-radius: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(37, 99, 235, 0.1);
+}
+.tryon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1rem;
+  border: none;
+}
+.tryon-result {
+  animation: fadeIn 0.7s;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

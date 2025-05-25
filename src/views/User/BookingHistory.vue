@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto px-4 pb-8">
-    <h1 class="text-3xl font-bold mb-4">Lịch sử đặt sân</h1>
+    <h1 class="text-3xl font-bold mb-4">Lịch sử đặt hàng</h1>
 
     <div class="flex flex-col lg:flex-row gap-8">
       <!-- Left Column: Search and Filters -->

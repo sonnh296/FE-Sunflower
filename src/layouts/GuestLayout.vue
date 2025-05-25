@@ -2,9 +2,9 @@
   <UserHeader />
   <div class="min-w-full mb-20 flex flex-col min-h-screen">
     <div
-      class="w-full flex-1 mb-20"
+      class="w-full flex-1 bg-[#5c6c99]"
       :class="{
-        'lg:px-36 mt-32':
+        'lg:px-36 mt-20':
           $router.currentRoute.value.name !== 'guest-home' &&
           $router.currentRoute.value.name !== 'login-screen',
         'xl:px-0 ': $router.currentRoute.value.name === 'guest-home'

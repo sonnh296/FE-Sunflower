@@ -10,10 +10,10 @@ import { getCurrentDate } from '@/utils/dateUtil'
       <div class="flex items-center text-white">
         <div class="flex items-center mr-10">
           <div class="bg-white rounded-lg">
-            <img src="/logo.png" alt="" class="h-20 w-20 fill-white" />
+            <img src="/logo2.png" alt="" class="h-20 w-20 fill-white" />
           </div>
           <div class="ml-2">
-            <span class="te xt-3xl flex items-center text-xl font-bold">Sunflower</span>
+            <span class="te xt-3xl flex items-center text-xl font-bold">Elsun</span>
             <h1>{{ getCurrentDate().substring(0, 4) }}</h1>
           </div>
         </div>
@@ -25,7 +25,7 @@ import { getCurrentDate } from '@/utils/dateUtil'
         <div class="text-white flex flex-col items-end justify-center">
           <span class="my-1 flex items-center">
             <i class="pi pi-envelope mr-2" style="font-size: 1rem" />
-            sunflower@gmail.com</span
+            elsunxinh@gmail.com</span
           >
 
           <span class="my-1"
@@ -37,7 +37,7 @@ import { getCurrentDate } from '@/utils/dateUtil'
             <i
               class="pi pi-facebook mx-auto ml-4 text-blue-600 rounded-full border-2 border-white"
               style="font-size: 1.7rem"
-              to="https://www.facebook.com/ManhManh.2k3"
+              to="https://www.facebook.com/profile.php?id=61576868692347"
             ></i>
             <span class="font-semibold text-white">Facebook</span>
           </div>

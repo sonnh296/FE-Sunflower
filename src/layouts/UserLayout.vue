@@ -2,20 +2,8 @@
   <UserHeader v-if="!authStore.identity" />
   <UserSideBar />
 
-  <div
-    class="min-w-full mb-20"
-    :class="{
-      'mt-24': authStore.identity && $router.currentRoute.value.name !== 'user-home',
-      'mt-32': !authStore.identity
-    }"
-  >
-    <div
-      class="w-full h-full min-h-screen"
-      :class="{
-        'lg:px-36': $router.currentRoute.value.name !== 'user-home',
-        'xl:px-0': $router.currentRoute.value.name === 'user-home'
-      }"
-    >
+  <div class="min-w-full pt-24 bg-[#5c6c99]">
+    <div class="w-full h-full min-h-screen px-10">
       <RouterView />
     </div>
   </div>
