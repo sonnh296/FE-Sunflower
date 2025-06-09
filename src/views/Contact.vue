@@ -52,7 +52,7 @@
         </div>
       </a>
       <a
-        href="https://www.tiktok.com/@elsunxinh"
+        href="https://vt.tiktok.com/ZSkfA5hC6/?page=TikTokShop"
         target="_blank"
         rel="noopener"
         class="flex items-center p-4 bg-white rounded-lg shadow hover:shadow-md transition group"

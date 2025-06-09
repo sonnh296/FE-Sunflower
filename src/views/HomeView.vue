@@ -79,21 +79,16 @@
   </div>
 
   <div class="px-10 md:px-28 lg:px-44">
-    <h2 class="text-2xl font-bold my-8">Tin tức & Khuyến mãi</h2>
-    <hr class="border-pink-400 border-1" />
-    <h2 class="text-xl my-8">
-      🎉 SIÊU SALE THÁNG 3 - GIẢM ĐẾN 50% 🎉 <br />
-      💥 Mừng tháng mới, săn sale cực sốc! <br />
-      🛍️ Giảm giá đến 50% tất cả sản phẩm thời trang nam & nữ. <br />
-      🔥 Mua 2 tặng 1 – Áp dụng cho các mẫu hot trend 2025! <br />
-      ⏳ Chương trình chỉ diễn ra từ 20/03 - 31/03, đừng bỏ lỡ!
-    </h2>
-    <hr class="border-pink-400 border-1" />
-    <h2 class="text-xl my-8">
-      🛒 DEAL SỐC FLASH SALE - GIÁ CHỈ TỪ 99K<br />
-      🔔 Flash Sale mỗi ngày từ 12h - 14h và 20h - 22h!<br />
-      👗 Áo thun, sơ mi, quần jeans giá chỉ từ 99K!<br />
-      ⏳ Số lượng có hạn – Nhanh tay săn ngay!
+    <h2 class="text-2xl font-bold my-8">
+      ☀️𝐄𝐥𝐬𝐮𝐧–𝐄𝐦𝐩𝐨𝐰𝐞𝐫 𝐘𝐨𝐮𝐫 𝐅𝐞𝐦𝐢𝐧𝐢𝐧𝐞 𝐆𝐫𝐚𝐜𝐞☀️ <br />
+      ----------------------------------------------------- <br />Elsun là thương hiệu thời trang nữ
+      được lấy cảm hứng từ sự kết hợp hoàn hảo giữa "elegant" (thanh lịch) và "sun" (mặt trời), mang
+      đến những thiết kế rạng rỡ, toát lên vẻ đẹp tinh tế và năng động. Với phong cách cá tính, trẻ
+      trung và sang trọng, chúng tôi cam kết mang đến cho bạn những sản phẩm chất lượng cao, giúp
+      bạn tự tin thể hiện cá tính riêng biệt trong mọi khoảnh khắc.
+      <br />
+      ------------------------------------------------------- <br />
+      𝐄𝐋𝐒𝐔𝐍 𝐎𝐍𝐋𝐈𝐍𝐄 𝐒𝐓𝐎𝐑𝐄: 8AM - 10PM
     </h2>
   </div>
 </template>
