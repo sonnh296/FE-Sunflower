@@ -51,6 +51,32 @@
           <div class="text-gray-600 text-sm">@elsunxinh</div>
         </div>
       </a>
+      <a
+        href="https://www.tiktok.com/@elsunxinh"
+        target="_blank"
+        rel="noopener"
+        class="flex items-center p-4 bg-white rounded-lg shadow hover:shadow-md transition group"
+      >
+        <i class="pi pi-tiktok text-black text-2xl mr-4 group-hover:text-gray-700"></i>
+        <div>
+          <div class="font-semibold text-gray-800">TikTok</div>
+          <div class="text-gray-600 text-sm">@elsunxinh</div>
+        </div>
+      </a>
+      <a
+        href="https://shopee.vn/elsun.studio?categoryId=100017&entryPoint=ShopByPDP&itemId=40753356114"
+        target="_blank"
+        rel="noopener"
+        class="flex items-center p-4 bg-white rounded-lg shadow hover:shadow-md transition group"
+      >
+        <i
+          class="pi pi-shopping-cart text-orange-500 text-2xl mr-4 group-hover:text-orange-600"
+        ></i>
+        <div>
+          <div class="font-semibold text-gray-800">Shopee</div>
+          <div class="text-gray-600 text-sm">shopee.vn/elsunxinh</div>
+        </div>
+      </a>
     </div>
     <div class="mt-10 p-4 bg-white rounded shadow text-gray-700">
       <p>
