@@ -68,7 +68,7 @@
                   label="Chi tiết"
                   icon="pi pi-arrow-up-right"
                   class="w-full"
-                  @click="router.push({ name: 'login-screen' })"
+                  @click="goToProduct(product.id)"
                 />
               </div>
             </div>
@@ -113,6 +113,10 @@ const bestSellingProducts = ref([
   { id: 5, name: 'Váy dạ hội', price: '1.299.000', discount: 15, image: '/sample5.jpeg' },
   { id: 6, name: 'Set đồ công sở', price: '899.000', discount: 25, image: '/sample6.jpeg' }
 ])
+
+const goToProduct = (productId: string) => {
+  router.push({ name: 'user-product', params: { id: productId } })
+}
 
 onMounted(async () => {
   await productStore.getProducts()

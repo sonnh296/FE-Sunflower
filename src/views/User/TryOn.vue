@@ -13,6 +13,7 @@
         >
           <div class="tryon-step-badge">1</div>
           <span class="font-semibold text-blue-600">Sản phẩm</span>
+          <div class="w-32 h-14"></div>
           <div class="tryon-img-frame">
             <Image
               :src="productItemStore.productItem?.url"
@@ -31,24 +32,24 @@
         >
           <div class="tryon-step-badge">2</div>
           <span class="font-semibold text-blue-600">Chọn ảnh của bạn</span>
-          <FileUpload
-            mode="basic"
-            name="demo[]"
-            :showUploadButton="false"
-            accept="image/png, image/jpeg"
-            :maxFileSize="1000000"
-            @select="onImageSelect"
-            class="w-32 py-2"
-          />
+          <div class="w-32 h-8">
+            <FileUpload
+              mode="basic"
+              name="demo[]"
+              :showUploadButton="false"
+              accept="image/png, image/jpeg"
+              :maxFileSize="1000000"
+              @select="onImageSelect"
+            />
+          </div>
+
           <div v-if="selectedImgTemp" class="mt-2 tryon-img-frame">
             <Image
               :src="selectedImgTemp"
               alt="selectedImgTemp"
-              width="100"
-              height="100"
               preview
               class="tryon-img"
-              :previewImageStyle="{ maxWidth: '90vw', maxHeight: '80vh', objectFit: 'contain' }"
+              :previewImageStyle="{ objectFit: 'cover' }"
             />
           </div>
         </div>
