@@ -45,6 +45,16 @@ const router = createRouter({
           path: 'contact',
           name: 'contact',
           component: () => import('../views/Contact.vue')
+        },
+        {
+          path: 'product/:id',
+          name: 'product-guest',
+          component: () => import('../views/User/Product.vue')
+        },
+        {
+          path: 'try-on/:id',
+          name: 'guest-try-on',
+          component: () => import('../views/User/TryOn.vue')
         }
       ]
     },

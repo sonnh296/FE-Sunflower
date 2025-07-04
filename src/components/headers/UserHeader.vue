@@ -1,5 +1,8 @@
 <template>
-  <div class="fixed z-30 top-0 justify-between flex w-full h-20 border-b bg-slate-200">
+  <div
+    class="fixed z-30 top-0 justify-between flex w-full h-20 bg-[#FFFEF5] transition-shadow duration-300"
+    :class="{ 'shadow-lg': isScrolled }"
+  >
     <div class="flex items-center cursor-pointer" @click="$router.push('/')">
       <img src="/logo1.png" alt="ball" class="w-40" />
     </div>
@@ -38,9 +41,20 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/authStore'
 import ActionButton from '../buttons/ActionButton.vue'
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 
-onMounted(() => {})
+const isScrolled = ref(false)
+
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 0
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
