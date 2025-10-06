@@ -49,7 +49,7 @@ const router = createRouter({
         {
           path: 'product/:id',
           name: 'product-guest',
-          component: () => import('../views/User/Product.vue')
+          component: () => import('../views/Guest/ProductDetail.vue')
         },
         {
           path: 'try-on/:id',

@@ -1,143 +1,528 @@
 <template>
-  <div class="flex flex-col bg-contain !object-cover bg-no-repeat pt-24 h-auto">
-    <!-- Search bar -->
-    <div class="w-full min-h-[400px] flex flex-row px-10 md:px-20 py-5">
-      <div
-        class="bg-gradient-to-br from-[#5c6c99] via-indigo-400 to-purple-700 rounded-3xl flex-none pt-5 justify-center mx-auto h-96 mb-4 md:mb-0 flex items-center shadow-xl border border-white/10 backdrop-blur-sm relative overflow-hidden px-10 w-full"
-      >
-        <div class="w-1/2 relative z-10">
-          <h1 class="text-2xl font-bold text-white mb-4 drop-shadow-md animate-fade-in-up">
-            <span
-              class="bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent"
-            >
-              Tìm quần áo phù hợp
-            </span>
-            <br />
-            <span class="text-white">không cần đến cửa hàng</span>
-          </h1>
-          <h1
-            class="text-blue-100 text-base mb-6 drop-shadow-sm animate-fade-in-up animation-delay-200"
-          >
-            sẵn sàng với
-            <span class="text-4xl">AI virtual try on</span>
-          </h1>
-          <Button
-            label="Thử đồ ngay"
-            icon="pi pi-microchip-ai"
-            class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-2 px-5 rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 animate-fade-in-up animation-delay-400"
-            @click="scrollToProducts"
-          />
-        </div>
-        <div class="w-1/2 h-full relative z-10">
-          <div class="relative">
-            <img
-              src="/bg-sample-model.png"
-              alt="Homepage"
-              class="object-contain rounded-lg transform hover:scale-102 transition-transform duration-300"
-            />
+  <div class="flex flex-col bg-white">
+    <!-- Video Hero Section -->
+    <div class="w-full h-screen relative overflow-hidden">
+      <!-- Video Background -->
+      <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
+        <source src="/bg_vid1.mp4" type="video/mp4" />
+      </video>
+
+      <!-- Sophisticated overlay -->
+      <div class="absolute inset-0 bg-black/40"></div>
+
+      <!-- Hero Content -->
+      <div class="relative z-10 h-full flex items-center justify-center px-6 md:px-12 lg:px-20">
+        <div class="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <!-- Text Content -->
+          <div class="text-left space-y-8 animate-fade-in-up">
+            <div class="space-y-4">
+              <h1
+                class="text-5xl md:text-6xl lg:text-7xl font-light text-white leading-tight tracking-tight"
+              >
+                Tìm quần áo<br />
+                <span class="font-serif italic">phù hợp</span>
+              </h1>
+              <p class="text-xl md:text-2xl text-white/90 font-light">không cần đến cửa hàng</p>
+            </div>
+
+            <div class="flex items-baseline gap-3 animate-fade-in-up animation-delay-200">
+              <span class="text-white/80 text-lg font-light">sẵn sàng với</span>
+              <span
+                class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-300 via-purple-300 to-pink-300 bg-clip-text text-transparent"
+              >
+                AI Virtual Try-On
+              </span>
+            </div>
+
+            <div class="pt-4 animate-fade-in-up animation-delay-400">
+              <Button
+                label="Khám phá ngay"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                class="!bg-white !text-gray-900 hover:!bg-gray-100 !border-0 !font-semibold !py-4 !px-8 !text-lg !rounded-full !shadow-2xl hover:!shadow-3xl !transition-all !duration-300 hover:!scale-105"
+                @click="scrollToNextSection"
+              />
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Scroll Indicator -->
+      <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
+        <div
+          class="flex flex-col items-center gap-2 text-white/60 cursor-pointer"
+          @click="scrollToNextSection"
+        >
+          <span class="text-sm uppercase tracking-widest font-light">Khám phá</span>
+          <i class="pi pi-chevron-down text-xl"></i>
+        </div>
+      </div>
     </div>
-    <div class="bg-[#EBD96B] py-10 my-10 px-8">
-      <div class="max-w-4xl mx-auto text-center">
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+    <!-- Social Media Section -->
+    <div class="bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 py-16 px-6">
+      <div class="max-w-6xl mx-auto">
+        <h3 class="text-center text-2xl font-light text-gray-800 mb-3 tracking-wide">
+          Kết nối với <span class="font-serif italic">Elsun</span>
+        </h3>
+        <p class="text-center text-gray-600 mb-10 text-sm">
+          Theo dõi chúng tôi để cập nhật xu hướng mới nhất
+        </p>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
           <a
             href="mailto:elsunxinh@gmail.com"
-            class="flex flex-col items-center p-4 rounded-lg hover:bg-yellow-200/50 transition group"
+            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
           >
-            <i class="pi pi-envelope text-amber-600 text-2xl mb-2 group-hover:text-amber-700"></i>
-            <div class="font-semibold text-gray-800 text-sm">Email</div>
+            <i
+              class="pi pi-envelope text-amber-600 text-3xl mb-3 group-hover:scale-110 transition-transform"
+            ></i>
+            <div class="font-medium text-gray-800 text-sm">Email</div>
           </a>
           <a
             href="https://www.facebook.com/profile.php?id=61576868692347"
             target="_blank"
             rel="noopener"
-            class="flex flex-col items-center p-4 rounded-lg hover:bg-yellow-200/50 transition group"
+            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
           >
-            <i class="pi pi-facebook text-blue-600 text-2xl mb-2 group-hover:text-blue-800"></i>
-            <div class="font-semibold text-gray-800 text-sm">Facebook</div>
+            <i
+              class="pi pi-facebook text-blue-600 text-3xl mb-3 group-hover:scale-110 transition-transform"
+            ></i>
+            <div class="font-medium text-gray-800 text-sm">Facebook</div>
           </a>
           <a
             href="https://www.instagram.com/elsunxinh"
             target="_blank"
             rel="noopener"
-            class="flex flex-col items-center p-4 rounded-lg hover:bg-yellow-200/50 transition group"
+            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
           >
-            <i class="pi pi-instagram text-pink-500 text-2xl mb-2 group-hover:text-pink-600"></i>
-            <div class="font-semibold text-gray-800 text-sm">Instagram</div>
+            <i
+              class="pi pi-instagram text-pink-500 text-3xl mb-3 group-hover:scale-110 transition-transform"
+            ></i>
+            <div class="font-medium text-gray-800 text-sm">Instagram</div>
           </a>
           <a
             href="https://vt.tiktok.com/ZSkfA5hC6/?page=TikTokShop"
             target="_blank"
             rel="noopener"
-            class="flex flex-col items-center p-4 rounded-lg hover:bg-yellow-200/50 transition group"
+            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
           >
-            <i class="pi pi-tiktok text-black text-2xl mb-2 group-hover:text-gray-700"></i>
-            <div class="font-semibold text-gray-800 text-sm">TikTok</div>
+            <i
+              class="pi pi-tiktok text-gray-900 text-3xl mb-3 group-hover:scale-110 transition-transform"
+            ></i>
+            <div class="font-medium text-gray-800 text-sm">TikTok</div>
           </a>
           <a
             href="https://shopee.vn/elsun.studio?categoryId=100017&entryPoint=ShopByPDP&itemId=40753356114"
             target="_blank"
             rel="noopener"
-            class="flex flex-col items-center p-4 rounded-lg hover:bg-yellow-200/50 transition group"
+            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
           >
             <i
-              class="pi pi-shopping-cart text-orange-500 text-2xl mb-2 group-hover:text-orange-600"
+              class="pi pi-shopping-cart text-orange-500 text-3xl mb-3 group-hover:scale-110 transition-transform"
             ></i>
-            <div class="font-semibold text-gray-800 text-sm">Shopee</div>
+            <div class="font-medium text-gray-800 text-sm">Shopee</div>
           </a>
         </div>
       </div>
     </div>
-    <div id="san-pham"></div>
-    <!-- Featured Products -->
-    <div class="w-full px-5 pb-20">
-      <div class="bg-[#fffef5] rounded-[50px] p-5 flex flex-col lg:px-24 pt-10">
-        <h2 class="text-3xl font-bold mb-8 text-center text-pink-400 mt-5">Sản phẩm</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div
-            v-for="product in productStore.products"
-            :key="product.id"
-            class="group cursor-pointer"
-            :class="product.productItem.length > 0 ? '' : 'hidden'"
-          >
-            <div v-if="product.productItem.length > 0" class="flex flex-col w-full">
+
+    <!-- Creative Editorial Gallery -->
+    <div class="w-full py-24 bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden">
+      <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+        <!-- Section Header -->
+        <div class="text-center mb-20">
+          <h2 class="text-5xl md:text-6xl font-light text-gray-900 mb-6 tracking-tight">
+            Phong cách
+            <span
+              class="font-serif italic text-gradient bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent"
+              >Elsun</span
+            >
+          </h2>
+          <div class="flex items-center justify-center gap-3 mb-6">
+            <div class="w-12 h-px bg-gradient-to-r from-transparent to-gray-300"></div>
+            <div class="w-3 h-3 rounded-full bg-gradient-to-r from-pink-400 to-purple-400"></div>
+            <div class="w-12 h-px bg-gradient-to-l from-transparent to-gray-300"></div>
+          </div>
+          <p class="text-gray-600 text-lg font-light max-w-2xl mx-auto">
+            Khám phá vẻ đẹp thanh lịch và năng động trong từng thiết kế
+          </p>
+        </div>
+
+        <!-- Creative Bento-Style Grid -->
+        <div class="grid grid-cols-12 gap-4 md:gap-6">
+          <!-- Large Featured Image - Top Left -->
+          <div class="col-span-12 md:col-span-7 lg:col-span-5 row-span-2">
+            <div
+              class="group relative cursor-pointer overflow-hidden rounded-3xl bg-gray-100 shadow-xl hover:shadow-2xl transition-all duration-700 h-full min-h-[350px]"
+            >
+              <img
+                src="/sample1.jpeg"
+                alt="Featured Collection 1"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
+              />
               <div
-                class="relative overflow-hidden border border-gray-200/60 rounded-xl p-4 bg-white/50 backdrop-blur-sm shadow-sm group-hover:border-gray-300 group-hover:shadow-md transition-all duration-300"
+                class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
               >
-                <!-- Subtle corner accent -->
-                <div
-                  class="absolute top-0 right-0 w-8 h-8 bg-gradient-to-bl from-gray-100 to-transparent opacity-50"
-                ></div>
-
-                <img
-                  :src="product.productItem[0].url"
-                  :alt="product.name"
-                  class="w-full h-40 object-contain group-hover:scale-105 transition-transform duration-300"
-                />
-
-                <!-- Subtle bottom gradient -->
-                <div
-                  class="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-t from-gray-50/20 to-transparent rounded-b-xl"
-                ></div>
-              </div>
-
-              <div class="flex justify-between items-end mt-4 px-1">
-                <div class="flex-1">
-                  <h3 class="font-semibold text-lg text-gray-800 mb-1">{{ product.name }}</h3>
-                  <p class="text-gray-600 text-sm font-medium">
-                    {{ product.productItem[0].price }} đ
-                  </p>
-                </div>
-                <div class="flex items-center h-full">
-                  <Button
-                    icon="pi pi-arrow-up-right"
-                    class="rounded-full bg-gray-800 hover:bg-gray-900 text-white border-0 ml-3 shadow-md hover:shadow-lg transition-all duration-200"
-                    @click="goToProduct(product.id)"
-                  />
+                <div class="absolute bottom-6 left-6 text-white">
+                  <p class="text-sm font-light mb-1 tracking-wide">NEW COLLECTION</p>
+                  <h3 class="text-2xl font-semibold">Thanh Lịch</h3>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- Medium Image - Top Right -->
+          <div class="col-span-6 md:col-span-5 lg:col-span-4">
+            <div
+              class="group relative cursor-pointer overflow-hidden rounded-2xl bg-gray-100 shadow-lg hover:shadow-2xl transition-all duration-700 h-64 md:h-80"
+            >
+              <img
+                src="/sample2.jpeg"
+                alt="Featured Collection 2"
+                class="w-full h-full object-cover group-hover:scale-110 group-hover:rotate-2 transition-all duration-1000 ease-out"
+              />
+              <div
+                class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500 flex items-center justify-center"
+              >
+                <div
+                  class="transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                >
+                  <i class="pi pi-heart text-white text-3xl"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Small Square - Top Far Right -->
+          <div class="col-span-6 md:col-span-12 lg:col-span-3">
+            <div
+              class="group relative cursor-pointer overflow-hidden rounded-2xl bg-gradient-to-br from-pink-100 to-purple-100 shadow-lg hover:shadow-2xl transition-all duration-700 h-64 md:h-80"
+            >
+              <img
+                src="/sample3.jpeg"
+                alt="Featured Collection 3"
+                class="w-full h-full object-cover group-hover:scale-125 transition-transform duration-1000 ease-out mix-blend-overlay"
+              />
+              <div
+                class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-gray-900"
+              >
+                TRENDING
+              </div>
+            </div>
+          </div>
+
+          <!-- Wide Rectangle - Middle -->
+          <div class="col-span-12 md:col-span-7 lg:col-span-7">
+            <div
+              class="group relative cursor-pointer overflow-hidden rounded-3xl bg-gray-100 shadow-lg hover:shadow-2xl transition-all duration-700 h-56 md:h-72"
+            >
+              <img
+                src="/sample4.jpeg"
+                alt="Featured Collection 4"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-all duration-500"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Tall Rectangle - Right -->
+          <div class="col-span-6 md:col-span-5 lg:col-span-5 row-span-2">
+            <div
+              class="group relative cursor-pointer overflow-hidden rounded-3xl bg-gray-100 shadow-xl hover:shadow-2xl transition-all duration-700 h-full min-h-[400px]"
+            >
+              <img
+                src="/sample5.jpeg"
+                alt="Featured Collection 5"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
+              />
+              <div
+                class="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/50 to-transparent p-6 opacity-0 group-hover:opacity-100 transition-all duration-500"
+              >
+                <span
+                  class="inline-block bg-white text-gray-900 px-4 py-2 rounded-full text-sm font-medium"
+                >
+                  ✨ Best Seller
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Medium Bottom Left -->
+          <div class="col-span-6 md:col-span-7 lg:col-span-4">
+            <div
+              class="group relative cursor-pointer overflow-hidden rounded-2xl bg-gray-100 shadow-lg hover:shadow-2xl transition-all duration-700 h-56"
+            >
+              <img
+                src="/sample6.jpeg"
+                alt="Featured Collection 6"
+                class="w-full h-full object-cover group-hover:scale-110 group-hover:-rotate-2 transition-all duration-1000 ease-out"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-indigo-500/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Decorative Text Box -->
+          <div class="col-span-12 md:col-span-5 lg:col-span-3">
+            <div
+              class="group relative cursor-pointer overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 to-gray-700 shadow-lg hover:shadow-2xl transition-all duration-700 h-56 flex items-center justify-center p-8 hover:scale-105"
+            >
+              <div class="text-center text-white">
+                <i class="pi pi-sparkles text-4xl mb-4 text-pink-300"></i>
+                <h4 class="text-2xl font-serif italic mb-2">Mới mỗi ngày</h4>
+                <p class="text-gray-300 text-sm font-light">Cập nhật xu hướng</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center mt-20">
+          <Button
+            label="Xem toàn bộ bộ sưu tập"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            class="!bg-gradient-to-r !from-pink-500 !via-purple-500 !to-indigo-500 hover:!from-pink-600 hover:!via-purple-600 hover:!to-indigo-600 !text-white !border-0 !font-semibold !py-4 !px-10 !text-lg !rounded-full !shadow-2xl hover:!shadow-3xl !transition-all !duration-500 hover:!scale-110 hover:!-translate-y-1"
+            @click="scrollToNextSection"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Products Showcase -->
+    <div class="w-full py-24 bg-gradient-to-b from-gray-50 to-white">
+      <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-light text-gray-900 mb-4 tracking-tight">
+            Sản phẩm nổi bật
+          </h2>
+          <div class="w-24 h-px bg-gray-300 mx-auto mb-6"></div>
+          <p class="text-gray-600 text-lg font-light max-w-2xl mx-auto">
+            Những thiết kế được yêu thích nhất với mức giá đặc biệt
+          </p>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Product 1: Váy Hồng -->
+          <div
+            class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
+            @click="navigateToProduct(0)"
+          >
+            <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
+              <img
+                :src="featuredProducts[0].image"
+                alt="Váy Hồng"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-2">
+                <span
+                  class="bg-pink-100 text-pink-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+                >
+                  Váy Hồng
+                </span>
+              </div>
+              <h3 class="font-semibold text-xl text-gray-900 mb-3">
+                {{ featuredProducts[0].name }}
+              </h3>
+              <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                Thiết kế váy hồng nữ tính, thanh lịch và trẻ trung, phù hợp cho nhiều dịp
+              </p>
+              <div class="flex items-baseline gap-3 mb-4">
+                <span class="text-2xl font-bold text-gray-900">459.000đ</span>
+              </div>
+              <Button
+                label="Xem chi tiết"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                class="w-full !bg-pink-500 hover:!bg-pink-600 !text-white !border-0 !font-medium !py-3 !rounded-xl !transition-all !duration-300"
+                @click.stop="navigateToProduct(0)"
+              />
+            </div>
+          </div>
+
+          <!-- Product 2: Áo Phông -->
+          <div
+            class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
+            @click="navigateToProduct(1)"
+          >
+            <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
+              <img
+                :src="featuredProducts[1].image"
+                alt="Áo Phông"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-2">
+                <span
+                  class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+                >
+                  Áo Phông
+                </span>
+              </div>
+              <h3 class="font-semibold text-xl text-gray-900 mb-3">
+                {{ featuredProducts[1].name }}
+              </h3>
+              <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                Áo phông basic, dễ phối đồ, chất liệu mềm mại thoáng mát
+              </p>
+              <div class="flex items-baseline gap-3 mb-4">
+                <span class="text-2xl font-bold text-gray-900">359.000đ</span>
+              </div>
+              <Button
+                label="Xem chi tiết"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                class="w-full !bg-blue-500 hover:!bg-blue-600 !text-white !border-0 !font-medium !py-3 !rounded-xl !transition-all !duration-300"
+                @click.stop="navigateToProduct(1)"
+              />
+            </div>
+          </div>
+
+          <!-- Product 3: Chân váy -->
+          <div
+            class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
+            @click="navigateToProduct(2)"
+          >
+            <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
+              <img
+                :src="featuredProducts[2].image"
+                alt="Chân váy"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-2">
+                <span
+                  class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+                >
+                  Chân váy
+                </span>
+              </div>
+              <h3 class="font-semibold text-xl text-gray-900 mb-3">
+                {{ featuredProducts[2].name }}
+              </h3>
+              <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                Chân váy họa tiết sọc đỏ năng động, phong cách trẻ trung
+              </p>
+              <div class="flex items-baseline gap-3 mb-4">
+                <span class="text-2xl font-bold text-gray-900">339.000đ</span>
+              </div>
+              <Button
+                label="Xem chi tiết"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                class="w-full !bg-purple-500 hover:!bg-purple-600 !text-white !border-0 !font-medium !py-3 !rounded-xl !transition-all !duration-300"
+                @click.stop="navigateToProduct(2)"
+              />
+            </div>
+          </div>
+
+          <!-- Product 4: Cả set -->
+          <div
+            class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
+            @click="navigateToProduct(3)"
+          >
+            <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
+              <img
+                :src="featuredProducts[3].image"
+                alt="Cả set"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div
+                class="absolute top-4 left-4 bg-amber-500 text-white px-3 py-1 rounded-full text-sm font-medium"
+              >
+                Bộ Sưu Tập
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-2">
+                <span
+                  class="bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+                >
+                  Cả set
+                </span>
+              </div>
+              <h3 class="font-semibold text-xl text-gray-900 mb-3">
+                {{ featuredProducts[3].name }}
+              </h3>
+              <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                Bộ đồ chấm bi đáng yêu, phối hợp hoàn hảo cho set đồ hoàn chỉnh
+              </p>
+              <div class="flex items-baseline gap-3 mb-4">
+                <span class="text-2xl font-bold text-gray-900">639.000đ</span>
+              </div>
+              <Button
+                label="Xem chi tiết"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                class="w-full !bg-amber-500 hover:!bg-amber-600 !text-white !border-0 !font-medium !py-3 !rounded-xl !transition-all !duration-300"
+                @click.stop="navigateToProduct(3)"
+              />
+            </div>
+          </div>
+
+          <!-- Product 5: Set chấm bi -->
+          <div
+            class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
+            @click="navigateToProduct(4)"
+          >
+            <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
+              <img
+                :src="featuredProducts[4].image"
+                alt="Set chấm bi"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div
+                class="absolute top-4 left-4 bg-rose-500 text-white px-3 py-1 rounded-full text-sm font-medium"
+              >
+                Best Seller
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-2">
+                <span
+                  class="bg-rose-100 text-rose-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+                >
+                  Set chấm bi
+                </span>
+              </div>
+              <h3 class="font-semibold text-xl text-gray-900 mb-3">
+                {{ featuredProducts[4].name }}
+              </h3>
+              <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                Bộ set chấm bi sang trọng, thiết kế tinh tế với chất liệu cao cấp
+              </p>
+              <div class="flex items-baseline gap-3 mb-4">
+                <span class="text-2xl font-bold text-gray-900">799.000đ</span>
+              </div>
+              <Button
+                label="Xem chi tiết"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                class="w-full !bg-rose-500 hover:!bg-rose-600 !text-white !border-0 !font-medium !py-3 !rounded-xl !transition-all !duration-300"
+                @click.stop="navigateToProduct(4)"
+              />
+            </div>
+          </div>
+
+          <!-- Product 6: More Options -->
+          <div
+            class="group bg-gradient-to-br from-gray-900 to-gray-700 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 flex items-center justify-center p-8 cursor-pointer"
+            @click="scrollToNextSection"
+          >
+            <div class="text-center text-white">
+              <i
+                class="pi pi-arrow-right text-5xl mb-4 group-hover:translate-x-2 transition-transform duration-300"
+              ></i>
+              <h3 class="font-semibold text-2xl mb-2">Khám phá thêm</h3>
+              <p class="text-gray-300 text-sm">Xem toàn bộ bộ sưu tập</p>
             </div>
           </div>
         </div>
@@ -145,59 +530,70 @@
     </div>
   </div>
 
-  <div class="relative bg-gradient-to-b from-gray-50 to-white py-20">
-    <!-- Subtle background pattern -->
-    <div class="absolute inset-0 opacity-30">
+  <!-- About Section -->
+  <div class="relative bg-gradient-to-b from-white via-gray-50 to-white py-32">
+    <!-- Elegant background pattern -->
+    <div class="absolute inset-0 opacity-20">
       <div
         class="w-full h-full"
         style="
           background-image: radial-gradient(
-            circle at 1px 1px,
-            rgba(156, 163, 175, 0.3) 1px,
+            circle at 2px 2px,
+            rgba(156, 163, 175, 0.15) 1px,
             transparent 0
           );
-          background-size: 20px 20px;
+          background-size: 40px 40px;
         "
       ></div>
     </div>
 
-    <div class="relative max-w-4xl mx-auto px-10 md:px-28 lg:px-44">
-      <div class="text-center mb-12">
-        <h1 class="text-4xl md:text-5xl font-light text-gray-800 mb-4 tracking-wide">
+    <div class="relative max-w-5xl mx-auto px-6 md:px-12">
+      <!-- Brand Header -->
+      <div class="text-center mb-16">
+        <h1 class="text-5xl md:text-6xl font-light text-gray-900 mb-6 tracking-tight">
           <span class="font-serif italic">Elsun</span>
         </h1>
-        <p class="text-lg text-gray-600 font-light italic mb-8">Empower Your Feminine Grace</p>
+        <p class="text-xl text-gray-600 font-light italic mb-8 tracking-wide">
+          Empower Your Feminine Grace
+        </p>
         <div
-          class="w-24 h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mb-8"
+          class="w-32 h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto"
         ></div>
       </div>
 
+      <!-- Content Card -->
       <div
-        class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-lg border border-white/20"
+        class="bg-white/80 backdrop-blur-sm rounded-3xl p-10 md:p-16 shadow-2xl border border-gray-100"
       >
-        <p class="text-gray-700 leading-relaxed text-center text-lg font-light">
-          Elsun là thương hiệu thời trang nữ được lấy cảm hứng từ sự kết hợp hoàn hảo giữa
-          <span class="italic font-medium">"elegant"</span> (thanh lịch) và
-          <span class="italic font-medium">"sun"</span> (mặt trời), mang đến những thiết kế rạng rỡ,
-          toát lên vẻ đẹp tinh tế và năng động.
-        </p>
+        <div class="space-y-8">
+          <p class="text-gray-700 leading-relaxed text-center text-lg md:text-xl font-light">
+            Elsun là thương hiệu thời trang nữ được lấy cảm hứng từ sự kết hợp hoàn hảo giữa
+            <span class="italic font-semibold text-gray-900">"elegant"</span> (thanh lịch) và
+            <span class="italic font-semibold text-gray-900">"sun"</span> (mặt trời), mang đến những
+            thiết kế rạng rỡ, toát lên vẻ đẹp tinh tế và năng động.
+          </p>
 
-        <div class="flex items-center justify-center my-8">
-          <div class="w-12 h-px bg-gray-300"></div>
-          <div class="w-2 h-2 bg-gray-300 rounded-full mx-4"></div>
-          <div class="w-12 h-px bg-gray-300"></div>
-        </div>
+          <!-- Decorative Divider -->
+          <div class="flex items-center justify-center py-4">
+            <div class="w-16 h-px bg-gray-300"></div>
+            <div class="w-2 h-2 bg-gray-400 rounded-full mx-6"></div>
+            <div class="w-16 h-px bg-gray-300"></div>
+          </div>
 
-        <p class="text-gray-700 leading-relaxed text-center text-lg font-light mb-8">
-          Với phong cách cá tính, trẻ trung và sang trọng, chúng tôi cam kết mang đến cho bạn những
-          sản phẩm chất lượng cao, giúp bạn tự tin thể hiện cá tính riêng biệt trong mọi khoảnh
-          khắc.
-        </p>
+          <p class="text-gray-700 leading-relaxed text-center text-lg md:text-xl font-light">
+            Với phong cách cá tính, trẻ trung và sang trọng, chúng tôi cam kết mang đến cho bạn
+            những sản phẩm chất lượng cao, giúp bạn tự tin thể hiện bản sắc riêng biệt trong mọi
+            khoảnh khắc.
+          </p>
 
-        <div class="text-center">
-          <div class="inline-flex items-center space-x-2 text-gray-600">
-            <i class="pi pi-clock text-sm"></i>
-            <span class="text-sm font-medium tracking-wider">ELSUN ONLINE STORE: 8AM - 10PM</span>
+          <!-- Store Hours -->
+          <div class="pt-8 text-center">
+            <div class="inline-flex items-center gap-3 px-6 py-3 bg-gray-50 rounded-full">
+              <i class="pi pi-clock text-gray-600"></i>
+              <span class="text-sm font-medium tracking-wider text-gray-700 uppercase">
+                ELSUN Online Store: 8AM - 10PM
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -206,42 +602,86 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
-import router from '@/router'
 import { useProductStore } from '@/stores/productStore'
 
+const router = useRouter()
 const productStore = useProductStore()
 
-const scrollToProducts = () => {
-  const element = document.getElementById('san-pham')
-  if (element) {
-    element.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    })
+// Featured products with their images mapped
+const featuredProducts = ref([
+  { id: '', name: 'Váy Hồng Thanh Lịch', image: '/vay-hong.jpg', keyword: 'váy' },
+  { id: '', name: 'Áo Phông Thời Trang', image: '/ao-phong.png', keyword: 'áo' },
+  { id: '', name: 'Chân Váy Sọc Đỏ', image: '/chan-vay.png', keyword: 'chân' },
+  { id: '', name: 'Set Chấm Bi', image: '/set-chambi-1.jpg', keyword: 'set' },
+  { id: '', name: 'Set Chấm Bi Cao Cấp', image: '/set-chambi-2.jpg', keyword: 'set' }
+])
+
+const scrollToNextSection = () => {
+  window.scrollBy({
+    top: window.innerHeight - 100,
+    behavior: 'smooth'
+  })
+}
+
+const navigateToProduct = (index: number) => {
+  const product = featuredProducts.value[index]
+  if (product.id) {
+    router.push({ name: 'product-guest', params: { id: product.id } })
+  } else {
+    // Fallback: find product by keyword
+    navigateToFirstProduct(product.keyword)
   }
 }
 
-const goToProduct = (productId: string) => {
-  router.push({ name: 'product-guest', params: { id: productId } })
+const navigateToFirstProduct = async (keyword: string) => {
+  // Make sure products are loaded
+  if (productStore.products.length === 0) {
+    await productStore.getProducts()
+  }
+
+  // Find product that matches the keyword
+  const product = productStore.products.find((p) =>
+    p.name.toLowerCase().includes(keyword.toLowerCase())
+  )
+
+  if (product && product.id) {
+    router.push({ name: 'product-guest', params: { id: product.id } })
+  } else if (productStore.products.length > 0) {
+    // Navigate to first product if no match
+    router.push({ name: 'product-guest', params: { id: productStore.products[0].id } })
+  }
+}
+
+// Map products to featured items
+const mapProductsToFeatured = () => {
+  productStore.products.forEach((product) => {
+    const featured = featuredProducts.value.find(
+      (f) =>
+        product.name.toLowerCase().includes(f.keyword) ||
+        f.keyword.includes(product.name.toLowerCase())
+    )
+    if (featured && !featured.id) {
+      featured.id = product.id
+      featured.name = product.name
+    }
+  })
 }
 
 onMounted(async () => {
   await productStore.getProducts()
+  mapProductsToFeatured()
 })
 </script>
 
 <style scoped>
-.bg-header {
-  background-image: url('/homepage.jpg');
-}
-
 /* Custom animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(40px);
   }
   to {
     opacity: 1;
@@ -249,12 +689,26 @@ onMounted(async () => {
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
+  animation: fadeInUp 1s ease-out forwards;
 }
 
 .animation-delay-200 {
   animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.animation-delay-300 {
+  animation-delay: 0.3s;
   opacity: 0;
 }
 
@@ -263,8 +717,21 @@ onMounted(async () => {
   opacity: 0;
 }
 
-/* Enhanced hover effects */
-.hover\:shadow-2xl:hover {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced shadows */
+.hover\:shadow-3xl:hover {
+  box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+}
+
+/* Text gradient */
+.text-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 </style>
