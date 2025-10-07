@@ -1,14 +1,21 @@
 <template>
   <div class="flex flex-col bg-white">
     <!-- Video Hero Section -->
-    <div class="w-full h-screen relative overflow-hidden">
-      <!-- Video Background -->
-      <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
-        <source src="/bg_vid1.mp4" type="video/mp4" />
-      </video>
+    <!-- Hero Section with YouTube Video Background -->
+    <div class="relative w-full h-screen overflow-hidden">
+      <!-- YouTube Video Background -->
+      <div class="absolute inset-0 w-full h-full overflow-hidden">
+        <iframe
+          src="https://www.youtube.com/embed/SrhbKG6J70Q?autoplay=1&mute=1&loop=1&playlist=SrhbKG6J70Q&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
+          class="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+          frameborder="0"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+        ></iframe>
+      </div>
 
-      <!-- Sophisticated overlay -->
-      <div class="absolute inset-0 bg-black/40"></div>
+      <!-- Dark Overlay -->
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
 
       <!-- Hero Content -->
       <div class="relative z-10 h-full flex items-center justify-center px-6 md:px-12 lg:px-20">
