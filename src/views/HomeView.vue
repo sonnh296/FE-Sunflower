@@ -1,17 +1,41 @@
 <template>
   <div class="flex flex-col bg-white">
-    <!-- Video Hero Section -->
-    <!-- Hero Section with YouTube Video Background -->
+    <!-- Hero Section with Image Grid -->
     <div class="relative w-full h-screen overflow-hidden">
-      <!-- YouTube Video Background -->
-      <div class="absolute inset-0 w-full h-full overflow-hidden">
-        <iframe
-          src="https://www.youtube.com/embed/SrhbKG6J70Q?autoplay=1&mute=1&loop=1&playlist=SrhbKG6J70Q&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
-          class="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-          frameborder="0"
-          allow="autoplay; encrypted-media"
-          allowfullscreen
-        ></iframe>
+      <!-- Image Grid Background -->
+      <div class="absolute inset-0 w-full h-full grid grid-cols-4 gap-0">
+        <!-- Image 1 -->
+        <div class="w-full h-full overflow-hidden">
+          <img
+            src="/sample1.jpeg"
+            alt="Fashion Collection 1"
+            class="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+          />
+        </div>
+        <!-- Image 2 -->
+        <div class="w-full h-full overflow-hidden">
+          <img
+            src="/sample2.jpeg"
+            alt="Fashion Collection 2"
+            class="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+          />
+        </div>
+        <!-- Image 3 -->
+        <div class="w-full h-full overflow-hidden">
+          <img
+            src="/sample3.jpeg"
+            alt="Fashion Collection 3"
+            class="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+          />
+        </div>
+        <!-- Image 4 -->
+        <div class="w-full h-full overflow-hidden">
+          <img
+            src="/sample4.jpeg"
+            alt="Fashion Collection 4"
+            class="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+          />
+        </div>
       </div>
 
       <!-- Dark Overlay -->
@@ -128,6 +152,33 @@
             ></i>
             <div class="font-medium text-gray-800 text-sm">Shopee</div>
           </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- YouTube Video Section -->
+    <div class="w-full py-24 bg-gradient-to-b from-white to-gray-50">
+      <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+        <!-- Section Header -->
+        <div class="text-center mb-12">
+          <h2 class="text-4xl md:text-5xl font-light text-gray-900 mb-4 tracking-tight">
+            Khám phá bộ sưu tập
+          </h2>
+          <div class="w-24 h-px bg-gray-300 mx-auto mb-6"></div>
+          <p class="text-gray-600 text-lg font-light max-w-2xl mx-auto">
+            Xem video giới thiệu các sản phẩm mới nhất của chúng tôi
+          </p>
+        </div>
+
+        <!-- YouTube Video Embed -->
+        <div class="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl">
+          <iframe
+            src="https://www.youtube.com/embed/SrhbKG6J70Q?autoplay=1&mute=1&loop=1&playlist=SrhbKG6J70Q&controls=1&rel=0&modestbranding=1"
+            class="absolute inset-0 w-full h-full border-0"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowfullscreen
+            title="Elsun Fashion Collection"
+          ></iframe>
         </div>
       </div>
     </div>
@@ -609,21 +660,44 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
-import { useProductStore } from '@/stores/productStore'
 
 const router = useRouter()
-const productStore = useProductStore()
 
 // Featured products with their images mapped
 const featuredProducts = ref([
-  { id: '', name: 'Váy Hồng Thanh Lịch', image: '/vay-hong.jpg', keyword: 'váy' },
-  { id: '', name: 'Áo Phông Thời Trang', image: '/ao-phong.png', keyword: 'áo' },
-  { id: '', name: 'Chân Váy Sọc Đỏ', image: '/chan-vay.png', keyword: 'chân' },
-  { id: '', name: 'Set Chấm Bi', image: '/set-chambi-1.jpg', keyword: 'set' },
-  { id: '', name: 'Set Chấm Bi Cao Cấp', image: '/set-chambi-2.jpg', keyword: 'set' }
+  {
+    id: 1,
+    name: 'Váy Hồng',
+    image: '/IMG_7054.JPG',
+    keyword: 'váy hồng'
+  },
+  {
+    id: 2,
+    name: 'Áo Phông',
+    image: '/ao-phong.png',
+    keyword: 'áo phông'
+  },
+  {
+    id: 3,
+    name: 'Chân Váy',
+    image: '/chan-vay.png',
+    keyword: 'chân váy'
+  },
+  {
+    id: 4,
+    name: 'Set Chambi 1',
+    image: '/IMG_3575.PNG',
+    keyword: 'set chambi'
+  },
+  {
+    id: 5,
+    name: 'Set Chambi 2',
+    image: '/IMG_3576.PNG',
+    keyword: 'set'
+  }
 ])
 
 const scrollToNextSection = () => {
@@ -637,50 +711,8 @@ const navigateToProduct = (index: number) => {
   const product = featuredProducts.value[index]
   if (product.id) {
     router.push({ name: 'product-guest', params: { id: product.id } })
-  } else {
-    // Fallback: find product by keyword
-    navigateToFirstProduct(product.keyword)
   }
 }
-
-const navigateToFirstProduct = async (keyword: string) => {
-  // Make sure products are loaded
-  if (productStore.products.length === 0) {
-    await productStore.getProducts()
-  }
-
-  // Find product that matches the keyword
-  const product = productStore.products.find((p) =>
-    p.name.toLowerCase().includes(keyword.toLowerCase())
-  )
-
-  if (product && product.id) {
-    router.push({ name: 'product-guest', params: { id: product.id } })
-  } else if (productStore.products.length > 0) {
-    // Navigate to first product if no match
-    router.push({ name: 'product-guest', params: { id: productStore.products[0].id } })
-  }
-}
-
-// Map products to featured items
-const mapProductsToFeatured = () => {
-  productStore.products.forEach((product) => {
-    const featured = featuredProducts.value.find(
-      (f) =>
-        product.name.toLowerCase().includes(f.keyword) ||
-        f.keyword.includes(product.name.toLowerCase())
-    )
-    if (featured && !featured.id) {
-      featured.id = product.id
-      featured.name = product.name
-    }
-  })
-}
-
-onMounted(async () => {
-  await productStore.getProducts()
-  mapProductsToFeatured()
-})
 </script>
 
 <style scoped>
