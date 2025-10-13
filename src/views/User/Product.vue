@@ -133,7 +133,7 @@ const authStore = useAuthStore()
 const cartStore = useCartStore()
 const route = useRoute()
 
-const addToCart = (item: ProductItem) => {
+const addToCart = async (item: ProductItem) => {
   if (!authStore.identified) {
     toast.add({
       severity: 'warn',
@@ -144,16 +144,18 @@ const addToCart = (item: ProductItem) => {
     return
   }
 
-  const existingItem = cartStore.cartItems.find((cartItem) => cartItem.id === item.id)
+  const existingItem = cartStore.cartItems.find(
+    (cartItem) => cartItem.productItem.id === item.id
+  )
 
   if (existingItem) {
-    existingItem.quantity += 1
-    cartStore.updateCartItem({
+    const newQuantity = existingItem.quantity + 1
+    await cartStore.updateCartItem({
       cartItemId: existingItem.id as string,
-      quantity: existingItem.quantity
+      quantity: newQuantity
     })
   } else {
-    cartStore.addToCart({
+    await cartStore.addToCart({
       productItemId: item.id as string,
       quantity: 1
     })
@@ -185,6 +187,9 @@ const routeToTryOn = (id: string) => {
 }
 
 onMounted(async () => {
-  await productItemStore.getProductItems(route.params.id as string)
+  await Promise.all([
+    productItemStore.getProductItems(route.params.id as string),
+    authStore.identified ? cartStore.getCart() : Promise.resolve()
+  ])
 })
 </script>
