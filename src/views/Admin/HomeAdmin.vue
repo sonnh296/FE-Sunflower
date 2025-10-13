@@ -95,21 +95,19 @@ onMounted(async () => {
 const saveEditedProduct = async () => {
   if (editedProduct.value.id) {
     await productStore.updateProduct({
-      id: Number(editedProduct.value.id),
+      id: editedProduct.value.id,
       name: editedProduct.value.name,
       description: editedProduct.value.description
     })
   } else {
     await productStore.createProduct({
       name: editedProduct.value.name,
-      description: editedProduct.value.description,
-      productItem: []
+      description: editedProduct.value.description
     })
     productStore.products.push({
       id: editedProduct.value.id,
       name: editedProduct.value.name,
-      description: editedProduct.value.description,
-      productItem: []
+      description: editedProduct.value.description
     })
   }
   productDialog.value = false

@@ -19,14 +19,20 @@
         </p>
       </div>
 
+      <!-- Loading State -->
+      <div v-if="loadingProduct" class="flex justify-center items-center py-20">
+        <i class="pi pi-spin pi-spinner text-4xl text-purple-500"></i>
+      </div>
+
       <!-- Main Try-On Interface -->
       <div
+        v-else-if="product"
         class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 overflow-hidden"
       >
         <div class="p-8 md:p-12">
           <!-- When no image is uploaded, show the original layout -->
           <div v-if="!selectedImgTemp" class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            <!-- Step 1: Product Display -->
+            <!-- Step 1: Product Display with Image Selection -->
             <div class="space-y-6">
               <div class="flex items-center space-x-3 mb-6">
                 <div
@@ -34,9 +40,10 @@
                 >
                   1
                 </div>
-                <h3 class="text-xl font-semibold text-gray-800">Sản phẩm được chọn</h3>
+                <h3 class="text-xl font-semibold text-gray-800">Chọn ảnh sản phẩm</h3>
               </div>
 
+              <!-- Selected Product Image -->
               <div class="relative group">
                 <div
                   class="bg-gradient-to-br from-gray-50 to-purple-50/30 rounded-2xl p-8 border border-gray-200/50 shadow-sm"
@@ -49,8 +56,8 @@
                   <div class="flex justify-center">
                     <div class="relative">
                       <Image
-                        :src="productItemStore.productItem?.url"
-                        :alt="productItemStore.productItem?.size"
+                        :src="selectedProductImage"
+                        :alt="product.name"
                         width="280"
                         height="280"
                         preview
@@ -61,14 +68,47 @@
                           objectFit: 'contain'
                         }"
                       />
-                      <!-- Floating badge -->
+                      <!-- Product name badge -->
                       <div
-                        class="absolute -top-2 -right-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg"
+                        class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 to-rose-500 text-white px-4 py-2 rounded-full text-xs font-medium shadow-lg whitespace-nowrap"
                       >
-                        {{ productItemStore.productItem?.size }}
+                        {{ product.name }}
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              <!-- Image Thumbnails Selection -->
+              <div v-if="product.imageUrls && product.imageUrls.length > 1" class="space-y-3">
+                <p class="text-sm font-medium text-gray-700 text-center">
+                  Chọn ảnh sản phẩm khác ({{ product.imageUrls.length }} ảnh)
+                </p>
+                <div class="grid grid-cols-4 gap-3">
+                  <button
+                    v-for="(imageUrl, index) in product.imageUrls"
+                    :key="index"
+                    @click="selectedProductImage = imageUrl"
+                    :class="[
+                      'relative overflow-hidden rounded-lg transition-all duration-300 border-2',
+                      selectedProductImage === imageUrl
+                        ? 'border-purple-500 ring-2 ring-purple-200 scale-105'
+                        : 'border-gray-200 hover:border-purple-300 hover:scale-105'
+                    ]"
+                  >
+                    <img
+                      :src="imageUrl"
+                      :alt="`${product.name} - ${index + 1}`"
+                      class="w-full h-20 object-cover"
+                    />
+                    <!-- Selected indicator -->
+                    <div
+                      v-if="selectedProductImage === imageUrl"
+                      class="absolute top-1 right-1 bg-purple-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                    >
+                      <i class="pi pi-check text-xs"></i>
+                    </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -101,12 +141,15 @@
                       name="demo[]"
                       :showUploadButton="false"
                       accept="image/png, image/jpeg"
-                      :maxFileSize="1000000"
+                      :maxFileSize="10000000"
                       @select="onImageSelect"
                       class="custom-file-upload"
                     />
 
-                    <p class="text-sm text-gray-600">Chọn ảnh của bạn (PNG, JPEG tối đa 1MB)</p>
+                    <p class="text-sm text-gray-600">Chọn ảnh của bạn (PNG, JPEG tối đa 10MB)</p>
+                    <p class="text-xs text-gray-500">
+                      Lưu ý: Chọn ảnh toàn thân để có kết quả tốt nhất
+                    </p>
                   </div>
                 </div>
               </div>
@@ -140,8 +183,8 @@
                     <div class="flex justify-center">
                       <div class="relative">
                         <Image
-                          :src="productItemStore.productItem?.url"
-                          :alt="productItemStore.productItem?.size"
+                          :src="selectedProductImage"
+                          :alt="product.name"
                           width="240"
                           height="240"
                           preview
@@ -152,11 +195,11 @@
                             objectFit: 'contain'
                           }"
                         />
-                        <!-- Floating badge -->
+                        <!-- Product name badge -->
                         <div
-                          class="absolute -top-2 -right-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg"
+                          class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-pink-500 to-rose-500 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg whitespace-nowrap"
                         >
-                          {{ productItemStore.productItem?.size }}
+                          {{ product.name }}
                         </div>
                       </div>
                     </div>
@@ -330,37 +373,47 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
-import { useProductItemStore } from '@/stores/productItemStore'
 import { useRoute } from 'vue-router'
 import { useTryOnStore } from '@/stores/tryOnStore'
+import { getProductByIdApi } from '@/api/productApi'
+import type { Product } from '@/types/Product'
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
 import Image from 'primevue/image'
 import ProgressBar from 'primevue/progressbar'
 
 const toast = useToast()
-const productItemStore = useProductItemStore()
 const route = useRoute()
 const tryOnStore = useTryOnStore()
 
+const loadingProduct = ref(true)
+const product = ref<Product | null>(null)
+const selectedProductImage = ref<string>('')
 const selectedImgTemp = ref<string>('')
 const selectedImage = ref<File>()
 const generatedImageUrl = ref<string>('')
 
 const generateImage = async () => {
-  if (!selectedImage.value || !productItemStore.productItem?.url) return
+  if (!selectedImage.value || !selectedProductImage.value) return
 
   try {
     const response = await tryOnStore.generateImage(
       selectedImage.value,
-      productItemStore.productItem.url.replace('http://', 'https://')
+      selectedProductImage.value.replace('http://', 'https://')
     )
     generatedImageUrl.value = response.imageUrl
+
+    toast.add({
+      severity: 'success',
+      summary: 'Thành công',
+      detail: 'Đã tạo ảnh thử đồ thành công!',
+      life: 3000
+    })
   } catch (error) {
     console.error(error)
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to generate try-on image',
+      summary: 'Lỗi',
+      detail: 'Không thể tạo ảnh thử đồ. Vui lòng thử lại!',
       life: 3000
     })
   }
@@ -371,8 +424,42 @@ const onImageSelect = (event: FileUploadSelectEvent) => {
   selectedImgTemp.value = URL.createObjectURL(event.files[event.files.length - 1])
 }
 
+const loadProduct = async () => {
+  loadingProduct.value = true
+  try {
+    const productId = route.params.id as string
+    const response = await getProductByIdApi(productId)
+
+    if (response.data.code === 1000 && response.data.result) {
+      product.value = response.data.result
+
+      // Set the first image as default selected image
+      if (product.value.imageUrls && product.value.imageUrls.length > 0) {
+        selectedProductImage.value = product.value.imageUrls[0]
+      }
+    } else {
+      toast.add({
+        severity: 'error',
+        summary: 'Lỗi',
+        detail: 'Không thể tải thông tin sản phẩm',
+        life: 3000
+      })
+    }
+  } catch (error) {
+    console.error('Error loading product:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: 'Không thể tải thông tin sản phẩm',
+      life: 3000
+    })
+  } finally {
+    loadingProduct.value = false
+  }
+}
+
 onMounted(async () => {
-  await productItemStore.getProductItemById(route.params.id as string)
+  await loadProduct()
 })
 </script>
 

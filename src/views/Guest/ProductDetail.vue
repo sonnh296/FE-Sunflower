@@ -17,53 +17,62 @@
 
       <!-- Product Detail -->
       <div v-else-if="product" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <!-- Left Side - Product Images -->
+        <!-- Left Side - Product Images Carousel -->
         <div class="space-y-6">
-          <!-- Main Image -->
-          <div
-            class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-pink-50/30 shadow-xl border border-gray-100 group"
-          >
-            <img
-              :src="selectedImage || product.productItem[0]?.url || '/noavatar.png'"
-              :alt="product.name"
-              class="w-full h-[500px] object-cover group-hover:scale-105 transition-transform duration-700"
-            />
+          <!-- Image Carousel -->
+          <div v-if="product.imageUrls && product.imageUrls.length > 0">
+            <Galleria
+              :value="galleryImages"
+              :numVisible="5"
+              :circular="true"
+              :showItemNavigators="true"
+              :showThumbnails="true"
+              :showIndicators="true"
+              :changeItemOnIndicatorHover="true"
+              containerClass="rounded-3xl shadow-xl overflow-hidden"
+              :pt="{
+                root: { class: 'rounded-3xl' },
+                content: { class: 'rounded-3xl' },
+                itemsContainer: { class: 'rounded-3xl' }
+              }"
+            >
+              <template #item="slotProps">
+                <div
+                  class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-pink-50/30"
+                >
+                  <img
+                    :src="slotProps.item.itemImageSrc"
+                    :alt="slotProps.item.alt"
+                    class="w-full h-[500px] object-cover"
+                  />
 
-            <!-- Badges -->
-            <div class="absolute top-6 left-6 flex flex-col gap-2">
-              <span
-                v-if="product.productItem[0]?.stockQuantity > 0"
-                class="bg-emerald-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg"
-              >
-                Còn hàng
-              </span>
-              <span
-                class="bg-white/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full text-sm font-semibold shadow-lg"
-              >
-                New Collection
-              </span>
-            </div>
+                  <!-- Badges -->
+                  <div class="absolute top-6 left-6 flex flex-col gap-2">
+                    <span
+                      class="bg-white/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full text-sm font-semibold shadow-lg"
+                    >
+                      New Collection
+                    </span>
+                  </div>
+                </div>
+              </template>
+
+              <template #thumbnail="slotProps">
+                <img
+                  :src="slotProps.item.thumbnailImageSrc"
+                  :alt="slotProps.item.alt"
+                  class="w-full h-20 object-cover rounded-lg"
+                />
+              </template>
+            </Galleria>
           </div>
 
-          <!-- Thumbnail Gallery -->
-          <div class="grid grid-cols-4 gap-4" v-if="product.productItem.length > 1">
-            <div
-              v-for="(item, index) in product.productItem.slice(0, 4)"
-              :key="index"
-              @click="selectedImage = item.url"
-              :class="[
-                'relative overflow-hidden rounded-xl cursor-pointer border-2 transition-all duration-300',
-                selectedImage === item.url
-                  ? 'border-pink-500 ring-2 ring-pink-200'
-                  : 'border-gray-200 hover:border-gray-300'
-              ]"
-            >
-              <img
-                :src="item.url"
-                :alt="`${product.name} - ${index + 1}`"
-                class="w-full h-24 object-cover"
-              />
-            </div>
+          <!-- Fallback if no images -->
+          <div
+            v-else
+            class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-pink-50/30 shadow-xl border border-gray-100"
+          >
+            <img src="/noavatar.png" :alt="product.name" class="w-full h-[500px] object-cover" />
           </div>
         </div>
 
@@ -73,7 +82,7 @@
           <div>
             <div class="flex items-center gap-2 mb-3">
               <span class="bg-pink-100 text-pink-800 text-sm font-medium px-3 py-1 rounded-full">
-                {{ product.productItem[0]?.category || 'Thời Trang' }}
+                Thời Trang
               </span>
             </div>
             <h1 class="text-4xl md:text-5xl font-light text-gray-900 mb-4 tracking-tight">
@@ -84,85 +93,17 @@
             </p>
           </div>
 
-          <!-- Price -->
-          <div class="flex items-baseline gap-4 pb-6 border-b border-gray-200">
-            <span class="text-4xl font-bold text-gray-900">
-              {{
-                product.productItem[0]?.price
-                  ? new Intl.NumberFormat('vi-VN').format(
-                      parseInt(product.productItem[0].price.toString())
-                    )
-                  : '0'
-              }}đ
-            </span>
-          </div>
-
-          <!-- Available Variants -->
-          <div class="space-y-6">
-            <!-- Color Selection -->
-            <div v-if="availableColors.length > 0">
-              <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">
-                Màu sắc có sẵn
-              </h3>
-              <div class="flex flex-wrap gap-3">
-                <button
-                  v-for="color in availableColors"
-                  :key="color"
-                  @click="selectedColor = color"
-                  :class="[
-                    'px-4 py-2 rounded-xl border-2 transition-all duration-300 font-medium',
-                    selectedColor === color
-                      ? 'border-pink-500 bg-pink-50 text-pink-700'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
-                  ]"
-                >
-                  {{ color }}
-                </button>
-              </div>
-            </div>
-
-            <!-- Size Selection -->
-            <div v-if="availableSizes.length > 0">
-              <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">
-                Kích thước
-              </h3>
-              <div class="flex flex-wrap gap-3">
-                <button
-                  v-for="size in availableSizes"
-                  :key="size"
-                  @click="selectedSize = size"
-                  :class="[
-                    'px-5 py-2 rounded-xl border-2 transition-all duration-300 font-medium min-w-[60px]',
-                    selectedSize === size
-                      ? 'border-pink-500 bg-pink-50 text-pink-700'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
-                  ]"
-                >
-                  {{ size }}
-                </button>
-              </div>
-            </div>
-
-            <!-- Gender -->
-            <div v-if="product.productItem[0]?.gender">
-              <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">
-                Giới tính
-              </h3>
-              <span class="inline-block bg-gray-100 text-gray-800 px-4 py-2 rounded-xl font-medium">
-                {{ product.productItem[0].gender }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Stock Information -->
+          <!-- Image Count Info -->
           <div
-            class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-6 border border-emerald-100"
+            class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100"
           >
             <div class="flex items-center gap-3">
-              <i class="pi pi-check-circle text-emerald-600 text-xl"></i>
+              <i class="pi pi-images text-blue-600 text-xl"></i>
               <div>
-                <p class="font-semibold text-gray-900">Còn {{ totalStock }} sản phẩm</p>
-                <p class="text-sm text-gray-600">Sẵn sàng giao hàng</p>
+                <p class="font-semibold text-gray-900">
+                  {{ product.imageUrls?.length || 0 }} hình ảnh sản phẩm
+                </p>
+                <p class="text-sm text-gray-600">Xem chi tiết từ nhiều góc độ</p>
               </div>
             </div>
           </div>
@@ -223,57 +164,44 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
-import { useProductStore } from '@/stores/productStore'
-import type { Product, ProductItem } from '@/types/Product'
+import Galleria from 'primevue/galleria'
+import { getProductByIdApi } from '@/api/productApi'
+import type { Product } from '@/types/Product'
 
 const route = useRoute()
 const router = useRouter()
-const productStore = useProductStore()
 
 const loading = ref(true)
 const product = ref<Product | null>(null)
-const selectedImage = ref<string>('')
-const selectedColor = ref<string>('')
-const selectedSize = ref<string>('')
 
-// Computed properties
-const availableColors = computed<string[]>(() => {
-  if (!product.value) return []
-  return [...new Set(product.value.productItem.map((item: ProductItem) => item.color))]
-})
+// Computed property for gallery images
+const galleryImages = computed(() => {
+  if (!product.value?.imageUrls || product.value.imageUrls.length === 0) {
+    return []
+  }
 
-const availableSizes = computed<string[]>(() => {
-  if (!product.value) return []
-  return [...new Set(product.value.productItem.map((item: ProductItem) => item.size))]
-})
-
-const totalStock = computed(() => {
-  if (!product.value) return 0
-  return product.value.productItem.reduce(
-    (sum: number, item: ProductItem) => sum + (item.stockQuantity || 0),
-    0
-  )
+  return product.value.imageUrls.map((url, index) => ({
+    itemImageSrc: url,
+    thumbnailImageSrc: url,
+    alt: `${product.value?.name} - Image ${index + 1}`
+  }))
 })
 
 // Methods
 const loadProduct = async () => {
   loading.value = true
   try {
-    await productStore.getProducts()
     const productId = route.params.id as string
-    product.value = productStore.products.find((p) => p.id === productId) || null
+    const response = await getProductByIdApi(productId)
 
-    if (product.value && product.value.productItem.length > 0) {
-      selectedImage.value = product.value.productItem[0].url
-      if (availableColors.value.length > 0) {
-        selectedColor.value = availableColors.value[0] as string
-      }
-      if (availableSizes.value.length > 0) {
-        selectedSize.value = availableSizes.value[0] as string
-      }
+    if (response.data.code === 1000 && response.data.result) {
+      product.value = response.data.result
+    } else {
+      product.value = null
     }
   } catch (error) {
     console.error('Error loading product:', error)
+    product.value = null
   } finally {
     loading.value = false
   }
@@ -288,9 +216,7 @@ const goToTryOn = () => {
 const addToCart = () => {
   // Add to cart logic here
   console.log('Add to cart:', {
-    product: product.value,
-    color: selectedColor.value,
-    size: selectedSize.value
+    product: product.value
   })
   // You can implement your cart store logic here
   alert('Đã thêm vào giỏ hàng!')

@@ -105,3 +105,12 @@ export const refreshTokenApi = async (
 export const getMeApi = async (): Promise<AxiosResponse<MfResponse<Identity>>> => {
   return await api.get('users/my-info')
 }
+
+// Google OAuth
+export const googleAuthApi = async (
+  code: string
+): Promise<AxiosResponse<MfResponse<LoginResponse>>> => {
+  return await api.post('auth/outbound/authentication', null, {
+    params: { code }
+  })
+}

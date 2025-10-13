@@ -1,8 +1,8 @@
 import type { AxiosResponse } from 'axios'
 import api from './api'
 import type { MfResponse } from '@/types/MatchFinderResponse'
-import type { BlogPost } from '@/types/Post'
-import type { Product, ProductItem } from '@/types/Product'
+import type { ApiResponse } from '@/types/ApiResponse'
+import type { Product, ProductListItem } from '@/types/Product'
 
 export type ProductSearchRequest = {
   pageSize: number
@@ -12,17 +12,16 @@ export type ProductSearchRequest = {
 export type ProductCreateRequest = {
   name: string
   description: string
-  productItem: ProductItem[]
 }
 
 export type ProductUpdateRequest = {
-  id: number
+  id: string
   name: string
   description: string
 }
 
 export type ProductResponse = {
-  content: Product[]
+  content: ProductListItem[]
   totalElements: number
   totalPages: number
 }
@@ -34,7 +33,7 @@ export type OneProductResponse = {
 
 export const getProductByIdApi = async (
   id: string
-): Promise<AxiosResponse<MfResponse<Product>>> => {
+): Promise<AxiosResponse<ApiResponse<Product>>> => {
   return await api.get('/products/' + id)
 }
 
@@ -56,6 +55,50 @@ export const updateProductApi = async (
   return await api.put('/products/' + value.id, value)
 }
 
-export const deleteProductApi = async (id: number): Promise<AxiosResponse<MfResponse<Product>>> => {
+export const deleteProductApi = async (id: string): Promise<AxiosResponse<MfResponse<Product>>> => {
   return await api.delete('/products/' + id)
+}
+
+// Product Image APIs
+export type ProductImageUploadRequest = {
+  productId: string
+  images: File[]
+}
+
+export type ProductSingleImageUploadRequest = {
+  productId: string
+  image: File
+}
+
+export const uploadProductImagesApi = async (
+  value: ProductImageUploadRequest
+): Promise<AxiosResponse<ApiResponse<Product>>> => {
+  const formData = new FormData()
+
+  value.images.forEach((image) => {
+    formData.append('images', image)
+  })
+
+  return await api.post(`/products/${value.productId}/images`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+}
+
+export const uploadProductSingleImageApi = async (
+  value: ProductSingleImageUploadRequest
+): Promise<AxiosResponse<ApiResponse<Product>>> => {
+  const formData = new FormData()
+
+  formData.append('image', value.image)
+
+  return await api.post(`/products/${value.productId}/images/single`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+}
+
+export const deleteProductImageApi = async (
+  productId: string,
+  imageId: string
+): Promise<AxiosResponse<ApiResponse<Product>>> => {
+  return await api.delete(`/products/${productId}/images/${imageId}`)
 }

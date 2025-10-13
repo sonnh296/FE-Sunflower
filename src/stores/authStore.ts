@@ -4,6 +4,7 @@ import {
   changePassApi,
   forgotPassApi,
   getMeApi,
+  googleAuthApi,
   loginApi,
   logoutApi,
   registerApi,
@@ -63,6 +64,22 @@ export const useAuthStore = defineStore({
         this.messageError = (e as AxiosError<BadRequestResponse>).response?.data.message
         this.loginError = true
         this.isLoggingIn = false
+      }
+    },
+
+    async googleLogin(code: string) {
+      try {
+        this.loginError = false
+        this.isLoggingIn = true
+        const { data } = await googleAuthApi(code)
+        this.isLoggingIn = false
+        await this.loginSuccessfully(data.result)
+      } catch (e: unknown) {
+        console.error(e)
+        this.messageError = (e as AxiosError<BadRequestResponse>).response?.data.message
+        this.loginError = true
+        this.isLoggingIn = false
+        throw e
       }
     },
 

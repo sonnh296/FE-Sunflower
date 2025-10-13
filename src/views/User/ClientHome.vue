@@ -51,18 +51,21 @@
             v-for="product in productStore.products"
             :key="product.id"
             class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300"
-            :class="product.productItem.length > 0 ? '' : 'hidden'"
+            :class="product.imageUrls && product.imageUrls.length > 0 ? '' : 'hidden'"
           >
-            <div v-if="product.productItem.length > 0" class="flex flex-col w-full">
+            <div
+              v-if="product.imageUrls && product.imageUrls.length > 0"
+              class="flex flex-col w-full"
+            >
               <img
-                :src="product.productItem[0].url"
+                :src="product.imageUrls[0]"
                 :alt="product.name"
                 class="w-full h-48 object-contain mx-auto flex items-center justify-center"
               />
               <div class="p-4 flex flex-col justify-between">
                 <div>
                   <h3 class="font-semibold text-lg mb-2">{{ product.name }}</h3>
-                  <p class="text-gray-600 mb-2">{{ product.productItem[0].price }} đ</p>
+                  <p class="text-gray-600 mb-2 text-sm">{{ product.description }}</p>
                 </div>
                 <Button
                   label="Chi tiết"
@@ -99,8 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import Button from 'primevue/button'
 import router from '@/router'
 import { useProductStore } from '@/stores/productStore'

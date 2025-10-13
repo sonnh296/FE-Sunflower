@@ -39,7 +39,7 @@
       </div>
 
       <!-- Dark Overlay -->
-      <div class="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+      <div class="absolute inset-0 bg-black/40"></div>
 
       <!-- Hero Content -->
       <div class="relative z-10 h-full flex items-center justify-center px-6 md:px-12 lg:px-20">
@@ -86,72 +86,6 @@
         >
           <span class="text-sm uppercase tracking-widest font-light">Khám phá</span>
           <i class="pi pi-chevron-down text-xl"></i>
-        </div>
-      </div>
-    </div>
-    <!-- Social Media Section -->
-    <div class="bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 py-16 px-6">
-      <div class="max-w-6xl mx-auto">
-        <h3 class="text-center text-2xl font-light text-gray-800 mb-3 tracking-wide">
-          Kết nối với <span class="font-serif italic">Elsun</span>
-        </h3>
-        <p class="text-center text-gray-600 mb-10 text-sm">
-          Theo dõi chúng tôi để cập nhật xu hướng mới nhất
-        </p>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
-          <a
-            href="mailto:elsunxinh@gmail.com"
-            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
-          >
-            <i
-              class="pi pi-envelope text-amber-600 text-3xl mb-3 group-hover:scale-110 transition-transform"
-            ></i>
-            <div class="font-medium text-gray-800 text-sm">Email</div>
-          </a>
-          <a
-            href="https://www.facebook.com/profile.php?id=61576868692347"
-            target="_blank"
-            rel="noopener"
-            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
-          >
-            <i
-              class="pi pi-facebook text-blue-600 text-3xl mb-3 group-hover:scale-110 transition-transform"
-            ></i>
-            <div class="font-medium text-gray-800 text-sm">Facebook</div>
-          </a>
-          <a
-            href="https://www.instagram.com/elsunxinh"
-            target="_blank"
-            rel="noopener"
-            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
-          >
-            <i
-              class="pi pi-instagram text-pink-500 text-3xl mb-3 group-hover:scale-110 transition-transform"
-            ></i>
-            <div class="font-medium text-gray-800 text-sm">Instagram</div>
-          </a>
-          <a
-            href="https://vt.tiktok.com/ZSkfA5hC6/?page=TikTokShop"
-            target="_blank"
-            rel="noopener"
-            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
-          >
-            <i
-              class="pi pi-tiktok text-gray-900 text-3xl mb-3 group-hover:scale-110 transition-transform"
-            ></i>
-            <div class="font-medium text-gray-800 text-sm">TikTok</div>
-          </a>
-          <a
-            href="https://shopee.vn/elsun.studio?categoryId=100017&entryPoint=ShopByPDP&itemId=40753356114"
-            target="_blank"
-            rel="noopener"
-            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
-          >
-            <i
-              class="pi pi-shopping-cart text-orange-500 text-3xl mb-3 group-hover:scale-110 transition-transform"
-            ></i>
-            <div class="font-medium text-gray-800 text-sm">Shopee</div>
-          </a>
         </div>
       </div>
     </div>
@@ -364,136 +298,42 @@
         </div>
 
         <!-- Products Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- Product 1: Váy Hồng -->
-          <div
-            class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
-            @click="navigateToProduct(0)"
-          >
-            <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
-              <img
-                :src="featuredProducts[0].image"
-                alt="Váy Hồng"
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              />
-            </div>
-            <div class="p-6">
-              <div class="flex items-center gap-2 mb-2">
-                <span
-                  class="bg-pink-100 text-pink-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
-                >
-                  Váy Hồng
-                </span>
-              </div>
-              <h3 class="font-semibold text-xl text-gray-900 mb-3">
-                {{ featuredProducts[0].name }}
-              </h3>
-              <p class="text-gray-600 text-sm mb-4 line-clamp-2">
-                Thiết kế váy hồng nữ tính, thanh lịch và trẻ trung, phù hợp cho nhiều dịp
-              </p>
-              <div class="flex items-baseline gap-3 mb-4">
-                <span class="text-2xl font-bold text-gray-900">459.000đ</span>
-              </div>
-              <Button
-                label="Xem chi tiết"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                class="w-full !bg-pink-500 hover:!bg-pink-600 !text-white !border-0 !font-medium !py-3 !rounded-xl !transition-all !duration-300"
-                @click.stop="navigateToProduct(0)"
-              />
-            </div>
-          </div>
+        <div v-if="isLoadingProducts" class="flex justify-center items-center py-20">
+          <i class="pi pi-spin pi-spinner text-4xl text-gray-400"></i>
+          <span class="ml-4 text-gray-600">Đang tải sản phẩm...</span>
+        </div>
 
-          <!-- Product 2: Áo Phông -->
-          <div
-            class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
-            @click="navigateToProduct(1)"
-          >
-            <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
-              <img
-                :src="featuredProducts[1].image"
-                alt="Áo Phông"
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              />
-            </div>
-            <div class="p-6">
-              <div class="flex items-center gap-2 mb-2">
-                <span
-                  class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
-                >
-                  Áo Phông
-                </span>
-              </div>
-              <h3 class="font-semibold text-xl text-gray-900 mb-3">
-                {{ featuredProducts[1].name }}
-              </h3>
-              <p class="text-gray-600 text-sm mb-4 line-clamp-2">
-                Áo phông basic, dễ phối đồ, chất liệu mềm mại thoáng mát
-              </p>
-              <div class="flex items-baseline gap-3 mb-4">
-                <span class="text-2xl font-bold text-gray-900">359.000đ</span>
-              </div>
-              <Button
-                label="Xem chi tiết"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                class="w-full !bg-blue-500 hover:!bg-blue-600 !text-white !border-0 !font-medium !py-3 !rounded-xl !transition-all !duration-300"
-                @click.stop="navigateToProduct(1)"
-              />
-            </div>
-          </div>
+        <div v-else-if="featuredProducts.length === 0" class="text-center py-20">
+          <i class="pi pi-inbox text-6xl text-gray-300 mb-4"></i>
+          <p class="text-gray-500 text-lg">Chưa có sản phẩm nào</p>
+        </div>
 
-          <!-- Product 3: Chân váy -->
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Dynamic Products from API -->
           <div
+            v-for="(product, index) in featuredProducts.slice(0, 5)"
+            :key="product.id"
             class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
-            @click="navigateToProduct(2)"
+            @click="navigateToProduct(product)"
           >
             <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
               <img
-                :src="featuredProducts[2].image"
-                alt="Chân váy"
+                v-if="product.thumbnailUrl"
+                :src="product.thumbnailUrl"
+                :alt="product.name"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
-            </div>
-            <div class="p-6">
-              <div class="flex items-center gap-2 mb-2">
-                <span
-                  class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
-                >
-                  Chân váy
-                </span>
+              <div v-else class="w-full h-full flex items-center justify-center bg-gray-200">
+                <i class="pi pi-image text-6xl text-gray-400"></i>
               </div>
-              <h3 class="font-semibold text-xl text-gray-900 mb-3">
-                {{ featuredProducts[2].name }}
-              </h3>
-              <p class="text-gray-600 text-sm mb-4 line-clamp-2">
-                Chân váy họa tiết sọc đỏ năng động, phong cách trẻ trung
-              </p>
-              <div class="flex items-baseline gap-3 mb-4">
-                <span class="text-2xl font-bold text-gray-900">339.000đ</span>
-              </div>
-              <Button
-                label="Xem chi tiết"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                class="w-full !bg-purple-500 hover:!bg-purple-600 !text-white !border-0 !font-medium !py-3 !rounded-xl !transition-all !duration-300"
-                @click.stop="navigateToProduct(2)"
-              />
-            </div>
-          </div>
-
-          <!-- Product 4: Cả set -->
-          <div
-            class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
-            @click="navigateToProduct(3)"
-          >
-            <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
-              <img
-                :src="featuredProducts[3].image"
-                alt="Cả set"
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              />
               <div
+                v-if="index === 0"
+                class="absolute top-4 left-4 bg-rose-500 text-white px-3 py-1 rounded-full text-sm font-medium"
+              >
+                Best Seller
+              </div>
+              <div
+                v-else-if="index === 1"
                 class="absolute top-4 left-4 bg-amber-500 text-white px-3 py-1 rounded-full text-sm font-medium"
               >
                 Bộ Sưu Tập
@@ -502,76 +342,52 @@
             <div class="p-6">
               <div class="flex items-center gap-2 mb-2">
                 <span
-                  class="bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+                  :class="[
+                    'text-xs font-medium px-2.5 py-0.5 rounded-full',
+                    index % 5 === 0
+                      ? 'bg-pink-100 text-pink-800'
+                      : index % 5 === 1
+                        ? 'bg-blue-100 text-blue-800'
+                        : index % 5 === 2
+                          ? 'bg-purple-100 text-purple-800'
+                          : index % 5 === 3
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-rose-100 text-rose-800'
+                  ]"
                 >
-                  Cả set
+                  {{ product.name }}
                 </span>
               </div>
               <h3 class="font-semibold text-xl text-gray-900 mb-3">
-                {{ featuredProducts[3].name }}
+                {{ product.name }}
               </h3>
               <p class="text-gray-600 text-sm mb-4 line-clamp-2">
-                Bộ đồ chấm bi đáng yêu, phối hợp hoàn hảo cho set đồ hoàn chỉnh
+                {{ product.description || 'Sản phẩm chất lượng cao, thiết kế đẹp mắt' }}
               </p>
-              <div class="flex items-baseline gap-3 mb-4">
-                <span class="text-2xl font-bold text-gray-900">639.000đ</span>
-              </div>
               <Button
                 label="Xem chi tiết"
                 icon="pi pi-arrow-right"
                 iconPos="right"
-                class="w-full !bg-amber-500 hover:!bg-amber-600 !text-white !border-0 !font-medium !py-3 !rounded-xl !transition-all !duration-300"
-                @click.stop="navigateToProduct(3)"
+                :class="[
+                  'w-full !text-white !border-0 !font-medium !py-3 !rounded-xl !transition-all !duration-300',
+                  index % 5 === 0
+                    ? '!bg-pink-500 hover:!bg-pink-600'
+                    : index % 5 === 1
+                      ? '!bg-blue-500 hover:!bg-blue-600'
+                      : index % 5 === 2
+                        ? '!bg-purple-500 hover:!bg-purple-600'
+                        : index % 5 === 3
+                          ? '!bg-amber-500 hover:!bg-amber-600'
+                          : '!bg-rose-500 hover:!bg-rose-600'
+                ]"
+                @click.stop="navigateToProduct(product)"
               />
             </div>
           </div>
 
-          <!-- Product 5: Set chấm bi -->
+          <!-- More Options Card -->
           <div
-            class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
-            @click="navigateToProduct(4)"
-          >
-            <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
-              <img
-                :src="featuredProducts[4].image"
-                alt="Set chấm bi"
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              />
-              <div
-                class="absolute top-4 left-4 bg-rose-500 text-white px-3 py-1 rounded-full text-sm font-medium"
-              >
-                Best Seller
-              </div>
-            </div>
-            <div class="p-6">
-              <div class="flex items-center gap-2 mb-2">
-                <span
-                  class="bg-rose-100 text-rose-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
-                >
-                  Set chấm bi
-                </span>
-              </div>
-              <h3 class="font-semibold text-xl text-gray-900 mb-3">
-                {{ featuredProducts[4].name }}
-              </h3>
-              <p class="text-gray-600 text-sm mb-4 line-clamp-2">
-                Bộ set chấm bi sang trọng, thiết kế tinh tế với chất liệu cao cấp
-              </p>
-              <div class="flex items-baseline gap-3 mb-4">
-                <span class="text-2xl font-bold text-gray-900">799.000đ</span>
-              </div>
-              <Button
-                label="Xem chi tiết"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                class="w-full !bg-rose-500 hover:!bg-rose-600 !text-white !border-0 !font-medium !py-3 !rounded-xl !transition-all !duration-300"
-                @click.stop="navigateToProduct(4)"
-              />
-            </div>
-          </div>
-
-          <!-- Product 6: More Options -->
-          <div
+            v-if="featuredProducts.length > 0"
             class="group bg-gradient-to-br from-gray-900 to-gray-700 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 flex items-center justify-center p-8 cursor-pointer"
             @click="scrollToNextSection"
           >
@@ -583,6 +399,73 @@
               <p class="text-gray-300 text-sm">Xem toàn bộ bộ sưu tập</p>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Media Section -->
+    <div class="bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 py-16 px-6">
+      <div class="max-w-6xl mx-auto">
+        <h3 class="text-center text-2xl font-light text-gray-800 mb-3 tracking-wide">
+          Kết nối với <span class="font-serif italic">Elsun</span>
+        </h3>
+        <p class="text-center text-gray-600 mb-10 text-sm">
+          Theo dõi chúng tôi để cập nhật xu hướng mới nhất
+        </p>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
+          <a
+            href="mailto:elsunxinh@gmail.com"
+            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
+          >
+            <i
+              class="pi pi-envelope text-amber-600 text-3xl mb-3 group-hover:scale-110 transition-transform"
+            ></i>
+            <div class="font-medium text-gray-800 text-sm">Email</div>
+          </a>
+          <a
+            href="https://www.facebook.com/profile.php?id=61576868692347"
+            target="_blank"
+            rel="noopener"
+            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
+          >
+            <i
+              class="pi pi-facebook text-blue-600 text-3xl mb-3 group-hover:scale-110 transition-transform"
+            ></i>
+            <div class="font-medium text-gray-800 text-sm">Facebook</div>
+          </a>
+          <a
+            href="https://www.instagram.com/elsunxinh"
+            target="_blank"
+            rel="noopener"
+            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
+          >
+            <i
+              class="pi pi-instagram text-pink-500 text-3xl mb-3 group-hover:scale-110 transition-transform"
+            ></i>
+            <div class="font-medium text-gray-800 text-sm">Instagram</div>
+          </a>
+          <a
+            href="https://vt.tiktok.com/ZSkfA5hC6/?page=TikTokShop"
+            target="_blank"
+            rel="noopener"
+            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
+          >
+            <i
+              class="pi pi-tiktok text-gray-900 text-3xl mb-3 group-hover:scale-110 transition-transform"
+            ></i>
+            <div class="font-medium text-gray-800 text-sm">TikTok</div>
+          </a>
+          <a
+            href="https://shopee.vn/elsun.studio?categoryId=100017&entryPoint=ShopByPDP&itemId=40753356114"
+            target="_blank"
+            rel="noopener"
+            class="flex flex-col items-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white hover:shadow-lg transition-all duration-300 group border border-amber-100/50"
+          >
+            <i
+              class="pi pi-shopping-cart text-orange-500 text-3xl mb-3 group-hover:scale-110 transition-transform"
+            ></i>
+            <div class="font-medium text-gray-800 text-sm">Shopee</div>
+          </a>
         </div>
       </div>
     </div>
@@ -660,45 +543,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
+import { getProductsApi } from '@/api/productApi'
+import type { ProductListItem } from '@/types/Product'
 
 const router = useRouter()
 
-// Featured products with their images mapped
-const featuredProducts = ref([
-  {
-    id: 1,
-    name: 'Váy Hồng',
-    image: '/IMG_7054.JPG',
-    keyword: 'váy hồng'
-  },
-  {
-    id: 2,
-    name: 'Áo Phông',
-    image: '/ao-phong.png',
-    keyword: 'áo phông'
-  },
-  {
-    id: 3,
-    name: 'Chân Váy',
-    image: '/chan-vay.png',
-    keyword: 'chân váy'
-  },
-  {
-    id: 4,
-    name: 'Set Chambi 1',
-    image: '/IMG_3575.PNG',
-    keyword: 'set chambi'
-  },
-  {
-    id: 5,
-    name: 'Set Chambi 2',
-    image: '/IMG_3576.PNG',
-    keyword: 'set'
+// Products fetched from API
+const featuredProducts = ref<ProductListItem[]>([])
+const isLoadingProducts = ref(false)
+
+// Fetch products from API
+const fetchProducts = async () => {
+  isLoadingProducts.value = true
+  try {
+    const response = await getProductsApi({
+      pageSize: 6, // Get 6 products for homepage
+      pageNumber: 0
+    })
+
+    if (response.data.result?.content) {
+      featuredProducts.value = response.data.result.content
+    }
+  } catch (error) {
+    console.error('Error fetching products:', error)
+  } finally {
+    isLoadingProducts.value = false
   }
-])
+}
 
 const scrollToNextSection = () => {
   window.scrollBy({
@@ -707,12 +581,16 @@ const scrollToNextSection = () => {
   })
 }
 
-const navigateToProduct = (index: number) => {
-  const product = featuredProducts.value[index]
+const navigateToProduct = (product: ProductListItem) => {
   if (product.id) {
     router.push({ name: 'product-guest', params: { id: product.id } })
   }
 }
+
+// Fetch products on component mount
+onMounted(() => {
+  fetchProducts()
+})
 </script>
 
 <style scoped>
