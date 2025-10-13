@@ -225,10 +225,16 @@ import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import { useProductStore } from '@/stores/productStore'
 import type { Product, ProductItem } from '@/types/Product'
+import { useCartStore } from '@/stores/cartStore'
+import { useAuthStore } from '@/stores/authStore'
+import { useToast } from 'primevue/usetoast'
 
 const route = useRoute()
 const router = useRouter()
 const productStore = useProductStore()
+const cartStore = useCartStore()
+const authStore = useAuthStore()
+const toast = useToast()
 
 const loading = ref(true)
 const product = ref<Product | null>(null)
@@ -252,6 +258,13 @@ const totalStock = computed(() => {
   return product.value.productItem.reduce(
     (sum: number, item: ProductItem) => sum + (item.stockQuantity || 0),
     0
+  )
+})
+
+const selectedVariant = computed<ProductItem | undefined>(() => {
+  if (!product.value) return undefined
+  return product.value.productItem.find(
+    (item: ProductItem) => item.color === selectedColor.value && item.size === selectedSize.value
   )
 })
 
@@ -285,19 +298,59 @@ const goToTryOn = () => {
   }
 }
 
-const addToCart = () => {
-  // Add to cart logic here
-  console.log('Add to cart:', {
-    product: product.value,
-    color: selectedColor.value,
-    size: selectedSize.value
+const addToCart = async () => {
+  if (!authStore.identified) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Cần đăng nhập',
+      detail: 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng',
+      life: 3000
+    })
+    router.push({ name: 'login-screen' })
+    return
+  }
+
+  const variant = selectedVariant.value
+
+  if (!variant || !variant.id) {
+    toast.add({
+      severity: 'error',
+      summary: 'Không thể thêm vào giỏ hàng',
+      detail: 'Vui lòng chọn màu sắc và kích thước hợp lệ',
+      life: 3000
+    })
+    return
+  }
+
+  const existingItem = cartStore.cartItems.find(
+    (cartItem) => cartItem.productItem.id === variant.id
+  )
+
+  if (existingItem) {
+    await cartStore.updateCartItem({
+      cartItemId: existingItem.id,
+      quantity: existingItem.quantity + 1
+    })
+  } else {
+    await cartStore.addToCart({
+      productItemId: variant.id,
+      quantity: 1
+    })
+  }
+
+  toast.add({
+    severity: 'success',
+    summary: 'Thành công',
+    detail: 'Sản phẩm đã được thêm vào giỏ hàng',
+    life: 3000
   })
-  // You can implement your cart store logic here
-  alert('Đã thêm vào giỏ hàng!')
 }
 
-onMounted(() => {
-  loadProduct()
+onMounted(async () => {
+  await Promise.all([
+    loadProduct(),
+    authStore.identified ? cartStore.getCart() : Promise.resolve()
+  ])
 })
 </script>
 
