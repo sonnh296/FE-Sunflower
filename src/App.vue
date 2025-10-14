@@ -23,42 +23,6 @@
 
 <script setup lang="ts">
 import Toast from 'primevue/toast'
-import { useNotificationStore } from '@/stores/notificationStore'
-import { onMounted, watchEffect } from 'vue'
-import { useToast } from 'primevue/usetoast'
-import { ACCESS_TOKEN_KEY } from './constants/storage'
-import Cookies from 'js-cookie'
 import ConfirmDialog from 'primevue/confirmdialog'
 import Button from 'primevue/button'
-import { useLocationStore } from './stores/locationStore'
-import { NOTIFICATION_HUB } from './constants/env'
-
-const toast = useToast()
-
-const notificationStore = useNotificationStore()
-const locationStore = useLocationStore()
-// watchEffect(() => {
-//   const newNotification = notificationStore.latestNotification
-//   if (newNotification) {
-//     toast.add({
-//       severity: 'secondary',
-//       summary: newNotification.title,
-//       detail: newNotification.content,
-//       group: 'bl'
-//     })
-//   }
-// })
-
-// onMounted(async () => {
-//   const accessToken = Cookies.get(ACCESS_TOKEN_KEY)
-//   if (accessToken) {
-//     notificationStore.startConnection(NOTIFICATION_HUB)
-//   }
-//   if (!locationStore.enableLocation) {
-//     await locationStore.getCurrentLocation()
-//   }
-//   if (locationStore.allProvince.length === 0) {
-//     await locationStore.getAllProvinces()
-//   }
-// })
 </script>

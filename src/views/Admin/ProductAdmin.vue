@@ -101,47 +101,134 @@
     <!-- Create/Edit Product Dialog -->
     <Dialog
       v-model:visible="productDialog"
-      :header="editMode ? 'Sửa sản phẩm' : 'Thêm sản phẩm mới'"
       :modal="true"
-      class="p-fluid"
-      style="width: 500px"
+      :closable="true"
+      :draggable="false"
+      class="product-dialog"
+      style="width: 650px; max-width: 95vw"
     >
-      <div class="formgrid grid gap-4">
-        <div class="col-12">
-          <label for="name" class="font-semibold">Tên sản phẩm</label>
-          <InputText
-            id="name"
-            v-model="editedProduct.name"
-            required
-            placeholder="Nhập tên sản phẩm"
-          />
+      <template #header>
+        <div class="flex items-center gap-3">
+          <div
+            class="flex items-center justify-center w-12 h-12 rounded-full"
+            :class="
+              editMode ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'
+            "
+          >
+            <i :class="editMode ? 'pi pi-pencil' : 'pi pi-plus'" class="text-xl"></i>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800 m-0">
+              {{ editMode ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới' }}
+            </h2>
+            <p class="text-sm text-gray-500 m-0 mt-1">
+              {{ editMode ? 'Cập nhật thông tin sản phẩm' : 'Điền thông tin để tạo sản phẩm mới' }}
+            </p>
+          </div>
+        </div>
+      </template>
+
+      <div class="space-y-6 py-4">
+        <!-- Product Name Field -->
+        <div class="form-field">
+          <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
+            <i class="pi pi-tag text-gray-400 mr-2"></i>
+            Tên sản phẩm
+            <span class="text-red-500 ml-1">*</span>
+          </label>
+          <div class="relative">
+            <InputText
+              id="name"
+              v-model="editedProduct.name"
+              required
+              placeholder="Ví dụ: Áo sơ mi công sở cao cấp"
+              class="w-full p-3 border-2 rounded-lg focus:border-blue-500 transition-all"
+              :class="!editedProduct.name ? 'border-gray-300' : 'border-green-400'"
+            />
+            <i
+              v-if="editedProduct.name"
+              class="pi pi-check-circle absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500"
+            ></i>
+          </div>
+          <small class="text-gray-500 mt-1 block">
+            Nhập tên rõ ràng, dễ hiểu để khách hàng dễ tìm kiếm
+          </small>
         </div>
 
-        <div class="col-12">
-          <label for="description" class="font-semibold">Mô tả</label>
-          <Textarea
-            id="description"
-            v-model="editedProduct.description"
-            rows="5"
-            placeholder="Nhập mô tả sản phẩm"
-          />
+        <!-- Product Description Field -->
+        <div class="form-field">
+          <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
+            <i class="pi pi-align-left text-gray-400 mr-2"></i>
+            Mô tả sản phẩm
+            <span class="text-red-500 ml-1">*</span>
+          </label>
+          <div class="relative">
+            <Textarea
+              id="description"
+              v-model="editedProduct.description"
+              rows="6"
+              placeholder="Mô tả chi tiết về sản phẩm: chất liệu, màu sắc, kích thước, tính năng đặc biệt..."
+              class="w-full p-3 border-2 rounded-lg focus:border-blue-500 transition-all resize-none"
+              :class="!editedProduct.description ? 'border-gray-300' : 'border-green-400'"
+            />
+          </div>
+          <div class="flex justify-between items-center mt-1">
+            <small class="text-gray-500">
+              Mô tả chi tiết giúp khách hàng hiểu rõ hơn về sản phẩm
+            </small>
+            <small
+              class="text-gray-400"
+              :class="
+                editedProduct.description && editedProduct.description.length > 200
+                  ? 'text-orange-500 font-semibold'
+                  : ''
+              "
+            >
+              {{ editedProduct.description?.length || 0 }} ký tự
+            </small>
+          </div>
+        </div>
+
+        <!-- Info Box -->
+        <div
+          class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 rounded-lg p-4"
+        >
+          <div class="flex items-start gap-3">
+            <i class="pi pi-info-circle text-blue-600 text-xl mt-0.5"></i>
+            <div>
+              <p class="font-semibold text-blue-900 text-sm mb-1">Lưu ý quan trọng</p>
+              <ul class="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                <li>Sau khi tạo, bạn có thể thêm hình ảnh cho sản phẩm</li>
+                <li>Tên và mô tả có thể chỉnh sửa bất cứ lúc nào</li>
+                <li>Hình ảnh đẹp sẽ thu hút khách hàng hơn</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
       <template #footer>
-        <Button
-          label="Hủy"
-          icon="pi pi-times"
-          class="p-button-text"
-          @click="productDialog = false"
-        />
-        <Button
-          :label="editMode ? 'Cập nhật' : 'Tạo mới'"
-          icon="pi pi-check"
-          class="p-button-success"
-          @click="saveProduct"
-          :loading="productStore.creating || productStore.updating"
-        />
+        <div class="flex justify-between items-center gap-3 pt-4 border-t">
+          <Button
+            label="Hủy bỏ"
+            icon="pi pi-times"
+            class="p-button-text p-button-secondary flex-1 !py-3 hover:!bg-gray-100"
+            @click="productDialog = false"
+          />
+          <Button
+            :label="editMode ? 'Cập nhật' : 'Tạo sản phẩm'"
+            :icon="editMode ? 'pi pi-check' : 'pi pi-plus'"
+            class="flex-1 !py-3"
+            :class="
+              editMode
+                ? 'p-button-primary !bg-blue-600 hover:!bg-blue-700'
+                : 'p-button-success !bg-green-600 hover:!bg-green-700'
+            "
+            @click="saveProduct"
+            :loading="productStore.creating || productStore.updating"
+            :disabled="!editedProduct.name || !editedProduct.description"
+          />
+        </div>
       </template>
     </Dialog>
 
@@ -595,5 +682,94 @@ onMounted(async () => {
 
 :deep(.p-fileupload-choose) {
   width: 100%;
+}
+
+/* Product Dialog Enhancements */
+:deep(.product-dialog .p-dialog-header) {
+  padding: 1.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(to bottom, #ffffff, #f9fafb);
+}
+
+:deep(.product-dialog .p-dialog-content) {
+  padding: 0 1.75rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+:deep(.product-dialog .p-dialog-footer) {
+  padding: 1.5rem 1.75rem;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+/* Form Field Styles */
+.form-field {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Input Focus Effects */
+:deep(.p-inputtext:focus) {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6 !important;
+}
+
+:deep(.p-inputtextarea:focus) {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6 !important;
+}
+
+/* Button Hover Effects */
+:deep(.p-button:not(.p-button-text):hover) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+:deep(.p-button:active) {
+  transform: translateY(0);
+}
+
+/* Scrollbar Styling */
+:deep(.p-dialog-content)::-webkit-scrollbar {
+  width: 8px;
+}
+
+:deep(.p-dialog-content)::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+:deep(.p-dialog-content)::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+:deep(.p-dialog-content)::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  :deep(.product-dialog) {
+    width: 95vw !important;
+  }
+
+  :deep(.product-dialog .p-dialog-header),
+  :deep(.product-dialog .p-dialog-content),
+  :deep(.product-dialog .p-dialog-footer) {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 </style>

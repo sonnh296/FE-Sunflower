@@ -90,6 +90,126 @@
       </div>
     </div>
 
+    <!-- Featured Products Showcase -->
+    <div class="w-full py-24 bg-gradient-to-b from-gray-50 to-white">
+      <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-light text-gray-900 mb-4 tracking-tight">
+            Sản phẩm nổi bật
+          </h2>
+          <div class="w-24 h-px bg-gray-300 mx-auto mb-6"></div>
+          <p class="text-gray-600 text-lg font-light max-w-2xl mx-auto">
+            Những thiết kế được yêu thích nhất với mức giá đặc biệt
+          </p>
+        </div>
+
+        <!-- Products Grid -->
+        <div v-if="isLoadingProducts" class="flex justify-center items-center py-20">
+          <i class="pi pi-spin pi-spinner text-4xl text-gray-400"></i>
+          <span class="ml-4 text-gray-600">Đang tải sản phẩm...</span>
+        </div>
+
+        <div v-else-if="featuredProducts.length === 0" class="text-center py-20">
+          <i class="pi pi-inbox text-6xl text-gray-300 mb-4"></i>
+          <p class="text-gray-500 text-lg">Chưa có sản phẩm nào</p>
+        </div>
+
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Dynamic Products from API -->
+          <div
+            v-for="(product, index) in featuredProducts.slice(0, 5)"
+            :key="product.id"
+            class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
+            @click="navigateToProduct(product)"
+          >
+            <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
+              <img
+                v-if="product.thumbnailUrl"
+                :src="product.thumbnailUrl"
+                :alt="product.name"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div v-else class="w-full h-full flex items-center justify-center bg-gray-200">
+                <i class="pi pi-image text-6xl text-gray-400"></i>
+              </div>
+              <div
+                v-if="index === 0"
+                class="absolute top-4 left-4 bg-rose-500 text-white px-3 py-1 rounded-full text-sm font-medium"
+              >
+                Best Seller
+              </div>
+              <div
+                v-else-if="index === 1"
+                class="absolute top-4 left-4 bg-amber-500 text-white px-3 py-1 rounded-full text-sm font-medium"
+              >
+                Bộ Sưu Tập
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-2">
+                <span
+                  :class="[
+                    'text-xs font-medium px-2.5 py-0.5 rounded-full',
+                    index % 5 === 0
+                      ? 'bg-pink-100 text-pink-800'
+                      : index % 5 === 1
+                        ? 'bg-blue-100 text-blue-800'
+                        : index % 5 === 2
+                          ? 'bg-purple-100 text-purple-800'
+                          : index % 5 === 3
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-rose-100 text-rose-800'
+                  ]"
+                >
+                  {{ product.name }}
+                </span>
+              </div>
+              <h3 class="font-semibold text-xl text-gray-900 mb-3">
+                {{ product.name }}
+              </h3>
+              <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                {{ product.description || 'Sản phẩm chất lượng cao, thiết kế đẹp mắt' }}
+              </p>
+              <Button
+                label="Xem chi tiết"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                :class="[
+                  'w-full !text-white !border-0 !font-medium !py-3 !rounded-xl !transition-all !duration-300',
+                  index % 5 === 0
+                    ? '!bg-pink-500 hover:!bg-pink-600'
+                    : index % 5 === 1
+                      ? '!bg-blue-500 hover:!bg-blue-600'
+                      : index % 5 === 2
+                        ? '!bg-purple-500 hover:!bg-purple-600'
+                        : index % 5 === 3
+                          ? '!bg-amber-500 hover:!bg-amber-600'
+                          : '!bg-rose-500 hover:!bg-rose-600'
+                ]"
+                @click.stop="navigateToProduct(product)"
+              />
+            </div>
+          </div>
+
+          <!-- More Options Card -->
+          <div
+            v-if="featuredProducts.length > 0"
+            class="group bg-gradient-to-br from-gray-900 to-gray-700 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 flex items-center justify-center p-8 cursor-pointer"
+            @click="scrollToNextSection"
+          >
+            <div class="text-center text-white">
+              <i
+                class="pi pi-arrow-right text-5xl mb-4 group-hover:translate-x-2 transition-transform duration-300"
+              ></i>
+              <h3 class="font-semibold text-2xl mb-2">Khám phá thêm</h3>
+              <p class="text-gray-300 text-sm">Xem toàn bộ bộ sưu tập</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- YouTube Video Section -->
     <div class="w-full py-24 bg-gradient-to-b from-white to-gray-50">
       <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
@@ -279,126 +399,6 @@
             class="!bg-gradient-to-r !from-pink-500 !via-purple-500 !to-indigo-500 hover:!from-pink-600 hover:!via-purple-600 hover:!to-indigo-600 !text-white !border-0 !font-semibold !py-4 !px-10 !text-lg !rounded-full !shadow-2xl hover:!shadow-3xl !transition-all !duration-500 hover:!scale-110 hover:!-translate-y-1"
             @click="scrollToNextSection"
           />
-        </div>
-      </div>
-    </div>
-
-    <!-- Featured Products Showcase -->
-    <div class="w-full py-24 bg-gradient-to-b from-gray-50 to-white">
-      <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
-        <!-- Section Header -->
-        <div class="text-center mb-16">
-          <h2 class="text-4xl md:text-5xl font-light text-gray-900 mb-4 tracking-tight">
-            Sản phẩm nổi bật
-          </h2>
-          <div class="w-24 h-px bg-gray-300 mx-auto mb-6"></div>
-          <p class="text-gray-600 text-lg font-light max-w-2xl mx-auto">
-            Những thiết kế được yêu thích nhất với mức giá đặc biệt
-          </p>
-        </div>
-
-        <!-- Products Grid -->
-        <div v-if="isLoadingProducts" class="flex justify-center items-center py-20">
-          <i class="pi pi-spin pi-spinner text-4xl text-gray-400"></i>
-          <span class="ml-4 text-gray-600">Đang tải sản phẩm...</span>
-        </div>
-
-        <div v-else-if="featuredProducts.length === 0" class="text-center py-20">
-          <i class="pi pi-inbox text-6xl text-gray-300 mb-4"></i>
-          <p class="text-gray-500 text-lg">Chưa có sản phẩm nào</p>
-        </div>
-
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- Dynamic Products from API -->
-          <div
-            v-for="(product, index) in featuredProducts.slice(0, 5)"
-            :key="product.id"
-            class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
-            @click="navigateToProduct(product)"
-          >
-            <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
-              <img
-                v-if="product.thumbnailUrl"
-                :src="product.thumbnailUrl"
-                :alt="product.name"
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              />
-              <div v-else class="w-full h-full flex items-center justify-center bg-gray-200">
-                <i class="pi pi-image text-6xl text-gray-400"></i>
-              </div>
-              <div
-                v-if="index === 0"
-                class="absolute top-4 left-4 bg-rose-500 text-white px-3 py-1 rounded-full text-sm font-medium"
-              >
-                Best Seller
-              </div>
-              <div
-                v-else-if="index === 1"
-                class="absolute top-4 left-4 bg-amber-500 text-white px-3 py-1 rounded-full text-sm font-medium"
-              >
-                Bộ Sưu Tập
-              </div>
-            </div>
-            <div class="p-6">
-              <div class="flex items-center gap-2 mb-2">
-                <span
-                  :class="[
-                    'text-xs font-medium px-2.5 py-0.5 rounded-full',
-                    index % 5 === 0
-                      ? 'bg-pink-100 text-pink-800'
-                      : index % 5 === 1
-                        ? 'bg-blue-100 text-blue-800'
-                        : index % 5 === 2
-                          ? 'bg-purple-100 text-purple-800'
-                          : index % 5 === 3
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-rose-100 text-rose-800'
-                  ]"
-                >
-                  {{ product.name }}
-                </span>
-              </div>
-              <h3 class="font-semibold text-xl text-gray-900 mb-3">
-                {{ product.name }}
-              </h3>
-              <p class="text-gray-600 text-sm mb-4 line-clamp-2">
-                {{ product.description || 'Sản phẩm chất lượng cao, thiết kế đẹp mắt' }}
-              </p>
-              <Button
-                label="Xem chi tiết"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                :class="[
-                  'w-full !text-white !border-0 !font-medium !py-3 !rounded-xl !transition-all !duration-300',
-                  index % 5 === 0
-                    ? '!bg-pink-500 hover:!bg-pink-600'
-                    : index % 5 === 1
-                      ? '!bg-blue-500 hover:!bg-blue-600'
-                      : index % 5 === 2
-                        ? '!bg-purple-500 hover:!bg-purple-600'
-                        : index % 5 === 3
-                          ? '!bg-amber-500 hover:!bg-amber-600'
-                          : '!bg-rose-500 hover:!bg-rose-600'
-                ]"
-                @click.stop="navigateToProduct(product)"
-              />
-            </div>
-          </div>
-
-          <!-- More Options Card -->
-          <div
-            v-if="featuredProducts.length > 0"
-            class="group bg-gradient-to-br from-gray-900 to-gray-700 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 flex items-center justify-center p-8 cursor-pointer"
-            @click="scrollToNextSection"
-          >
-            <div class="text-center text-white">
-              <i
-                class="pi pi-arrow-right text-5xl mb-4 group-hover:translate-x-2 transition-transform duration-300"
-              ></i>
-              <h3 class="font-semibold text-2xl mb-2">Khám phá thêm</h3>
-              <p class="text-gray-300 text-sm">Xem toàn bộ bộ sưu tập</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>

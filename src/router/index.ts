@@ -1,7 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/stores/authStore'
-import { ACCESS_TOKEN_KEY } from '@/constants/storage'
-import Cookies from 'js-cookie'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,19 +19,9 @@ const router = createRouter({
           component: () => import('../views/Auth/LoginScreen.vue')
         },
         {
-          path: 'search',
-          name: 'guest-search',
-          component: () => import('../views/Guest/GuestSearch.vue')
-        },
-        {
           path: 'post/:id',
           name: 'post-detail-public',
           component: () => import('../views/Guest/PostBlog.vue')
-        },
-        {
-          path: 'field/:id',
-          name: 'public-field',
-          component: () => import('../views/Guest/PublicField.vue')
         },
         {
           path: 'about',
@@ -96,59 +83,14 @@ const router = createRouter({
           component: () => import('../views/User/ForgetPassword.vue')
         },
         {
-          path: 'field/:id',
-          name: 'user-field',
-          component: () => import('../views/User/FieldDetail.vue')
-        },
-        {
           path: 'info',
           name: 'user-info',
           component: () => import('../views/User/ProfileUser.vue')
         },
         {
-          path: 'success-payment',
-          name: 'success-payment',
-          component: () => import('../views/User/SuccessPayment.vue')
-        },
-        {
-          path: 'booking-history',
-          name: 'booking-history',
-          component: () => import('../views/User/BookingHistory.vue')
-        },
-        {
           path: 'post/:id',
           name: 'user-post-detail',
           component: () => import('../views/User/BlogPost.vue')
-        },
-        {
-          path: 'cancel-payment',
-          name: 'cancel-payment',
-          component: () => import('../views/User/CancelPayment.vue')
-        },
-        {
-          path: 'find-opponent',
-          name: 'find-opponent',
-          component: () => import('../views/User/FindOpponent.vue')
-        },
-        {
-          path: 'find-opponent/mine/:page',
-          name: 'find-opponent-mine',
-          component: () => import('../views/User/FindOpponent.vue')
-        },
-        {
-          path: 'find-opponent/:id',
-          name: 'find-opponent-post',
-          component: () => import('../views/User/OpponentFindingPost.vue')
-        },
-        {
-          path: 'payment-history',
-          name: 'paymment-history',
-          component: () => import('../views/User/PaymentHistory.vue')
-        },
-        {
-          path: 'favorite-fields',
-          name: 'favorite-fields',
-          component: () => import('../views/User/FavoriteFielde.vue')
         }
       ]
     },
@@ -173,26 +115,6 @@ const router = createRouter({
           path: 'products/:id',
           name: 'admin-products',
           component: () => import('../views/Admin/ProductAdmin.vue')
-        },
-        {
-          path: 'fields',
-          name: 'admin-fields',
-          component: () => import('../views/Admin/fields/AdminFields.vue')
-        },
-        {
-          path: 'fields/:id',
-          name: 'field-edit',
-          component: () => import('../views/Admin/fields/FieldEdit.vue')
-        },
-        {
-          path: 'create-field',
-          name: 'create-field',
-          component: () => import('../views/Admin/fields/FieldCreate.vue')
-        },
-        {
-          path: 'reports',
-          name: 'list-reports',
-          component: () => import('../views/Admin/fields/ReportField.vue')
         },
         {
           path: 'users',
@@ -246,34 +168,9 @@ const router = createRouter({
       redirect: '/404'
     }
   ],
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior() {
     return { top: 0 }
   }
 })
-
-// router.beforeEach(async (to, from) => {
-//   const authStore = useAuthStore()
-
-//   if (Cookies.get(ACCESS_TOKEN_KEY)) {
-//     await authStore.getMe()
-//     if (authStore.identity && to.name == 'home') {
-//       switch (authStore.identity.roleName) {
-//         case 'Player':
-//           return { name: 'user-home' }
-//         case 'Field':
-//           return { name: 'owner-home' }
-//         case 'Admin':
-//           return { name: 'admin-home' }
-//         case 'Staff':
-//           return { name: 'staff-home' }
-//       }
-//     }
-//   }
-
-//   if (!authStore.identity && authStore.identified && to.name !== 'home') {
-//     console.log('no identity')
-//     return { name: 'home' }
-//   }
-// })
 
 export default router

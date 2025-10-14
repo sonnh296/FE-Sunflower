@@ -23,10 +23,6 @@ import router from '@/router'
 import type { BadRequestResponse } from '@/api/types/BadRequestError'
 import type { LoginResponse } from '@/api/types/LoginResponse'
 import { useLocalStorage } from '@vueuse/core'
-import { useNotificationStore } from './notificationStore'
-import { NOTIFICATION_HUB } from '@/constants/env'
-import { usePaymentStoreUser } from './paymentStoreUser'
-// import type { BadRequestError } from '@/models/BadRequestError'
 
 export interface State {
   loginError: boolean

@@ -36,8 +36,6 @@
       </template>
     </Menubar>
   </div>
-
-  <LocationInfoDialog :open="openLocationInfo" @close="openLocationInfo = false" />
 </template>
 
 <script setup lang="ts">
@@ -47,7 +45,6 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/authStore'
 import { onClickOutside } from '@vueuse/core'
-import LocationInfoDialog from '../dialogs/LocationInfoDialog.vue'
 import Button from 'primevue/button'
 const { t } = useI18n()
 
@@ -55,7 +52,6 @@ const authStore = useAuthStore()
 
 const isScrolled = ref(false)
 const openProfile = ref(false)
-const openLocationInfo = ref(false)
 const toggleProfile = ref(null)
 onClickOutside(toggleProfile, () => (openProfile.value = false))
 
@@ -64,11 +60,6 @@ const items = ref([
     label: t('sidebar.user.home'),
     icon: 'pi pi-home',
     command: () => navigate('/home')
-  },
-  {
-    label: t('sidebar.user.bookingHistory'),
-    icon: 'pi pi-history',
-    command: () => navigate('/booking-history')
   }
 ])
 
