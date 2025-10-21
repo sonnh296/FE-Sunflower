@@ -18,8 +18,6 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/vue-fontawesome": "^3.0.8",
-    "@goongmaps/goong-js": "^1.0.9",
-    "@goongmaps/goong-sdk": "^1.0.7",
     "@mapbox/polyline": "^1.2.1",
     "@microsoft/signalr": "^8.0.0",
     "@toast-ui/calendar": "^2.1.3",

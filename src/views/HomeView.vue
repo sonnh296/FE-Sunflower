@@ -210,6 +210,9 @@
       </div>
     </div>
 
+    <!-- Fashion Advisor Section -->
+    <FashionAdvisorForm />
+
     <!-- YouTube Video Section -->
     <div class="w-full py-24 bg-gradient-to-b from-white to-gray-50">
       <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
@@ -548,6 +551,7 @@ import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import { getProductsApi } from '@/api/productApi'
 import type { ProductListItem } from '@/types/Product'
+import FashionAdvisorForm from '@/components/FashionAdvisorForm.vue'
 
 const router = useRouter()
 
