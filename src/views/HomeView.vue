@@ -65,14 +65,37 @@
               </span>
             </div>
 
-            <div class="pt-4 animate-fade-in-up animation-delay-400">
-              <Button
-                label="Khám phá ngay"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                class="!bg-white !text-gray-900 hover:!bg-gray-100 !border-0 !font-semibold !py-4 !px-8 !text-lg !rounded-full !shadow-2xl hover:!shadow-3xl !transition-all !duration-300 hover:!scale-105"
-                @click="scrollToNextSection"
-              />
+            <div class="pt-4 flex flex-col gap-4 animate-fade-in-up animation-delay-400">
+              <!-- Main Action Buttons -->
+              <div class="flex flex-col sm:flex-row gap-4">
+                <Button
+                  label="Khám phá ngay"
+                  icon="pi pi-arrow-right"
+                  iconPos="right"
+                  class="!bg-white !text-gray-900 hover:!bg-gray-100 !border-0 !font-semibold !py-4 !px-8 !text-lg !rounded-full !shadow-2xl hover:!shadow-3xl !transition-all !duration-300 hover:!scale-105"
+                  @click="scrollToProducts"
+                />
+                <Button
+                  label="Xem bộ sưu tập"
+                  icon="pi pi-images"
+                  iconPos="right"
+                  class="!bg-transparent !text-white hover:!bg-white/10 !border-2 !border-white !font-semibold !py-4 !px-8 !text-lg !rounded-full !shadow-xl !transition-all !duration-300 hover:!scale-105"
+                  @click="navigateToCollections"
+                />
+              </div>
+
+              <!-- AI Fashion Advisor Button -->
+              <div class="flex flex-col sm:flex-row gap-3 items-center">
+                <Button
+                  label="Tư vấn thời trang AI"
+                  icon="pi pi-sparkles"
+                  class="!bg-gradient-to-r !from-purple-500 !to-pink-500 hover:!from-purple-600 hover:!to-pink-600 !text-white !border-0 !font-semibold !py-3 !px-6 !text-base !rounded-full !shadow-xl hover:!shadow-2xl !transition-all !duration-300 hover:!scale-105"
+                  @click="showFashionAdvisor"
+                />
+                <span class="text-white/70 text-sm italic">
+                  Nhận gợi ý phù hợp với dáng người của bạn
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -91,7 +114,7 @@
     </div>
 
     <!-- Featured Products Showcase -->
-    <div class="w-full py-24 bg-gradient-to-b from-gray-50 to-white">
+    <div id="products-section" class="w-full py-24 bg-gradient-to-b from-gray-50 to-white">
       <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
         <!-- Section Header -->
         <div class="text-center mb-16">
@@ -206,202 +229,6 @@
               <p class="text-gray-300 text-sm">Xem toàn bộ bộ sưu tập</p>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Fashion Advisor Section -->
-    <FashionAdvisorForm />
-
-    <!-- YouTube Video Section -->
-    <div class="w-full py-24 bg-gradient-to-b from-white to-gray-50">
-      <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
-        <!-- Section Header -->
-        <div class="text-center mb-12">
-          <h2 class="text-4xl md:text-5xl font-light text-gray-900 mb-4 tracking-tight">
-            Khám phá bộ sưu tập
-          </h2>
-          <div class="w-24 h-px bg-gray-300 mx-auto mb-6"></div>
-          <p class="text-gray-600 text-lg font-light max-w-2xl mx-auto">
-            Xem video giới thiệu các sản phẩm mới nhất của chúng tôi
-          </p>
-        </div>
-
-        <!-- YouTube Video Embed -->
-        <div class="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl">
-          <iframe
-            src="https://www.youtube.com/embed/SrhbKG6J70Q?autoplay=1&mute=1&loop=1&playlist=SrhbKG6J70Q&controls=1&rel=0&modestbranding=1"
-            class="absolute inset-0 w-full h-full border-0"
-            allow="autoplay; encrypted-media; picture-in-picture"
-            allowfullscreen
-            title="Elsun Fashion Collection"
-          ></iframe>
-        </div>
-      </div>
-    </div>
-
-    <!-- Creative Editorial Gallery -->
-    <div class="w-full py-24 bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden">
-      <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
-        <!-- Section Header -->
-        <div class="text-center mb-20">
-          <h2 class="text-5xl md:text-6xl font-light text-gray-900 mb-6 tracking-tight">
-            Phong cách
-            <span
-              class="font-serif italic text-gradient bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent"
-              >Elsun</span
-            >
-          </h2>
-          <div class="flex items-center justify-center gap-3 mb-6">
-            <div class="w-12 h-px bg-gradient-to-r from-transparent to-gray-300"></div>
-            <div class="w-3 h-3 rounded-full bg-gradient-to-r from-pink-400 to-purple-400"></div>
-            <div class="w-12 h-px bg-gradient-to-l from-transparent to-gray-300"></div>
-          </div>
-          <p class="text-gray-600 text-lg font-light max-w-2xl mx-auto">
-            Khám phá vẻ đẹp thanh lịch và năng động trong từng thiết kế
-          </p>
-        </div>
-
-        <!-- Creative Bento-Style Grid -->
-        <div class="grid grid-cols-12 gap-4 md:gap-6">
-          <!-- Large Featured Image - Top Left -->
-          <div class="col-span-12 md:col-span-7 lg:col-span-5 row-span-2">
-            <div
-              class="group relative cursor-pointer overflow-hidden rounded-3xl bg-gray-100 shadow-xl hover:shadow-2xl transition-all duration-700 h-full min-h-[350px]"
-            >
-              <img
-                src="/sample1.jpeg"
-                alt="Featured Collection 1"
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
-              >
-                <div class="absolute bottom-6 left-6 text-white">
-                  <p class="text-sm font-light mb-1 tracking-wide">NEW COLLECTION</p>
-                  <h3 class="text-2xl font-semibold">Thanh Lịch</h3>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Medium Image - Top Right -->
-          <div class="col-span-6 md:col-span-5 lg:col-span-4">
-            <div
-              class="group relative cursor-pointer overflow-hidden rounded-2xl bg-gray-100 shadow-lg hover:shadow-2xl transition-all duration-700 h-64 md:h-80"
-            >
-              <img
-                src="/sample2.jpeg"
-                alt="Featured Collection 2"
-                class="w-full h-full object-cover group-hover:scale-110 group-hover:rotate-2 transition-all duration-1000 ease-out"
-              />
-              <div
-                class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500 flex items-center justify-center"
-              >
-                <div
-                  class="transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300"
-                >
-                  <i class="pi pi-heart text-white text-3xl"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Small Square - Top Far Right -->
-          <div class="col-span-6 md:col-span-12 lg:col-span-3">
-            <div
-              class="group relative cursor-pointer overflow-hidden rounded-2xl bg-gradient-to-br from-pink-100 to-purple-100 shadow-lg hover:shadow-2xl transition-all duration-700 h-64 md:h-80"
-            >
-              <img
-                src="/sample3.jpeg"
-                alt="Featured Collection 3"
-                class="w-full h-full object-cover group-hover:scale-125 transition-transform duration-1000 ease-out mix-blend-overlay"
-              />
-              <div
-                class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-gray-900"
-              >
-                TRENDING
-              </div>
-            </div>
-          </div>
-
-          <!-- Wide Rectangle - Middle -->
-          <div class="col-span-12 md:col-span-7 lg:col-span-7">
-            <div
-              class="group relative cursor-pointer overflow-hidden rounded-3xl bg-gray-100 shadow-lg hover:shadow-2xl transition-all duration-700 h-56 md:h-72"
-            >
-              <img
-                src="/sample4.jpeg"
-                alt="Featured Collection 4"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-all duration-500"
-              ></div>
-            </div>
-          </div>
-
-          <!-- Tall Rectangle - Right -->
-          <div class="col-span-6 md:col-span-5 lg:col-span-5 row-span-2">
-            <div
-              class="group relative cursor-pointer overflow-hidden rounded-3xl bg-gray-100 shadow-xl hover:shadow-2xl transition-all duration-700 h-full min-h-[400px]"
-            >
-              <img
-                src="/sample5.jpeg"
-                alt="Featured Collection 5"
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
-              />
-              <div
-                class="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/50 to-transparent p-6 opacity-0 group-hover:opacity-100 transition-all duration-500"
-              >
-                <span
-                  class="inline-block bg-white text-gray-900 px-4 py-2 rounded-full text-sm font-medium"
-                >
-                  ✨ Best Seller
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Medium Bottom Left -->
-          <div class="col-span-6 md:col-span-7 lg:col-span-4">
-            <div
-              class="group relative cursor-pointer overflow-hidden rounded-2xl bg-gray-100 shadow-lg hover:shadow-2xl transition-all duration-700 h-56"
-            >
-              <img
-                src="/sample6.jpeg"
-                alt="Featured Collection 6"
-                class="w-full h-full object-cover group-hover:scale-110 group-hover:-rotate-2 transition-all duration-1000 ease-out"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-indigo-500/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
-              ></div>
-            </div>
-          </div>
-
-          <!-- Decorative Text Box -->
-          <div class="col-span-12 md:col-span-5 lg:col-span-3">
-            <div
-              class="group relative cursor-pointer overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 to-gray-700 shadow-lg hover:shadow-2xl transition-all duration-700 h-56 flex items-center justify-center p-8 hover:scale-105"
-            >
-              <div class="text-center text-white">
-                <i class="pi pi-sparkles text-4xl mb-4 text-pink-300"></i>
-                <h4 class="text-2xl font-serif italic mb-2">Mới mỗi ngày</h4>
-                <p class="text-gray-300 text-sm font-light">Cập nhật xu hướng</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Call to Action -->
-        <div class="text-center mt-20">
-          <Button
-            label="Xem toàn bộ bộ sưu tập"
-            icon="pi pi-arrow-right"
-            iconPos="right"
-            class="!bg-gradient-to-r !from-pink-500 !via-purple-500 !to-indigo-500 hover:!from-pink-600 hover:!via-purple-600 hover:!to-indigo-600 !text-white !border-0 !font-semibold !py-4 !px-10 !text-lg !rounded-full !shadow-2xl hover:!shadow-3xl !transition-all !duration-500 hover:!scale-110 hover:!-translate-y-1"
-            @click="scrollToNextSection"
-          />
         </div>
       </div>
     </div>
@@ -543,6 +370,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Fashion Advisor Dialog -->
+  <FashionAdvisorDialog v-model:visible="showAdvisorDialog" />
 </template>
 
 <script setup lang="ts">
@@ -551,13 +381,16 @@ import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import { getProductsApi } from '@/api/productApi'
 import type { ProductListItem } from '@/types/Product'
-import FashionAdvisorForm from '@/components/FashionAdvisorForm.vue'
+import FashionAdvisorDialog from '@/components/dialogs/FashionAdvisorDialog.vue'
 
 const router = useRouter()
 
 // Products fetched from API
 const featuredProducts = ref<ProductListItem[]>([])
 const isLoadingProducts = ref(false)
+
+// Fashion Advisor Dialog
+const showAdvisorDialog = ref(false)
 
 // Fetch products from API
 const fetchProducts = async () => {
@@ -585,10 +418,25 @@ const scrollToNextSection = () => {
   })
 }
 
+const scrollToProducts = () => {
+  const productsSection = document.getElementById('products-section')
+  if (productsSection) {
+    productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
 const navigateToProduct = (product: ProductListItem) => {
   if (product.id) {
     router.push({ name: 'product-guest', params: { id: product.id } })
   }
+}
+
+const navigateToCollections = () => {
+  router.push({ name: 'collections' })
+}
+
+const showFashionAdvisor = () => {
+  showAdvisorDialog.value = true
 }
 
 // Fetch products on component mount

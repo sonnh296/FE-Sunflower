@@ -11,6 +11,12 @@
       <div class="flex flex-row justify-end items-end space-x-6">
         <span
           class="cursor-pointer text-gray-700 hover:text-pink-500 font-medium"
+          @click="$router.push({ name: 'collections' })"
+        >
+          Bộ sưu tập
+        </span>
+        <span
+          class="cursor-pointer text-gray-700 hover:text-pink-500 font-medium"
           @click="$router.push({ name: 'about' })"
         >
           Giới thiệu
