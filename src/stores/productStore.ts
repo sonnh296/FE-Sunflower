@@ -51,7 +51,12 @@ export const useProductStore = defineStore('productStore', {
 
     async createProduct(product: ProductCreateRequest) {
       this.creating = true
-      const { data } = await crateProductApi(product)
+      // Ensure productItem is at least an empty array to avoid backend errors
+      const productData = {
+        ...product,
+        productItem: product.productItem || []
+      }
+      const { data } = await crateProductApi(productData)
       this.creating = false
       return data
     },

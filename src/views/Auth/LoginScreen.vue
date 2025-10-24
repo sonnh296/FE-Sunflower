@@ -74,7 +74,7 @@ onMounted(async () => {
       })
 
       // Clear the code from URL
-      router.replace({ name: 'auth', query: {} })
+      router.replace({ name: 'login-screen', query: {} })
     }
   }
 })

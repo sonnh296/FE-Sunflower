@@ -64,7 +64,7 @@
             <Button
               icon="pi pi-pencil"
               class="p-button-sm p-button-warning"
-              v-tooltip.top="'Sửa'"
+              v-tooltip.top="'Sửa thông tin'"
               @click="editProduct(slotProps.data)"
             />
             <Button
@@ -419,7 +419,7 @@ const openNewProductDialog = () => {
   productDialog.value = true
 }
 
-const editProduct = (product: Product) => {
+const editProduct = async (product: Product) => {
   editMode.value = true
   editedProduct.value = {
     id: product.id,
@@ -427,6 +427,19 @@ const editProduct = (product: Product) => {
     description: product.description
   }
   productDialog.value = true
+}
+
+// Image Management
+const openImageManager = async (product: Product) => {
+  currentProduct.value = product
+  imageManagerDialog.value = true
+  selectedFiles.value = []
+  selectedSingleFile.value = null
+  statusMessage.value = ''
+
+  // Refresh product to get latest images
+  await productStore.getProductById(product.id)
+  currentProduct.value = productStore.product ?? product
 }
 
 const saveProduct = async () => {
@@ -497,18 +510,6 @@ const deleteProduct = async () => {
 }
 
 // Image Management
-const openImageManager = async (product: Product) => {
-  currentProduct.value = product
-  imageManagerDialog.value = true
-  selectedFiles.value = []
-  selectedSingleFile.value = null
-  statusMessage.value = ''
-
-  // Refresh product to get latest images
-  await productStore.getProductById(product.id)
-  currentProduct.value = productStore.product ?? product
-}
-
 const handleMultipleFileSelect = (event: any) => {
   selectedFiles.value = event.files
 }

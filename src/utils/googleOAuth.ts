@@ -1,7 +1,7 @@
 // Google OAuth Configuration
 export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'your-client-id-here'
 export const GOOGLE_REDIRECT_URI =
-  import.meta.env.VITE_GOOGLE_REDIRECT_URI || 'http://localhost:5173/auth/sign-in'
+  import.meta.env.VITE_GOOGLE_REDIRECT_URI || 'http://localhost:5173/auth'
 
 // Google OAuth Authorization URL
 export const getGoogleAuthUrl = () => {
