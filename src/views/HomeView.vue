@@ -141,7 +141,7 @@
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <!-- Dynamic Products from API -->
           <div
-            v-for="(product, index) in featuredProducts.slice(0, 5)"
+            v-for="(product, index) in featuredProducts"
             :key="product.id"
             class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
             @click="navigateToProduct(product)"
