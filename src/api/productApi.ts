@@ -9,31 +9,23 @@ export type ProductSearchRequest = {
   pageNumber: number
 }
 
-export type ProductItemRequest = {
-  price: number
-  productId?: string
-  category: string
-  gender: string
-  size: string
-  color: string
-  stockQuantity: number
-  isActive: boolean
-  url: string
-}
-
 export type ProductCreateRequest = {
   name: string
   description: string
+  price: number
+  quantity: number
+  size: string
   imageUrls?: string[]
-  productItem?: ProductItemRequest[]
 }
 
 export type ProductUpdateRequest = {
   id: string
   name: string
   description: string
+  price: number
+  quantity: number
+  size: string
   imageUrls?: string[]
-  productItem?: ProductItemRequest[]
 }
 
 export type ProductResponse = {

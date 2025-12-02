@@ -48,6 +48,25 @@ export const useAuthStore = defineStore({
     rootUrl: '/'
   }),
   actions: {
+    // Initialize auth state from cookies
+    async initializeAuth() {
+      const accessToken = Cookies.get(ACCESS_TOKEN_KEY)
+      const userId = Cookies.get(USER_ID)
+
+      if (accessToken && userId) {
+        console.log('Found existing auth token, initializing...')
+        try {
+          await this.getMe()
+          this.identified = true
+          console.log('Auth initialized successfully, identified:', this.identified)
+        } catch (error) {
+          console.error('Failed to initialize auth:', error)
+          // Token might be invalid, clear it
+          await this.logout()
+        }
+      }
+    },
+
     async login(params: LoginRequest) {
       try {
         this.loginError = false

@@ -73,6 +73,21 @@ const router = createRouter({
           component: () => import('../views/User/Cart.vue')
         },
         {
+          path: 'checkout',
+          name: 'user-checkout',
+          component: () => import('../views/Checkout/CheckoutScreen.vue')
+        },
+        {
+          path: 'orders',
+          name: 'user-orders',
+          component: () => import('../views/Orders/MyOrdersScreen.vue')
+        },
+        {
+          path: 'orders/:id',
+          name: 'user-order-detail',
+          component: () => import('../views/Orders/OrderDetailScreen.vue')
+        },
+        {
           path: 'product/:id',
           name: 'user-product',
           component: () => import('../views/User/Product.vue')
@@ -115,6 +130,16 @@ const router = createRouter({
           path: 'home',
           name: 'admin-home',
           component: () => import('../views/Admin/HomeAdmin.vue')
+        },
+        {
+          path: 'orders',
+          name: 'admin-orders',
+          component: () => import('../views/Admin/AdminOrdersScreen.vue')
+        },
+        {
+          path: 'orders/:id',
+          name: 'admin-order-detail',
+          component: () => import('../views/Orders/OrderDetailScreen.vue')
         },
         {
           path: 'products/:id',

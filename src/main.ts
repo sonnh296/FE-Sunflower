@@ -18,8 +18,10 @@ import BadgeDirective from 'primevue/badgedirective'
 import ConfirmationService from 'primevue/confirmationservice'
 import Tooltip from 'primevue/tooltip'
 import { useFavicon } from '@vueuse/core'
+import { useAuthStore } from '@/stores/authStore'
 
 const app = createApp(App)
+const pinia = createPinia()
 const i18n = createI18n({
   locale: 'vn',
   fallbackLocale: 'vn',
@@ -31,7 +33,7 @@ const i18n = createI18n({
 const icon = useFavicon()
 icon.value = '/logo2.png'
 app.component('FontAwesomeIcon', FontAwesomeIcon)
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 app.use(i18n)
 app.use(PrimeVue, {
@@ -43,3 +45,7 @@ app.use(ConfirmationService)
 app.directive('badge', BadgeDirective)
 app.directive('tooltip', Tooltip)
 app.mount('#app')
+
+// Initialize auth state after app is mounted
+const authStore = useAuthStore()
+authStore.initializeAuth()

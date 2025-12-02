@@ -32,13 +32,18 @@ export const useCartStore = defineStore('cartStore', {
       this.loading = true
       const { data } = await getCartApi()
       this.cartItems = data.result.content ?? []
-      this.totalPrice = data.result.content.reduce(
-        (acc, item: CartItem) => acc + Number(item.productItem.price ?? 0) * item.quantity,
-        0
-      )
+      this.totalPrice =
+        data.result.content?.reduce(
+          (acc, item: CartItem) => acc + Number(item.price ?? 0) * item.quantity,
+          0
+        ) ?? 0
       this.totalItems = data.result.totalItems
       this.loading = false
       return data
+    },
+
+    async fetchCart() {
+      return this.getCart()
     },
 
     async addToCart(request: CartAddRequest) {

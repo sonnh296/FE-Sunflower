@@ -6,15 +6,24 @@
     <Menubar class="w-full" :model="items">
       <template #end>
         <div class="flex">
-          <Button
-            icon="pi pi-shopping-cart"
-            label="Giỏ hàng"
-            class="bg-green-400 mx-2"
-            @click.stop="navigate('/cart')"
-          />
+          <div class="relative">
+            <Button
+              icon="pi pi-shopping-cart"
+              label="Giỏ hàng"
+              class="bg-green-400 mx-2"
+              @click.stop="navigate('/cart')"
+            />
+            <!-- Cart Item Count Badge -->
+            <span
+              v-if="cartStore.totalItems > 0"
+              class="absolute -top-2 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg"
+            >
+              {{ cartStore.totalItems }}
+            </span>
+          </div>
           <button ref="toggleProfile" class="relative">
             <div @click="openProfile = !openProfile" class="flex items-center pr-6 pb-1">
-              <span>{{ authStore.name }}</span>
+              <span>{{ authStore.name || authStore.identity?.fullName || 'User' }}</span>
               <i v-if="!openProfile" class="pi pi-angle-down pt-1" style="color: green"></i>
               <i v-if="openProfile" class="pi pi-angle-up pt-1" style="color: green"></i>
             </div>
@@ -44,11 +53,13 @@ import Menubar from 'primevue/menubar'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/authStore'
+import { useCartStore } from '@/stores/cartStore'
 import { onClickOutside } from '@vueuse/core'
 import Button from 'primevue/button'
 const { t } = useI18n()
 
 const authStore = useAuthStore()
+const cartStore = useCartStore()
 
 const isScrolled = ref(false)
 const openProfile = ref(false)
@@ -68,13 +79,17 @@ const navigate = (to: string) => {
   openProfile.value = false
 }
 
-onMounted(() => {
-  authStore.name = 'Nguyễn Văn A'
-})
-
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 0
 }
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+  // Load cart items when component mounts
+  if (authStore.identified) {
+    cartStore.getCart()
+  }
+})
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)

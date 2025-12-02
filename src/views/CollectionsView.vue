@@ -47,7 +47,7 @@
           <h1
             class="text-5xl md:text-6xl lg:text-7xl font-light text-white leading-tight tracking-tight"
           >
-            Bộ sưu tập <span class="font-serif italic">Elsun</span>
+            Bộ sưu tập <span class="font-serif italic">SIME</span>
           </h1>
           <p class="text-xl md:text-2xl text-white/90 font-light">
             Khám phá phong cách thanh lịch và năng động

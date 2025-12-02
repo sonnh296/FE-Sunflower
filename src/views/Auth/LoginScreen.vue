@@ -58,10 +58,8 @@ onMounted(async () => {
         life: 3000
       })
 
-      // Redirect to home or dashboard based on user role
-      setTimeout(() => {
-        router.push({ name: 'guest-home' })
-      }, 1000)
+      // The authStore.loginSuccessfully already handles the redirect based on role
+      // So we don't need to manually redirect here
     } catch (error) {
       console.error('Google OAuth error:', error)
       isProcessingOAuth.value = false

@@ -1,7 +1,7 @@
 import type { AxiosResponse } from 'axios'
 import api from './api'
 import type { MfResponse } from '@/types/MatchFinderResponse'
-import type { ProductItem } from '@/types/Product'
+import type { Product } from '@/types/Product'
 
 export type CartSearchRequest = {
   pageSize: number
@@ -9,7 +9,7 @@ export type CartSearchRequest = {
 }
 
 export type CartAddRequest = {
-  productItemId: string
+  productId: string
   quantity: number
 }
 
@@ -26,8 +26,10 @@ export type CartResponse = {
 
 export type CartItem = {
   id: string
-  productItem: ProductItem
   quantity: number
+  addedAt: string
+  thumbnailUrl: string
+  price: number
 }
 
 export const getCartApi = async (): Promise<AxiosResponse<MfResponse<CartResponse>>> => {
@@ -37,9 +39,7 @@ export const getCartApi = async (): Promise<AxiosResponse<MfResponse<CartRespons
 export const addToCartApi = async (
   value: CartAddRequest
 ): Promise<AxiosResponse<MfResponse<CartResponse>>> => {
-  return await api.post('/cart', {
-    cartItem: value
-  })
+  return await api.post('/cart', value)
 }
 
 export const updateCartItemApi = async (
