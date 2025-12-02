@@ -164,10 +164,6 @@ onMounted(async () => {
 })
 </script>
 
-<script lang="ts">
-import { computed } from 'vue'
-</script>
-
 <style scoped>
 .orders-container {
   min-height: calc(100vh - 200px);

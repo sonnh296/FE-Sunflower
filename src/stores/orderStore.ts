@@ -22,12 +22,17 @@ export const useOrderStore = defineStore('order', () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
+  // Helper function to check if response is successful
+  const isSuccessResponse = (code: any): boolean => {
+    return code === 1000 || code === '1000' || String(code) === '1000'
+  }
+
   const createOrder = async (request: OrderCreationRequest) => {
     loading.value = true
     error.value = null
     try {
       const response = await createOrderApi(request)
-      if (response.data.code === 1000 || response.data.code === '1000') {
+      if (isSuccessResponse(response.data.code)) {
         currentOrder.value = response.data.result
         return response.data.result
       } else {
@@ -46,7 +51,7 @@ export const useOrderStore = defineStore('order', () => {
     error.value = null
     try {
       const response = await getMyOrdersApi(pageNumber, pageSize)
-      if (response.data.code === 1000 || response.data.code === '1000') {
+      if (isSuccessResponse(response.data.code)) {
         orders.value = response.data.result.content
         totalPages.value = response.data.result.totalPages
         totalElements.value = response.data.result.totalElements
@@ -63,7 +68,7 @@ export const useOrderStore = defineStore('order', () => {
     error.value = null
     try {
       const response = await getAllOrdersApi(pageNumber, pageSize)
-      if (response.data.code === 1000 || response.data.code === '1000') {
+      if (isSuccessResponse(response.data.code)) {
         orders.value = response.data.result.content
         totalPages.value = response.data.result.totalPages
         totalElements.value = response.data.result.totalElements
@@ -80,7 +85,7 @@ export const useOrderStore = defineStore('order', () => {
     error.value = null
     try {
       const response = await getOrdersByStatusApi(status, pageNumber, pageSize)
-      if (response.data.code === 1000 || response.data.code === '1000') {
+      if (isSuccessResponse(response.data.code)) {
         orders.value = response.data.result.content
         totalPages.value = response.data.result.totalPages
         totalElements.value = response.data.result.totalElements
@@ -97,7 +102,7 @@ export const useOrderStore = defineStore('order', () => {
     error.value = null
     try {
       const response = await getOrderByIdApi(orderId)
-      if (response.data.code === 1000 || response.data.code === '1000') {
+      if (isSuccessResponse(response.data.code)) {
         currentOrder.value = response.data.result
         return response.data.result
       }
@@ -114,7 +119,7 @@ export const useOrderStore = defineStore('order', () => {
     error.value = null
     try {
       const response = await updateOrderStatusApi(orderId, request)
-      if (response.data.code === 1000 || response.data.code === '1000') {
+      if (isSuccessResponse(response.data.code)) {
         // Update the order in the list
         const index = orders.value.findIndex(o => o.id === orderId)
         if (index !== -1) {

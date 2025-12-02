@@ -51,10 +51,9 @@ export const useProductStore = defineStore('productStore', {
 
     async createProduct(product: ProductCreateRequest) {
       this.creating = true
-      // Ensure productItem is at least an empty array to avoid backend errors
+      // Remove the productItem access since it doesn't exist in ProductCreateRequest
       const productData = {
-        ...product,
-        productItem: product.productItem || []
+        ...product
       }
       const { data } = await crateProductApi(productData)
       this.creating = false

@@ -125,7 +125,7 @@ const loading = computed(() => orderStore.loading)
 const error = computed(() => orderStore.error)
 
 const isAdmin = computed(() => {
-  return authStore.user?.roles?.includes('ADMIN') || false
+  return authStore.user?.user_roles?.some(role => role.role.roleName === 'ADMIN') || false
 })
 
 const orderStatuses = [
@@ -219,4 +219,3 @@ onMounted(async () => {
   min-height: calc(100vh - 200px);
 }
 </style>
-

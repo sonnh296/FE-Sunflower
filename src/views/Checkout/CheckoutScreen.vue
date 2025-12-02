@@ -19,14 +19,14 @@
         </div>
         <div v-else>
           <div v-for="item in cartItems" :key="item.id" class="flex items-center gap-4 mb-4 pb-4 border-b">
-            <img :src="item.product.thumbnailUrl" :alt="item.product.name" class="w-20 h-20 object-cover rounded" />
+            <img :src="item.thumbnailUrl" :alt="'Sản phẩm'" class="w-20 h-20 object-cover rounded" />
             <div class="flex-1">
-              <h3 class="font-medium">{{ item.product.name }}</h3>
-              <p class="text-sm text-gray-600">Size: {{ item.product.size }}</p>
+              <h3 class="font-medium">Sản phẩm</h3>
+              <p class="text-sm text-gray-600">ID: {{ item.id.substring(0, 8) }}</p>
               <p class="text-sm text-gray-600">Số lượng: {{ item.quantity }}</p>
             </div>
             <div class="text-right">
-              <p class="font-semibold">{{ formatPrice(item.product.price * item.quantity) }}</p>
+              <p class="font-semibold">{{ formatPrice(item.price * item.quantity) }}</p>
             </div>
           </div>
           <div class="flex justify-between items-center pt-4 border-t-2 border-gray-300">

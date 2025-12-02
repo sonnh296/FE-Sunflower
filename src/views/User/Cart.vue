@@ -58,7 +58,7 @@
                       :src="item.thumbnailUrl || '/noavatar.png'"
                       :alt="'Sản phẩm'"
                       class="w-full h-full object-cover"
-                      @error="$event.target.src = '/noavatar.png'"
+                      @error="(event) => (event.target as HTMLImageElement).src = '/noavatar.png'"
                     />
                   </div>
                 </div>

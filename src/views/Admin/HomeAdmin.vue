@@ -448,7 +448,10 @@ const saveProduct = async () => {
       await productStore.updateProduct({
         id: editedProduct.value.id,
         name: editedProduct.value.name!,
-        description: editedProduct.value.description!
+        description: editedProduct.value.description!,
+        price: editedProduct.value.price || 0,
+        quantity: editedProduct.value.quantity || 0,
+        size: editedProduct.value.size || 'M'
       })
       toast.add({
         severity: 'success',
@@ -459,7 +462,10 @@ const saveProduct = async () => {
     } else {
       await productStore.createProduct({
         name: editedProduct.value.name!,
-        description: editedProduct.value.description!
+        description: editedProduct.value.description!,
+        price: editedProduct.value.price || 0,
+        quantity: editedProduct.value.quantity || 0,
+        size: editedProduct.value.size || 'M'
       })
       toast.add({
         severity: 'success',

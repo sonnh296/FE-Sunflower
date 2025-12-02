@@ -47,6 +47,9 @@ export const useAuthStore = defineStore({
     name: useLocalStorage(NAME, '').value,
     rootUrl: '/'
   }),
+  getters: {
+    user: (state) => state.identity
+  },
   actions: {
     // Initialize auth state from cookies
     async initializeAuth() {

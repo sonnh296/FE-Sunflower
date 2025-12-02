@@ -334,12 +334,12 @@
           />
           <Button
             icon="pi pi-plus"
-            @click="quantity = Math.min(selectedVariant.stockQuantity, quantity + 1)"
+            @click="quantity = Math.min(selectedVariant.stockQuantity || 0, quantity + 1)"
             class="!bg-gray-100 hover:!bg-gray-200 !text-gray-700 !border-0 !rounded-lg !w-10 !h-10"
-            :disabled="quantity >= selectedVariant.stockQuantity"
+            :disabled="quantity >= (selectedVariant.stockQuantity || 0)"
           />
           <span class="text-sm text-gray-600">
-            (Tối đa: {{ selectedVariant.stockQuantity }})
+            (Tối đa: {{ selectedVariant.stockQuantity || 0 }})
           </span>
         </div>
       </div>
@@ -511,14 +511,14 @@ const addToCart = async (item: ProductItem) => {
 
   try {
     await cartStore.addToCart({
-      productItemId: item.id as string,
+      productId: item.id as string,
       quantity: 1
     })
 
     toast.add({
       severity: 'success',
       summary: 'Thành công',
-      detail: `Đã thêm ${item.color} - Size ${item.size} vào giỏ hàng`,
+      detail: `Đã thêm ${item.color || 'sản phẩm'} - Size ${item.size} vào giỏ hàng`,
       life: 3000
     })
   } catch (error) {
@@ -650,7 +650,7 @@ const addSelectedVariantToCart = async () => {
 
   try {
     await cartStore.addToCart({
-      productItemId: selectedVariant.value.id as string,
+      productId: selectedVariant.value.id as string,
       quantity: quantity.value
     })
 
