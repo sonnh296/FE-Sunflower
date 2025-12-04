@@ -48,7 +48,8 @@ export const useAuthStore = defineStore({
     rootUrl: '/'
   }),
   getters: {
-    user: (state) => state.identity
+    user: (state) => state.identity,
+    isAuthenticated: (state) => state.identified && !!state.identity
   },
   actions: {
     // Initialize auth state from cookies

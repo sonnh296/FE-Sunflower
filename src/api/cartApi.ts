@@ -1,7 +1,6 @@
 import type { AxiosResponse } from 'axios'
 import api from './api'
 import type { MfResponse } from '@/types/MatchFinderResponse'
-import type { Product } from '@/types/Product'
 
 export type CartSearchRequest = {
   pageSize: number
@@ -9,51 +8,68 @@ export type CartSearchRequest = {
 }
 
 export type CartAddRequest = {
-  productId: string
-  quantity: number
+  cartItem: {
+    quantity: number
+    productId?: string
+    productVariantId?: string
+  }
 }
 
 export type CartUpdateRequest = {
-  cartItemId: string
   quantity: number
 }
 
-export type CartResponse = {
-  content: CartItem[]
-  totalPrice: number
-  totalItems: number
-}
-
-export type CartItem = {
+export type CartItemResponse = {
   id: string
   quantity: number
   addedAt: string
   thumbnailUrl: string
   price: number
+  productId: string
+  productName: string
+  variantId: string | null
+  size: string | null
+  availableStock: number
 }
 
-export const getCartApi = async (): Promise<AxiosResponse<MfResponse<CartResponse>>> => {
-  return await api.get('/cart/items')
+export type CartPageResponse = {
+  content: CartItemResponse[]
+  totalPages: number
+  totalElements: number
+  size: number
+  number: number
+}
+
+export const getCartItemsApi = async (
+  pageNumber: number = 0,
+  pageSize: number = 100,
+  sort: string = 'DESC'
+): Promise<AxiosResponse<MfResponse<CartPageResponse>>> => {
+  return await api.get('/cart/items', {
+    params: {
+      field: 'addedAt',
+      pageNumber,
+      pageSize,
+      sort
+    }
+  })
 }
 
 export const addToCartApi = async (
-  value: CartAddRequest
-): Promise<AxiosResponse<MfResponse<CartResponse>>> => {
-  return await api.post('/cart', value)
+  request: CartAddRequest
+): Promise<AxiosResponse<MfResponse<any>>> => {
+  return await api.post('/cart', request)
 }
 
-export const updateCartItemApi = async (
-  value: CartUpdateRequest
-): Promise<AxiosResponse<MfResponse<CartResponse>>> => {
-  return await api.patch('/cart/items/' + value.cartItemId + '/quantity', value)
+export const updateCartItemQuantityApi = async (
+  cartItemId: string,
+  request: CartUpdateRequest
+): Promise<AxiosResponse<MfResponse<CartItemResponse>>> => {
+  return await api.patch(`/cart/items/${cartItemId}/quantity`, request)
 }
 
 export const removeFromCartApi = async (
   cartItemId: string
-): Promise<AxiosResponse<MfResponse<CartResponse>>> => {
+): Promise<AxiosResponse<MfResponse<string>>> => {
   return await api.delete(`/cart/items/${cartItemId}`)
-}
-
-export const clearCartApi = async (): Promise<AxiosResponse<MfResponse<CartResponse>>> => {
-  return await api.delete('/cart')
 }

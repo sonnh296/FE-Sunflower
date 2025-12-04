@@ -187,6 +187,121 @@
           </div>
         </div>
 
+        <!-- Variants Section -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            <i class="pi pi-th-large text-gray-400 mr-2"></i>
+            Các biến thể sản phẩm
+            <span class="text-red-500 ml-1">*</span>
+          </label>
+
+          <!-- Variant Cards -->
+          <div
+            v-for="(variant, index) in editedProduct.variants"
+            :key="index"
+            class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4"
+          >
+            <div class="flex gap-4">
+              <!-- Size Input -->
+              <div class="flex-1">
+                <label
+                  :for="`size_${index}`"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Kích cỡ</label
+                >
+                <InputText
+                  :id="`size_${index}`"
+                  v-model="variant.size"
+                  placeholder="Ví dụ: M, L, XL"
+                  class="w-full p-2 border-2 rounded-lg focus:border-blue-500 transition-all"
+                  :class="!variant.size ? 'border-gray-300' : 'border-green-400'"
+                />
+              </div>
+
+              <!-- Price Input -->
+              <div class="flex-1">
+                <label
+                  :for="`price_${index}`"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Giá</label
+                >
+                <InputNumber
+                  :id="`price_${index}`"
+                  v-model="variant.price"
+                  mode="currency"
+                  currency="VND"
+                  placeholder="0"
+                  class="w-full p-2 border-2 rounded-lg focus:border-blue-500 transition-all"
+                  :class="variant.price <= 0 ? 'border-red-400' : 'border-green-400'"
+                />
+              </div>
+
+              <!-- Stock Input -->
+              <div class="flex-1">
+                <label
+                  :for="`stock_${index}`"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Số lượng trong kho</label
+                >
+                <InputNumber
+                  :id="`stock_${index}`"
+                  v-model="variant.stock"
+                  placeholder="0"
+                  class="w-full p-2 border-2 rounded-lg focus:border-blue-500 transition-all"
+                  :class="variant.stock < 0 ? 'border-red-400' : 'border-green-400'"
+                />
+              </div>
+            </div>
+
+            <!-- Remove Variant Button -->
+            <div class="flex justify-end mt-2">
+              <Button
+                icon="pi pi-trash"
+                class="p-button-danger p-button-sm"
+                v-tooltip.top="'Xóa biến thể'"
+                @click="removeVariant(index)"
+              />
+            </div>
+          </div>
+
+          <!-- Add Variant Button -->
+          <div class="flex justify-end">
+            <Button
+              label="Thêm biến thể"
+              icon="pi pi-plus"
+              class="p-button-success"
+              @click="addVariant"
+            />
+          </div>
+        </div>
+
+        <!-- Availability Dates -->
+        <div class="form-field">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            <i class="pi pi-calendar text-gray-400 mr-2"></i>
+            Thời gian hiển thị (tùy chọn)
+          </label>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm text-gray-600 mb-1">Bắt đầu</label>
+              <input
+                type="date"
+                v-model="editedProduct.availableFrom"
+                class="w-full p-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600 mb-1">Kết thúc</label>
+              <input
+                type="date"
+                v-model="editedProduct.availableTo"
+                class="w-full p-2 border border-gray-300 rounded-md"
+              />
+            </div>
+          </div>
+          <small class="text-gray-500 mt-2 block">Các trường này là tùy chọn; định dạng ngày sẽ được chuyển sang ISO khi lưu.</small>
+        </div>
+
         <!-- Info Box -->
         <div
           class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 rounded-lg p-4"
@@ -364,12 +479,13 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
 import Textarea from 'primevue/textarea'
 import FileUpload from 'primevue/fileupload'
 import Message from 'primevue/message'
 import { useProductStore } from '@/stores/productStore'
 import { useToast } from 'primevue/usetoast'
-import type { Product } from '@/types/Product'
+import type { Product, ProductVariant } from '@/types/Product'
 import {
   uploadProductImagesApi,
   uploadProductSingleImageApi,
@@ -393,10 +509,20 @@ const productToDelete = ref<Product | null>(null)
 const currentProduct = ref<Product | null>(null)
 const imageToDelete = ref<string>('')
 
-// Form data
-const editedProduct = ref<Partial<Product>>({
+// Form data (include variants)
+const editedProduct = ref<{
+  id?: string
+  name?: string
+  description?: string
+  variants: ProductVariant[]
+  availableFrom?: string
+  availableTo?: string
+}>({
   name: '',
-  description: ''
+  description: '',
+  variants: [{ size: 'M', price: 0, stock: 0 }],
+  availableFrom: undefined,
+  availableTo: undefined
 })
 
 // Image upload
@@ -409,12 +535,24 @@ const statusType = ref<'success' | 'error' | 'info' | 'warn'>('success')
 const multipleFileUpload = ref()
 const singleFileUpload = ref()
 
+// Variant management functions
+const addVariant = () => {
+  editedProduct.value.variants.push({ size: '', price: 0, stock: 0 })
+}
+
+const removeVariant = (index: number) => {
+  if (editedProduct.value.variants.length > 1) {
+    editedProduct.value.variants.splice(index, 1)
+  }
+}
+
 // Product CRUD
 const openNewProductDialog = () => {
   editMode.value = false
   editedProduct.value = {
     name: '',
-    description: ''
+    description: '',
+    variants: [{ size: 'M', price: 0, stock: 0 }]
   }
   productDialog.value = true
 }
@@ -424,9 +562,67 @@ const editProduct = async (product: Product) => {
   editedProduct.value = {
     id: product.id,
     name: product.name,
-    description: product.description
+    description: product.description,
+    variants: product.variants && product.variants.length > 0
+      ? product.variants.map(v => ({ id: v.id, size: v.size, price: v.price, stock: v.stock }))
+      : [{ size: 'M', price: 0, stock: 0 }],
+    availableFrom: product.availableFrom ? product.availableFrom.slice(0, 10) : undefined,
+    availableTo: product.availableTo ? product.availableTo.slice(0, 10) : undefined
   }
   productDialog.value = true
+}
+
+const saveProduct = async () => {
+  try {
+    // Validate variants
+    const hasValidVariants = editedProduct.value.variants.every(v =>
+      v.size.trim() !== '' && v.price > 0 && v.stock >= 0
+    )
+
+    if (!hasValidVariants) {
+      toast.add({
+        severity: 'error',
+        summary: 'Lỗi',
+        detail: 'Vui lòng điền đầy đủ thông tin kích cỡ, giá và số lượng',
+        life: 3000
+      })
+      return
+    }
+
+    // Convert date-only strings (YYYY-MM-DD) to ISO string at midnight UTC/local as appropriate
+    const availableFromIso = editedProduct.value.availableFrom
+      ? new Date(editedProduct.value.availableFrom + 'T00:00:00').toISOString()
+      : undefined
+    const availableToIso = editedProduct.value.availableTo
+      ? new Date(editedProduct.value.availableTo + 'T00:00:00').toISOString()
+      : undefined
+
+    const productData: any = {
+      name: editedProduct.value.name!,
+      description: editedProduct.value.description!,
+      variants: editedProduct.value.variants.map(v => ({ size: v.size, price: v.price, stock: v.stock })),
+      availableFrom: availableFromIso,
+      availableTo: availableToIso
+    }
+
+    if (editMode.value && editedProduct.value.id) {
+      await productStore.updateProduct({ id: editedProduct.value.id, ...productData })
+      toast.add({ severity: 'success', summary: 'Thành công', detail: 'Đã cập nhật sản phẩm', life: 3000 })
+    } else {
+      await productStore.createProduct(productData)
+      toast.add({ severity: 'success', summary: 'Thành công', detail: 'Đã tạo sản phẩm mới', life: 3000 })
+    }
+
+    productDialog.value = false
+    await productStore.getProducts()
+  } catch (error: any) {
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: error.response?.data?.message || 'Không thể lưu sản phẩm',
+      life: 3000
+    })
+  }
 }
 
 // Image Management
@@ -440,50 +636,6 @@ const openImageManager = async (product: Product) => {
   // Refresh product to get latest images
   await productStore.getProductById(product.id)
   currentProduct.value = productStore.product ?? product
-}
-
-const saveProduct = async () => {
-  try {
-    if (editMode.value && editedProduct.value.id) {
-      await productStore.updateProduct({
-        id: editedProduct.value.id,
-        name: editedProduct.value.name!,
-        description: editedProduct.value.description!,
-        price: editedProduct.value.price || 0,
-        quantity: editedProduct.value.quantity || 0,
-        size: editedProduct.value.size || 'M'
-      })
-      toast.add({
-        severity: 'success',
-        summary: 'Thành công',
-        detail: 'Đã cập nhật sản phẩm',
-        life: 3000
-      })
-    } else {
-      await productStore.createProduct({
-        name: editedProduct.value.name!,
-        description: editedProduct.value.description!,
-        price: editedProduct.value.price || 0,
-        quantity: editedProduct.value.quantity || 0,
-        size: editedProduct.value.size || 'M'
-      })
-      toast.add({
-        severity: 'success',
-        summary: 'Thành công',
-        detail: 'Đã tạo sản phẩm mới',
-        life: 3000
-      })
-    }
-    productDialog.value = false
-    await productStore.getProducts()
-  } catch (error: any) {
-    toast.add({
-      severity: 'error',
-      summary: 'Lỗi',
-      detail: error.response?.data?.message || 'Không thể lưu sản phẩm',
-      life: 3000
-    })
-  }
 }
 
 const confirmDeleteProduct = (product: Product) => {

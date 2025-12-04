@@ -217,7 +217,7 @@
                       {{ item.gender }}
                     </h3>
                     <span class="text-xl font-bold text-pink-600">
-                      {{ new Intl.NumberFormat('vi-VN').format(parseInt(item.price.toString())) }}₫
+                      {{ new Intl.NumberFormat('vi-VN').format(parseInt((item.price ?? 0).toString())) }}₫
                     </span>
                   </div>
 
@@ -290,7 +290,7 @@
               <div class="flex items-center justify-between mb-2">
                 <h4 class="font-semibold text-gray-900">{{ item.gender }}</h4>
                 <span class="text-lg font-bold text-pink-600">
-                  {{ new Intl.NumberFormat('vi-VN').format(parseInt(item.price.toString())) }}₫
+                  {{ new Intl.NumberFormat('vi-VN').format(parseInt((item.price ?? 0).toString())) }}₫
                 </span>
               </div>
               <div class="space-y-1 text-sm text-gray-600">
@@ -510,9 +510,12 @@ const addToCart = async (item: ProductItem) => {
   }
 
   try {
+    // Use productItemId since this is a specific variant
     await cartStore.addToCart({
-      productId: item.id as string,
-      quantity: 1
+      cartItem: {
+        quantity: 1,
+        productId: item.id as string // This is actually productItemId in the old system
+      }
     })
 
     toast.add({
@@ -573,57 +576,69 @@ const addProductToCart = async () => {
     return
   }
 
-  try {
-    console.log('Adding PRODUCT directly to cart with productId:', product.value.id)
+  // Check if product has variants
+  if (product.value.variants && product.value.variants.length > 0) {
+    // Show variant selection dialog
+    selectedVariant.value = null
+    quantity.value = 1
 
-    toast.add({
-      severity: 'info',
-      summary: 'Đang thêm sản phẩm',
-      detail: 'Đang thêm sản phẩm vào giỏ hàng...',
-      life: 2000
-    })
-
-    // NEW: Send productId instead of productItemId
-    const result = await cartStore.addToCart({
-      productId: product.value.id, // Send PRODUCT ID, not product item ID!
-      quantity: 1
-    })
-
-    console.log('Cart API response:', result)
-    console.log('Successfully added product to cart!')
-
-    toast.add({
-      severity: 'success',
-      summary: 'Thành công',
-      detail: `Đã thêm "${product.value.name}" vào giỏ hàng`,
-      life: 3000
-    })
-  } catch (error: any) {
-    console.error('Error adding product to cart:', error)
-    console.error('Error response:', error.response?.data)
-    console.error('Error status:', error.response?.status)
-
-    let errorMessage = 'Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại!'
-
-    if (error.response?.status === 401) {
-      errorMessage = 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!'
-      setTimeout(() => {
-        authStore.logout()
-      }, 2000)
-    } else if (error.response?.status === 400) {
-      errorMessage = error.response?.data?.message || 'Yêu cầu không hợp lệ. Vui lòng thử lại!'
-    } else if (error.response?.status === 404) {
-      errorMessage = 'Không tìm thấy sản phẩm!'
-    } else if (error.response?.data?.message) {
-      errorMessage = error.response.data.message
+    // If we have product items loaded, show the variant dialog
+    if (productItemStore.productItems.length > 0) {
+      showVariantDialog.value = true
+      return
     }
 
-    toast.add({
-      severity: 'error',
-      summary: 'Lỗi',
-      detail: errorMessage,
-      life: 5000
-    })
+    // Otherwise, try to add with first variant
+    const firstVariant = product.value.variants[0]
+    try {
+      await cartStore.addToCart({
+        cartItem: {
+          quantity: 1,
+          productId: product.value.id,
+          productVariantId: firstVariant.id
+        }
+      })
+
+      toast.add({
+        severity: 'success',
+        summary: 'Thành công',
+        detail: `Đã thêm "${product.value.name}" (Size: ${firstVariant.size}) vào giỏ hàng`,
+        life: 3000
+      })
+    } catch (error: any) {
+      console.error('Error adding product to cart:', error)
+      toast.add({
+        severity: 'error',
+        summary: 'Lỗi',
+        detail: error.response?.data?.message || 'Không thể thêm sản phẩm vào giỏ hàng',
+        life: 3000
+      })
+    }
+  } else {
+    // No variants, add product directly
+    try {
+      await cartStore.addToCart({
+        cartItem: {
+          quantity: 1,
+          productId: product.value.id
+        }
+      })
+
+      toast.add({
+        severity: 'success',
+        summary: 'Thành công',
+        detail: `Đã thêm "${product.value.name}" vào giỏ hàng`,
+        life: 3000
+      })
+    } catch (error: any) {
+      console.error('Error adding product to cart:', error)
+      toast.add({
+        severity: 'error',
+        summary: 'Lỗi',
+        detail: error.response?.data?.message || 'Không thể thêm sản phẩm vào giỏ hàng',
+        life: 3000
+      })
+    }
   }
 }
 
@@ -649,9 +664,12 @@ const addSelectedVariantToCart = async () => {
   }
 
   try {
+    // Use the productItemId from the selected variant
     await cartStore.addToCart({
-      productId: selectedVariant.value.id as string,
-      quantity: quantity.value
+      cartItem: {
+        quantity: quantity.value,
+        productId: selectedVariant.value.id as string
+      }
     })
 
     toast.add({

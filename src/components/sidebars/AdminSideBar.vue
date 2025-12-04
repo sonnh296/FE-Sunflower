@@ -35,6 +35,26 @@ const items = ref([
     command: () => navigate('/home')
   },
   {
+    label: 'Sản phẩm',
+    icon: 'pi pi-shopping-bag',
+    command: () => navigate('/products')
+  },
+  {
+    label: 'Đơn hàng',
+    icon: 'pi pi-shopping-cart',
+    command: () => navigate('/orders')
+  },
+  {
+    label: 'Tin tức',
+    icon: 'pi pi-newspaper',
+    command: () => navigate('/news')
+  },
+  {
+    label: 'Banner',
+    icon: 'pi pi-images',
+    command: () => navigate('/banners')
+  },
+  {
     label: t('sidebar.admin.users'),
     icon: 'pi pi-users',
     command: () => navigate('/')

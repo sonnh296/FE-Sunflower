@@ -2,7 +2,7 @@ import type { AxiosResponse } from 'axios'
 import api from './api'
 import type { MfResponse } from '@/types/MatchFinderResponse'
 import type { ApiResponse } from '@/types/ApiResponse'
-import type { Product, ProductListItem } from '@/types/Product'
+import type { Product, ProductListItem, ProductVariant } from '@/types/Product'
 
 export type ProductSearchRequest = {
   pageSize: number
@@ -12,20 +12,20 @@ export type ProductSearchRequest = {
 export type ProductCreateRequest = {
   name: string
   description: string
-  price: number
-  quantity: number
-  size: string
+  variants: ProductVariant[]
   imageUrls?: string[]
+  availableFrom?: string
+  availableTo?: string
 }
 
 export type ProductUpdateRequest = {
   id: string
   name: string
   description: string
-  price: number
-  quantity: number
-  size: string
+  variants: ProductVariant[]
   imageUrls?: string[]
+  availableFrom?: string
+  availableTo?: string
 }
 
 export type ProductResponse = {

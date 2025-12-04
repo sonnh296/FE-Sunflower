@@ -93,6 +93,90 @@
             </p>
           </div>
 
+          <!-- Product Variants (Size & Price) -->
+          <div v-if="product.variants && product.variants.length > 0" class="space-y-6">
+            <!-- Price Display -->
+            <div class="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-6 border border-pink-100">
+              <div class="flex items-center gap-3">
+                <i class="pi pi-tag text-pink-600 text-xl"></i>
+                <div>
+                  <p class="font-semibold text-gray-900 text-2xl">
+                    {{ formatPrice(selectedVariant?.price || product.variants[0]?.price) }}
+                  </p>
+                  <p class="text-sm text-gray-600">
+                    Kích cỏ: {{ selectedVariant?.size || product.variants[0]?.size }}
+                    • Còn lại: {{ selectedVariant?.stock || product.variants[0]?.stock }} sản phẩm
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Size Selection -->
+            <div class="space-y-3">
+              <label class="block text-sm font-semibold text-gray-700">
+                Chọn kích cỡ:
+              </label>
+              <div class="grid grid-cols-4 gap-3">
+                <button
+                  v-for="variant in product.variants"
+                  :key="variant.id"
+                  @click="selectVariant(variant)"
+                  :disabled="variant.stock === 0"
+                  class="relative p-3 rounded-xl border-2 transition-all duration-200 text-center"
+                  :class="{
+                    'border-pink-500 bg-pink-50 text-pink-900': selectedVariant?.id === variant.id,
+                    'border-gray-200 bg-white text-gray-700 hover:border-gray-300': selectedVariant?.id !== variant.id && variant.stock > 0,
+                    'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed': variant.stock === 0
+                  }"
+                >
+                  <div class="font-semibold text-lg">{{ variant.size }}</div>
+                  <div class="text-xs mt-1">{{ formatPrice(variant.price) }}</div>
+                  <div v-if="variant.stock === 0" class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">Hết hàng</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Quantity Selection -->
+            <div class="space-y-3">
+              <label class="block text-sm font-semibold text-gray-700">
+                Số lượng:
+              </label>
+              <div class="flex items-center gap-3">
+                <button
+                  @click="decreaseQuantity"
+                  :disabled="quantity <= 1"
+                  class="w-10 h-10 rounded-full border-2 border-gray-200 flex items-center justify-center hover:border-pink-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <i class="pi pi-minus text-sm"></i>
+                </button>
+                <span class="w-16 text-center text-lg font-semibold">{{ quantity }}</span>
+                <button
+                  @click="increaseQuantity"
+                  :disabled="quantity >= (selectedVariant?.stock || 0)"
+                  class="w-10 h-10 rounded-full border-2 border-gray-200 flex items-center justify-center hover:border-pink-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <i class="pi pi-plus text-sm"></i>
+                </button>
+                <span class="text-sm text-gray-500 ml-2">
+                  Tối đa {{ selectedVariant?.stock || 0 }} sản phẩm
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- No variants available -->
+          <div v-else class="bg-yellow-50 border border-yellow-200 rounded-2xl p-6">
+            <div class="flex items-center gap-3">
+              <i class="pi pi-exclamation-triangle text-yellow-600 text-xl"></i>
+              <div>
+                <p class="font-semibold text-yellow-900">Sản phẩm chưa có thông tin kích cỡ</p>
+                <p class="text-sm text-yellow-800">Vui lòng liên hệ để biết thêm chi tiết.</p>
+              </div>
+            </div>
+          </div>
+
           <!-- Image Count Info -->
           <div
             class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100"
@@ -166,13 +250,19 @@ import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import Galleria from 'primevue/galleria'
 import { getProductByIdApi } from '@/api/productApi'
-import type { Product } from '@/types/Product'
+import type { Product, ProductVariant } from '@/types/Product'
+import { useAuthStore } from '@/stores/authStore'
+import { useToast } from 'primevue/usetoast'
 
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
+const toast = useToast()
 
 const loading = ref(true)
 const product = ref<Product | null>(null)
+const selectedVariant = ref<ProductVariant | null>(null)
+const quantity = ref(1)
 
 // Computed property for gallery images
 const galleryImages = computed(() => {
@@ -196,6 +286,7 @@ const loadProduct = async () => {
 
     if (response.data.code === 1000 && response.data.result) {
       product.value = response.data.result
+      selectedVariant.value = response.data.result.variants?.[0] || null
     } else {
       product.value = null
     }
@@ -214,12 +305,53 @@ const goToTryOn = () => {
 }
 
 const addToCart = () => {
+  if (!selectedVariant.value) {
+    return alert('Vui lòng chọn kích cỡ trước khi thêm vào giỏ hàng!')
+  }
+
+  // Check authentication
+  if (!authStore.isAuthenticated) {
+    return toast.add({
+      severity: 'warn',
+      summary: 'Cần đăng nhập',
+      detail: 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.',
+      life: 3000
+    })
+  }
+
   // Add to cart logic here
   console.log('Add to cart:', {
-    product: product.value
+    product: product.value,
+    variant: selectedVariant.value,
+    quantity: quantity.value
   })
   // You can implement your cart store logic here
   alert('Đã thêm vào giỏ hàng!')
+}
+
+const selectVariant = (variant: ProductVariant) => {
+  selectedVariant.value = variant
+  quantity.value = 1 // Reset quantity when changing variant
+}
+
+const increaseQuantity = () => {
+  if (quantity.value < (selectedVariant.value?.stock || 0)) {
+    quantity.value++
+  }
+}
+
+const decreaseQuantity = () => {
+  if (quantity.value > 1) {
+    quantity.value--
+  }
+}
+
+const formatPrice = (price: number) => {
+  if (!price) return '0đ'
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND'
+  }).format(price)
 }
 
 onMounted(() => {

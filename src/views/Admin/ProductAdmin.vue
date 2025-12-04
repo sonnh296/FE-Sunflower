@@ -105,7 +105,8 @@
       :closable="true"
       :draggable="false"
       class="product-dialog"
-      style="width: 650px; max-width: 95vw"
+      style="width: 650px; max-width: 95vw; max-height: 90vh"
+      :contentStyle="{ maxHeight: '60vh', overflow: 'auto' }"
     >
       <template #header>
         <div class="flex items-center gap-3">
@@ -185,6 +186,90 @@
               {{ editedProduct.description?.length || 0 }} ký tự
             </small>
           </div>
+        </div>
+
+        <!-- Product Variants Section -->
+        <div class="form-field">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            <i class="pi pi-list text-gray-400 mr-2"></i>
+            Kích cỡ và giá bán
+            <span class="text-red-500 ml-1">*</span>
+          </label>
+
+          <div class="space-y-3" v-if="editedProduct.variants && editedProduct.variants.length > 0">
+            <div v-for="(variant, index) in editedProduct.variants" :key="index" class="p-4 bg-gray-50 rounded-lg border border-gray-300">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Size Field -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Kích cỡ <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    v-model="variant.size"
+                    type="text"
+                    placeholder="S, M, L, XL..."
+                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <!-- Price Field -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Giá (VNĐ) <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    v-model.number="variant.price"
+                    type="number"
+                    min="0"
+                    step="1000"
+                    placeholder="100000"
+                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <!-- Stock Field -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Số lượng <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    v-model.number="variant.stock"
+                    type="number"
+                    min="0"
+                    placeholder="10"
+                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              <!-- Remove Button -->
+              <div v-if="editedProduct.variants.length > 1" class="mt-3 text-right">
+                <button
+                  @click="removeVariant(index)"
+                  type="button"
+                  class="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                >
+                  <i class="pi pi-trash mr-1"></i>
+                  Xóa kích cỡ này
+                </button>
+              </div>
+            </div>
+
+            <!-- Add Variant Button -->
+            <button
+              @click="addVariant"
+              type="button"
+              class="w-full p-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors text-gray-600 hover:text-blue-600 font-medium"
+            >
+              <i class="pi pi-plus mr-2"></i>
+              Thêm kích cỡ mới
+            </button>
+          </div>
+
+          <small class="text-gray-500 mt-2 block">
+            <i class="pi pi-info-circle mr-1"></i>
+            Thêm các kích cỡ khác nhau với giá riêng biệt cho từng size
+          </small>
         </div>
 
         <!-- Info Box -->
@@ -364,12 +449,13 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
 import Textarea from 'primevue/textarea'
 import FileUpload from 'primevue/fileupload'
 import Message from 'primevue/message'
 import { useProductStore } from '@/stores/productStore'
 import { useToast } from 'primevue/usetoast'
-import type { Product } from '@/types/Product'
+import type { Product, ProductVariant } from '@/types/Product'
 import {
   uploadProductImagesApi,
   uploadProductSingleImageApi,
@@ -391,12 +477,18 @@ const editMode = ref(false)
 const selectedProducts = ref()
 const productToDelete = ref<Product | null>(null)
 const currentProduct = ref<Product | null>(null)
-const imageToDelete = ref<string>('')
+const imageToDelete = ref('')
 
-// Form data
-const editedProduct = ref<Partial<Product>>({
+// Form data with proper TypeScript typing
+const editedProduct = ref<{
+  id?: string
+  name: string
+  description: string
+  variants: ProductVariant[]
+}>({
   name: '',
-  description: ''
+  description: '',
+  variants: [{ size: 'M', price: 0, stock: 0 }]
 })
 
 // Image upload
@@ -409,64 +501,101 @@ const statusType = ref<'success' | 'error' | 'info' | 'warn'>('success')
 const multipleFileUpload = ref()
 const singleFileUpload = ref()
 
+// Variant management functions
+const addVariant = () => {
+  editedProduct.value.variants.push({ size: '', price: 0, stock: 0 })
+}
+
+const removeVariant = (index: number) => {
+  if (editedProduct.value.variants.length > 1) {
+    editedProduct.value.variants.splice(index, 1)
+  }
+}
+
 // Product CRUD
 const openNewProductDialog = () => {
   editMode.value = false
   editedProduct.value = {
     name: '',
-    description: ''
+    description: '',
+    variants: [{ size: 'M', price: 0, stock: 0 }]
   }
   productDialog.value = true
 }
 
 const editProduct = async (product: Product) => {
   editMode.value = true
-  editedProduct.value = {
-    id: product.id,
-    name: product.name,
-    description: product.description
-  }
-  productDialog.value = true
-}
 
-// Image Management
-const openImageManager = async (product: Product) => {
-  currentProduct.value = product
-  imageManagerDialog.value = true
-  selectedFiles.value = []
-  selectedSingleFile.value = null
-  statusMessage.value = ''
-
-  // Refresh product to get latest images
+  // First, fetch the latest product data to ensure we have all information including images and variants
   await productStore.getProductById(product.id)
-  currentProduct.value = productStore.product ?? product
+  const latestProduct = productStore.product
+
+  if (!latestProduct) {
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: 'Không thể tải thông tin sản phẩm',
+      life: 3000
+    })
+    return
+  }
+
+  // Deep copy the product data to avoid reactivity issues
+  editedProduct.value = {
+    id: latestProduct.id,
+    name: latestProduct.name,
+    description: latestProduct.description,
+    variants: latestProduct.variants && latestProduct.variants.length > 0
+      ? JSON.parse(JSON.stringify(latestProduct.variants)) // Deep copy to avoid reference issues
+      : [{ size: 'M', price: 0, stock: 0 }]
+  }
+
+  console.log('Editing product with variants:', editedProduct.value.variants)
+  productDialog.value = true
 }
 
 const saveProduct = async () => {
   try {
+    // Validate variants
+    const hasValidVariants = editedProduct.value.variants.every(v =>
+      v.size.trim() !== '' && v.price > 0 && v.stock >= 0
+    )
+
+    if (!hasValidVariants) {
+      toast.add({
+        severity: 'error',
+        summary: 'Lỗi',
+        detail: 'Vui lòng điền đầy đủ thông tin kích cỡ, giá và số lượng',
+        life: 3000
+      })
+      return
+    }
+
+    // IMPORTANT: Don't include imageUrls when updating - this prevents images from being deleted
+    const productData = {
+      name: editedProduct.value.name,
+      description: editedProduct.value.description,
+      variants: editedProduct.value.variants.map(v => ({
+        size: v.size,
+        price: v.price,
+        stock: v.stock
+      }))
+      // DON'T send imageUrls here - let the backend keep existing images
+    }
+
     if (editMode.value && editedProduct.value.id) {
       await productStore.updateProduct({
         id: editedProduct.value.id,
-        name: editedProduct.value.name!,
-        description: editedProduct.value.description!,
-        price: editedProduct.value.price || 0,
-        quantity: editedProduct.value.quantity || 0,
-        size: editedProduct.value.size || 'M'
+        ...productData
       })
       toast.add({
         severity: 'success',
         summary: 'Thành công',
-        detail: 'Đã cập nhật sản phẩm',
+        detail: 'Đã cập nhật sản phẩm (hình ảnh được giữ nguyên)',
         life: 3000
       })
     } else {
-      await productStore.createProduct({
-        name: editedProduct.value.name!,
-        description: editedProduct.value.description!,
-        price: editedProduct.value.price || 0,
-        quantity: editedProduct.value.quantity || 0,
-        size: editedProduct.value.size || 'M'
-      })
+      await productStore.createProduct(productData)
       toast.add({
         severity: 'success',
         summary: 'Thành công',
@@ -516,6 +645,18 @@ const deleteProduct = async () => {
 }
 
 // Image Management
+const openImageManager = async (product: Product) => {
+  currentProduct.value = product
+  imageManagerDialog.value = true
+  selectedFiles.value = []
+  selectedSingleFile.value = null
+  statusMessage.value = ''
+
+  // Refresh product to get latest images
+  await productStore.getProductById(product.id)
+  currentProduct.value = productStore.product ?? product
+}
+
 const handleMultipleFileSelect = (event: any) => {
   selectedFiles.value = event.files
 }
@@ -628,16 +769,25 @@ const confirmDeleteImage = (imageUrl: string) => {
 const deleteImage = async () => {
   if (!currentProduct.value || !imageToDelete.value) return
 
-  // Extract imageId from URL
-  const urlParts = imageToDelete.value.split('/')
-  const filename = urlParts[urlParts.length - 1]
-  const imageId = filename.split('_')[0]
+  // Find the image ID from the images array
+  const imageToRemove = currentProduct.value.images?.find(img => img.imageUrl === imageToDelete.value)
+
+  if (!imageToRemove) {
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: 'Không tìm thấy ID của ảnh',
+      life: 3000
+    })
+    deleteImageDialog.value = false
+    return
+  }
 
   isUploading.value = true
   statusMessage.value = ''
 
   try {
-    const response = await deleteProductImageApi(currentProduct.value.id, imageId)
+    const response = await deleteProductImageApi(currentProduct.value.id, imageToRemove.id)
 
     if (response.data.result) {
       currentProduct.value = response.data.result

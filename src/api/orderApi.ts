@@ -3,6 +3,7 @@ import api from './api'
 import type { MfResponse } from '@/types/MatchFinderResponse'
 
 export enum OrderStatus {
+  PLACED = 'PLACED',
   PENDING = 'PENDING',
   CONFIRMED = 'CONFIRMED',
   PROCESSING = 'PROCESSING',
@@ -23,21 +24,13 @@ export type OrderStatusUpdateRequest = {
 
 export type OrderItemResponse = {
   id: string
-  productItem: {
-    id: string
-    product: {
-      id: string
-      name: string
-      description: string
-    }
-    size: string
-    color: string
-    price: number
-    quantity: number
-    imageUrl: string
-  }
+  productId: string
+  productName: string
+  variantId: string | null
+  size: string | null
   quantity: number
   priceAtOrder: number
+  thumbnailUrl: string
 }
 
 export type OrderResponse = {
@@ -136,4 +129,3 @@ export const cancelOrderApi = async (
 ): Promise<AxiosResponse<MfResponse<string>>> => {
   return await api.delete(`/orders/${orderId}`)
 }
-

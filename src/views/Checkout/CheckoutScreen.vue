@@ -3,7 +3,7 @@
     <h1 class="text-3xl font-bold mb-6">Thanh toán đơn hàng</h1>
 
     <div v-if="loading" class="text-center py-8">
-      <p>Đang xử lý...</p>
+      <ProgressSpinner />
     </div>
 
     <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -19,10 +19,10 @@
         </div>
         <div v-else>
           <div v-for="item in cartItems" :key="item.id" class="flex items-center gap-4 mb-4 pb-4 border-b">
-            <img :src="item.thumbnailUrl" :alt="'Sản phẩm'" class="w-20 h-20 object-cover rounded" />
+            <img :src="item.thumbnailUrl || '/noavatar.png'" :alt="item.productName" class="w-20 h-20 object-cover rounded" />
             <div class="flex-1">
-              <h3 class="font-medium">Sản phẩm</h3>
-              <p class="text-sm text-gray-600">ID: {{ item.id.substring(0, 8) }}</p>
+              <h3 class="font-medium">{{ item.productName }}</h3>
+              <p class="text-sm text-gray-600" v-if="item.size">Size: {{ item.size }}</p>
               <p class="text-sm text-gray-600">Số lượng: {{ item.quantity }}</p>
             </div>
             <div class="text-right">
@@ -83,14 +83,14 @@
 
           <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
             <p class="text-sm text-yellow-800">
-              <strong>Lưu ý:</strong> Đơn hàng sẽ được thanh toán khi nhận hàng (COD).
+              <strong>Lưu ý:</strong> Đơn hàng sẽ được thanh toán khi nhận hàng (COD). Đơn hàng sẽ được chuyển sang trạng thái "Đã đặt hàng" ngay sau khi bạn xác nhận.
             </p>
           </div>
 
           <div class="flex gap-4">
             <button
               type="button"
-              @click="$router.push('/cart')"
+              @click="$router.push('/user/cart')"
               class="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition"
             >
               Quay lại giỏ hàng
@@ -115,10 +115,12 @@ import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cartStore'
 import { useOrderStore } from '@/stores/orderStore'
 import type { OrderCreationRequest } from '@/api/orderApi'
+import { useToast } from 'primevue/usetoast'
 
 const router = useRouter()
 const cartStore = useCartStore()
 const orderStore = useOrderStore()
+const toast = useToast()
 
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -151,12 +153,27 @@ const handleSubmit = async () => {
 
   try {
     const order = await orderStore.createOrder(formData.value)
-    // Clear cart after successful order
-    await cartStore.fetchCart()
-    // Navigate to order success page
-    router.push(`/orders/${order.id}`)
+
+    toast.add({
+      severity: 'success',
+      summary: 'Thành công',
+      detail: 'Đặt hàng thành công! Đơn hàng của bạn đang được xử lý.',
+      life: 5000
+    })
+
+    // Clear cart locally
+    cartStore.clearCartLocally()
+
+    // Navigate to order detail page
+    router.push(`/user/orders/${order.id}`)
   } catch (err: any) {
     error.value = err.message || 'Đặt hàng thất bại. Vui lòng thử lại.'
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: error.value,
+      life: 5000
+    })
   } finally {
     submitting.value = false
   }
@@ -165,7 +182,7 @@ const handleSubmit = async () => {
 onMounted(async () => {
   loading.value = true
   try {
-    await cartStore.fetchCart()
+    await cartStore.getCart()
   } catch (err: any) {
     error.value = 'Không thể tải giỏ hàng'
   } finally {

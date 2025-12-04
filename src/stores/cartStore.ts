@@ -1,17 +1,17 @@
 import { defineStore } from 'pinia'
 import {
   addToCartApi,
-  clearCartApi,
-  getCartApi,
+  getCartItemsApi,
   removeFromCartApi,
-  updateCartItemApi,
+  updateCartItemQuantityApi,
   type CartAddRequest,
-  type CartItem,
+  type CartItemResponse,
   type CartUpdateRequest
 } from '@/api/cartApi'
+import { useToast } from 'primevue/usetoast'
 
 interface State {
-  cartItems: CartItem[]
+  cartItems: CartItemResponse[]
   loading: boolean
   totalPrice: number
   totalItems: number
@@ -30,16 +30,19 @@ export const useCartStore = defineStore('cartStore', {
     async getCart() {
       if (this.loading) return
       this.loading = true
-      const { data } = await getCartApi()
-      this.cartItems = data.result.content ?? []
-      this.totalPrice =
-        data.result.content?.reduce(
-          (acc, item: CartItem) => acc + Number(item.price ?? 0) * item.quantity,
+      try {
+        const { data } = await getCartItemsApi()
+        this.cartItems = data.result.content ?? []
+        this.totalPrice = this.cartItems.reduce(
+          (acc, item) => acc + Number(item.price ?? 0) * item.quantity,
           0
-        ) ?? 0
-      this.totalItems = data.result.totalItems
-      this.loading = false
-      return data
+        )
+        this.totalItems = this.cartItems.length
+      } catch (error) {
+        console.error('Failed to fetch cart:', error)
+      } finally {
+        this.loading = false
+      }
     },
 
     async fetchCart() {
@@ -47,43 +50,78 @@ export const useCartStore = defineStore('cartStore', {
     },
 
     async addToCart(request: CartAddRequest) {
+      const toast = useToast()
       this.loading = true
-      const { data } = await addToCartApi(request)
-      this.cartItems = data.result.content ?? []
-      this.totalPrice = data.result.totalPrice
-      this.totalItems = data.result.totalItems
-      this.loading = false
-      return data
+      try {
+        await addToCartApi(request)
+        await this.getCart() // Refresh cart
+        toast.add({
+          severity: 'success',
+          summary: 'Thành công',
+          detail: 'Đã thêm sản phẩm vào giỏ hàng',
+          life: 3000
+        })
+      } catch (error: any) {
+        toast.add({
+          severity: 'error',
+          summary: 'Lỗi',
+          detail: error.response?.data?.message || 'Không thể thêm sản phẩm vào giỏ hàng',
+          life: 3000
+        })
+        throw error
+      } finally {
+        this.loading = false
+      }
     },
 
-    async updateCartItem(request: CartUpdateRequest) {
+    async updateCartItem(cartItemId: string, quantity: number) {
+      const toast = useToast()
       this.loading = true
-      const { data } = await updateCartItemApi(request)
-      this.cartItems = data.result.content ?? []
-      this.totalPrice = data.result.totalPrice
-      this.totalItems = data.result.totalItems
-      this.loading = false
-      return data
+      try {
+        await updateCartItemQuantityApi(cartItemId, { quantity })
+        await this.getCart() // Refresh cart
+      } catch (error: any) {
+        toast.add({
+          severity: 'error',
+          summary: 'Lỗi',
+          detail: error.response?.data?.message || 'Không thể cập nhật giỏ hàng',
+          life: 3000
+        })
+        throw error
+      } finally {
+        this.loading = false
+      }
     },
 
     async removeFromCart(cartItemId: string) {
+      const toast = useToast()
       this.loading = true
-      const { data } = await removeFromCartApi(cartItemId)
-      this.cartItems = data.result.content ?? []
-      this.totalPrice = data.result.totalPrice
-      this.totalItems = data.result.totalItems
-      this.loading = false
-      return data
+      try {
+        await removeFromCartApi(cartItemId)
+        await this.getCart() // Refresh cart
+        toast.add({
+          severity: 'success',
+          summary: 'Thành công',
+          detail: 'Đã xóa sản phẩm khỏi giỏ hàng',
+          life: 3000
+        })
+      } catch (error: any) {
+        toast.add({
+          severity: 'error',
+          summary: 'Lỗi',
+          detail: error.response?.data?.message || 'Không thể xóa sản phẩm',
+          life: 3000
+        })
+        throw error
+      } finally {
+        this.loading = false
+      }
     },
 
-    async clearCart() {
-      this.loading = true
-      const { data } = await clearCartApi()
+    clearCartLocally() {
       this.cartItems = []
       this.totalPrice = 0
       this.totalItems = 0
-      this.loading = false
-      return data
     }
   }
 })

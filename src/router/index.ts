@@ -111,6 +111,16 @@ const router = createRouter({
           path: 'post/:id',
           name: 'user-post-detail',
           component: () => import('../views/User/BlogPost.vue')
+        },
+        {
+          path: 'news',
+          name: 'user-news',
+          component: () => import('../views/User/News.vue')
+        },
+        {
+          path: 'news/:id',
+          name: 'user-news-detail',
+          component: () => import('../views/User/NewsDetail.vue')
         }
       ]
     },
@@ -132,6 +142,11 @@ const router = createRouter({
           component: () => import('../views/Admin/HomeAdmin.vue')
         },
         {
+          path: 'products',
+          name: 'admin-products',
+          component: () => import('../views/Admin/ProductAdmin.vue')
+        },
+        {
           path: 'orders',
           name: 'admin-orders',
           component: () => import('../views/Admin/AdminOrdersScreen.vue')
@@ -142,9 +157,14 @@ const router = createRouter({
           component: () => import('../views/Orders/OrderDetailScreen.vue')
         },
         {
-          path: 'products/:id',
-          name: 'admin-products',
-          component: () => import('../views/Admin/ProductAdmin.vue')
+          path: 'news',
+          name: 'admin-news',
+          component: () => import('../views/Admin/NewsManagement.vue')
+        },
+        {
+          path: 'banners',
+          name: 'admin-banners',
+          component: () => import('../views/Admin/BannerManagement.vue')
         },
         {
           path: 'users',

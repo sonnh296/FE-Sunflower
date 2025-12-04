@@ -1,155 +1,200 @@
 <template>
-  <div class="order-detail-container max-w-4xl mx-auto p-6">
-    <div v-if="loading" class="text-center py-8">
-      <p>Đang tải...</p>
+  <div class="order-detail-container max-w-5xl mx-auto p-6">
+    <div v-if="orderStore.loading" class="text-center py-8">
+      <ProgressSpinner />
     </div>
 
-    <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-      {{ error }}
+    <div v-else-if="orderStore.error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+      {{ orderStore.error }}
     </div>
 
-    <div v-else-if="order">
+    <div v-else-if="order" class="space-y-6">
       <!-- Header -->
-      <div class="mb-6">
-        <button @click="$router.back()" class="text-primary hover:text-primary-dark mb-4 flex items-center gap-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-          </svg>
-          Quay lại
-        </button>
-        <h1 class="text-3xl font-bold">Chi tiết đơn hàng #{{ order.id.substring(0, 8) }}</h1>
+      <div class="flex justify-between items-start">
+        <div>
+          <h1 class="text-3xl font-bold mb-2">Chi tiết đơn hàng</h1>
+          <p class="text-gray-600">Mã đơn hàng: #{{ order.id.substring(0, 8) }}</p>
+          <p class="text-sm text-gray-500">{{ formatDate(order.createdAt) }}</p>
+        </div>
+        <span :class="getStatusClass(order.status)" class="px-4 py-2 rounded-full text-sm font-medium">
+          {{ getStatusLabel(order.status) }}
+        </span>
       </div>
 
-      <!-- Order Info -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Customer Information -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">Thông tin giao hàng</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <h2 class="text-lg font-semibold mb-3">Thông tin đơn hàng</h2>
-            <div class="space-y-2">
-              <p><span class="font-medium">Mã đơn hàng:</span> #{{ order.id }}</p>
-              <p><span class="font-medium">Ngày tạo:</span> {{ formatDate(order.createdAt) }}</p>
-              <p><span class="font-medium">Cập nhật lần cuối:</span> {{ formatDate(order.updatedAt) }}</p>
-              <p>
-                <span class="font-medium">Trạng thái:</span>
-                <span :class="getStatusClass(order.status)" class="ml-2 px-3 py-1 rounded-full text-sm font-medium">
-                  {{ getStatusText(order.status) }}
-                </span>
-              </p>
-            </div>
+            <p class="text-sm text-gray-600">Địa chỉ giao hàng</p>
+            <p class="font-medium">{{ order.deliveryAddress }}</p>
           </div>
-
           <div>
-            <h2 class="text-lg font-semibold mb-3">Thông tin khách hàng</h2>
-            <div class="space-y-2">
-              <p><span class="font-medium">Tên:</span> {{ order.user.fullName || order.user.username }}</p>
-              <p><span class="font-medium">Email:</span> {{ order.user.email }}</p>
-              <p><span class="font-medium">Số điện thoại:</span> {{ order.phoneNumber }}</p>
-              <p><span class="font-medium">Địa chỉ giao hàng:</span> {{ order.deliveryAddress }}</p>
-              <p v-if="order.notes"><span class="font-medium">Ghi chú:</span> {{ order.notes }}</p>
-            </div>
+            <p class="text-sm text-gray-600">Số điện thoại</p>
+            <p class="font-medium">{{ order.phoneNumber }}</p>
+          </div>
+          <div v-if="order.notes" class="md:col-span-2">
+            <p class="text-sm text-gray-600">Ghi chú</p>
+            <p class="font-medium">{{ order.notes }}</p>
           </div>
         </div>
       </div>
 
       <!-- Order Items -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 class="text-lg font-semibold mb-4">Sản phẩm</h2>
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">Sản phẩm đã đặt</h2>
         <div class="space-y-4">
-          <div v-for="item in order.orderItems" :key="item.id" class="flex items-center gap-4 pb-4 border-b last:border-0">
-            <img :src="item.productItem.imageUrl" :alt="item.productItem.product.name" class="w-24 h-24 object-cover rounded" />
+          <div
+            v-for="item in order.orderItems"
+            :key="item.id"
+            class="flex items-center gap-4 pb-4 border-b last:border-b-0"
+          >
+            <img
+              :src="item.thumbnailUrl || '/noavatar.png'"
+              :alt="item.productName"
+              class="w-24 h-24 object-cover rounded"
+            />
             <div class="flex-1">
-              <h3 class="font-medium text-lg">{{ item.productItem.product.name }}</h3>
-              <p class="text-sm text-gray-600">{{ item.productItem.product.description }}</p>
-              <p class="text-sm text-gray-600">Màu: {{ item.productItem.color }} | Size: {{ item.productItem.size }}</p>
+              <h3 class="font-semibold text-lg">{{ item.productName }}</h3>
+              <p class="text-sm text-gray-600" v-if="item.size">Size: {{ item.size }}</p>
               <p class="text-sm text-gray-600">Số lượng: {{ item.quantity }}</p>
+              <p class="text-sm text-gray-600">Đơn giá: {{ formatPrice(item.priceAtOrder) }}</p>
             </div>
             <div class="text-right">
-              <p class="text-sm text-gray-600">{{ formatPrice(item.priceAtOrder) }} x {{ item.quantity }}</p>
-              <p class="font-bold text-lg">{{ formatPrice(item.priceAtOrder * item.quantity) }}</p>
+              <p class="text-xl font-bold">{{ formatPrice(item.priceAtOrder * item.quantity) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-6 border-t">
+          <div class="flex justify-between items-center">
+            <span class="text-xl font-bold">Tổng cộng:</span>
+            <span class="text-3xl font-bold text-primary">{{ formatPrice(order.totalPrice) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Timeline -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">Trạng thái đơn hàng</h2>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3">
+            <div :class="isStatusReached('PLACED') ? 'bg-primary text-white' : 'bg-gray-300 text-gray-600'"
+                 class="w-8 h-8 rounded-full flex items-center justify-center">
+              <i class="pi pi-check text-sm"></i>
+            </div>
+            <div>
+              <p class="font-medium">Đã đặt hàng</p>
+              <p class="text-xs text-gray-500">Đơn hàng đã được tạo</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div :class="isStatusReached('CONFIRMED') ? 'bg-primary text-white' : 'bg-gray-300 text-gray-600'"
+                 class="w-8 h-8 rounded-full flex items-center justify-center">
+              <i class="pi pi-check text-sm"></i>
+            </div>
+            <div>
+              <p class="font-medium">Đã xác nhận</p>
+              <p class="text-xs text-gray-500">Shop đã xác nhận đơn hàng</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div :class="isStatusReached('PROCESSING') ? 'bg-primary text-white' : 'bg-gray-300 text-gray-600'"
+                 class="w-8 h-8 rounded-full flex items-center justify-center">
+              <i class="pi pi-check text-sm"></i>
+            </div>
+            <div>
+              <p class="font-medium">Đang xử lý</p>
+              <p class="text-xs text-gray-500">Đơn hàng đang được chuẩn bị</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div :class="isStatusReached('SHIPPING') ? 'bg-primary text-white' : 'bg-gray-300 text-gray-600'"
+                 class="w-8 h-8 rounded-full flex items-center justify-center">
+              <i class="pi pi-check text-sm"></i>
+            </div>
+            <div>
+              <p class="font-medium">Đang giao hàng</p>
+              <p class="text-xs text-gray-500">Đơn hàng đang trên đường giao đến bạn</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div :class="isStatusReached('DELIVERED') ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'"
+                 class="w-8 h-8 rounded-full flex items-center justify-center">
+              <i class="pi pi-check text-sm"></i>
+            </div>
+            <div>
+              <p class="font-medium">Đã giao hàng</p>
+              <p class="text-xs text-gray-500">Đơn hàng đã được giao thành công</p>
+            </div>
+          </div>
+
+          <div v-if="order.status === 'CANCELLED'" class="flex items-center gap-3">
+            <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center">
+              <i class="pi pi-times text-sm"></i>
+            </div>
+            <div>
+              <p class="font-medium">Đã hủy</p>
+              <p class="text-xs text-gray-500">Đơn hàng đã bị hủy</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Order Total -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div class="flex justify-between items-center text-xl">
-          <span class="font-bold">Tổng cộng:</span>
-          <span class="font-bold text-2xl text-primary">{{ formatPrice(order.totalPrice) }}</span>
-        </div>
-        <p class="text-sm text-gray-600 mt-2">Thanh toán khi nhận hàng (COD)</p>
-      </div>
-
       <!-- Actions -->
-      <div v-if="isAdmin && order.status !== 'CANCELLED' && order.status !== 'DELIVERED'" class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-lg font-semibold mb-4">Cập nhật trạng thái</h2>
-        <div class="flex gap-2 flex-wrap">
-          <button
-            v-for="status in availableStatuses"
-            :key="status.value"
-            @click="handleUpdateStatus(status.value)"
-            class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition"
-          >
-            {{ status.label }}
-          </button>
-        </div>
-      </div>
-
-      <div v-else-if="!isAdmin && (order.status === 'PENDING' || order.status === 'CONFIRMED')" class="bg-white rounded-lg shadow-md p-6">
-        <button
-          @click="handleCancelOrder"
-          class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition w-full md:w-auto"
-        >
-          Hủy đơn hàng
-        </button>
+      <div class="flex gap-3">
+        <Button
+          label="Quay lại"
+          icon="pi pi-arrow-left"
+          @click="$router.back()"
+          class="!bg-gray-200 !text-gray-700 !border-0"
+        />
+        <Button
+          v-if="order.status === 'PLACED' || order.status === 'PENDING'"
+          label="Hủy đơn hàng"
+          icon="pi pi-times"
+          severity="danger"
+          @click="confirmCancelOrder"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useOrderStore } from '@/stores/orderStore'
-import { useAuthStore } from '@/stores/authStore'
 import { OrderStatus } from '@/api/orderApi'
+import { useConfirm } from 'primevue/useconfirm'
+import { useToast } from 'primevue/usetoast'
 
 const route = useRoute()
 const router = useRouter()
 const orderStore = useOrderStore()
-const authStore = useAuthStore()
+const confirm = useConfirm()
+const toast = useToast()
 
-const orderId = route.params.id as string
 const order = computed(() => orderStore.currentOrder)
-const loading = computed(() => orderStore.loading)
-const error = computed(() => orderStore.error)
 
-const isAdmin = computed(() => {
-  return authStore.user?.user_roles?.some(role => role.role.roleName === 'ADMIN') || false
-})
+const statusOrder = ['PLACED', 'CONFIRMED', 'PROCESSING', 'SHIPPING', 'DELIVERED']
 
-const orderStatuses = [
-  { value: OrderStatus.PENDING, label: 'Chờ xác nhận' },
-  { value: OrderStatus.CONFIRMED, label: 'Xác nhận' },
-  { value: OrderStatus.PROCESSING, label: 'Đang xử lý' },
-  { value: OrderStatus.SHIPPING, label: 'Giao hàng' },
-  { value: OrderStatus.DELIVERED, label: 'Đã giao' },
-  { value: OrderStatus.CANCELLED, label: 'Hủy' }
-]
+const isStatusReached = (status: string) => {
+  if (!order.value) return false
+  if (order.value.status === 'CANCELLED') return false
 
-const availableStatuses = computed(() => {
-  if (!order.value) return []
+  const currentIndex = statusOrder.indexOf(order.value.status)
+  const checkIndex = statusOrder.indexOf(status)
+  return currentIndex >= checkIndex
+}
 
-  const statusFlow: Record<string, OrderStatus[]> = {
-    PENDING: [OrderStatus.CONFIRMED, OrderStatus.CANCELLED],
-    CONFIRMED: [OrderStatus.PROCESSING, OrderStatus.CANCELLED],
-    PROCESSING: [OrderStatus.SHIPPING],
-    SHIPPING: [OrderStatus.DELIVERED]
-  }
-
-  const nextStatuses = statusFlow[order.value.status] || []
-  return orderStatuses.filter(s => nextStatuses.includes(s.value))
-})
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleString('vi-VN')
+}
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat('vi-VN', {
@@ -158,13 +203,9 @@ const formatPrice = (price: number) => {
   }).format(price)
 }
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  return date.toLocaleString('vi-VN')
-}
-
-const getStatusText = (status: string) => {
-  const statusMap: Record<string, string> = {
+const getStatusLabel = (status: OrderStatus) => {
+  const labels: Record<OrderStatus, string> = {
+    PLACED: 'Đã đặt hàng',
     PENDING: 'Chờ xác nhận',
     CONFIRMED: 'Đã xác nhận',
     PROCESSING: 'Đang xử lý',
@@ -172,50 +213,53 @@ const getStatusText = (status: string) => {
     DELIVERED: 'Đã giao hàng',
     CANCELLED: 'Đã hủy'
   }
-  return statusMap[status] || status
+  return labels[status] || status
 }
 
-const getStatusClass = (status: string) => {
-  const classMap: Record<string, string> = {
+const getStatusClass = (status: OrderStatus) => {
+  const classes: Record<OrderStatus, string> = {
+    PLACED: 'bg-blue-100 text-blue-800',
     PENDING: 'bg-yellow-100 text-yellow-800',
-    CONFIRMED: 'bg-blue-100 text-blue-800',
-    PROCESSING: 'bg-purple-100 text-purple-800',
-    SHIPPING: 'bg-indigo-100 text-indigo-800',
+    CONFIRMED: 'bg-purple-100 text-purple-800',
+    PROCESSING: 'bg-indigo-100 text-indigo-800',
+    SHIPPING: 'bg-cyan-100 text-cyan-800',
     DELIVERED: 'bg-green-100 text-green-800',
     CANCELLED: 'bg-red-100 text-red-800'
   }
-  return classMap[status] || 'bg-gray-100 text-gray-800'
+  return classes[status] || 'bg-gray-100 text-gray-800'
 }
 
-const handleUpdateStatus = async (newStatus: OrderStatus) => {
-  if (confirm(`Bạn có chắc chắn muốn cập nhật trạng thái sang "${getStatusText(newStatus)}"?`)) {
-    try {
-      await orderStore.updateOrderStatus(orderId, { status: newStatus })
-      await orderStore.fetchOrderById(orderId)
-    } catch (err) {
-      alert('Không thể cập nhật trạng thái')
+const confirmCancelOrder = () => {
+  confirm.require({
+    message: 'Bạn có chắc chắn muốn hủy đơn hàng này?',
+    header: 'Xác nhận hủy đơn',
+    icon: 'pi pi-exclamation-triangle',
+    accept: async () => {
+      try {
+        await orderStore.cancelOrder(order.value!.id)
+        toast.add({
+          severity: 'success',
+          summary: 'Thành công',
+          detail: 'Đơn hàng đã được hủy',
+          life: 3000
+        })
+        // Refresh order details
+        await orderStore.fetchOrderById(order.value!.id)
+      } catch (error) {
+        toast.add({
+          severity: 'error',
+          summary: 'Lỗi',
+          detail: 'Không thể hủy đơn hàng',
+          life: 3000
+        })
+      }
     }
-  }
-}
-
-const handleCancelOrder = async () => {
-  if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
-    try {
-      await orderStore.cancelOrder(orderId)
-      await orderStore.fetchOrderById(orderId)
-    } catch (err) {
-      alert('Không thể hủy đơn hàng')
-    }
-  }
+  })
 }
 
 onMounted(async () => {
+  const orderId = route.params.id as string
   await orderStore.fetchOrderById(orderId)
 })
 </script>
 
-<style scoped>
-.order-detail-container {
-  min-height: calc(100vh - 200px);
-}
-</style>

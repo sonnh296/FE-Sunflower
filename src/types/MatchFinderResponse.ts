@@ -1,5 +1,5 @@
 export type MfResponse<T> = {
-  code: string
+  code: string | number
   result: T
   data: T
   message: 'true'

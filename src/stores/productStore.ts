@@ -55,6 +55,8 @@ export const useProductStore = defineStore('productStore', {
       const productData = {
         ...product
       }
+      // Debug log: show payload being sent to the API (helps debug date fields)
+      console.debug('[productStore] createProduct payload:', productData)
       const { data } = await crateProductApi(productData)
       this.creating = false
       return data
@@ -62,6 +64,8 @@ export const useProductStore = defineStore('productStore', {
 
     async updateProduct(product: ProductUpdateRequest) {
       this.updating = true
+      // Debug log: show payload being sent to the API (helps debug date fields)
+      console.debug('[productStore] updateProduct payload:', product)
       const { data } = await updateProductApi(product)
       this.updating = false
       return data

@@ -7,16 +7,6 @@
           <h1 class="text-3xl font-bold text-gray-800">Giỏ hàng của bạn</h1>
           <p class="text-gray-500 mt-1">{{ cartStore.cartItems.length }} sản phẩm</p>
         </div>
-        <Button
-          v-if="cartStore.cartItems.length"
-          severity="danger"
-          outlined
-          @click="cartStore.clearCart()"
-          class="!border-red-500 !text-red-500 hover:!bg-red-50"
-        >
-          <i class="pi pi-trash mr-2"></i>
-          Xóa tất cả
-        </Button>
       </div>
 
       <!-- Loading State -->
@@ -32,7 +22,7 @@
         <h2 class="text-2xl font-semibold text-gray-700 mb-2">Giỏ hàng trống</h2>
         <p class="text-gray-500 mb-6">Hãy thêm sản phẩm yêu thích vào giỏ hàng!</p>
         <Button
-          @click="$router.push('/products')"
+          @click="$router.push('/user/home')"
           class="!bg-gradient-to-r !from-purple-500 !to-pink-500 !border-0 !text-white"
         >
           <i class="pi pi-shopping-bag mr-2"></i>
@@ -56,7 +46,7 @@
                   <div class="relative w-32 h-32 rounded-lg overflow-hidden bg-gray-100">
                     <img
                       :src="item.thumbnailUrl || '/noavatar.png'"
-                      :alt="'Sản phẩm'"
+                      :alt="item.productName"
                       class="w-full h-full object-cover"
                       @error="(event) => (event.target as HTMLImageElement).src = '/noavatar.png'"
                     />
@@ -68,13 +58,18 @@
                   <div class="flex justify-between items-start mb-3">
                     <div>
                       <h3 class="text-lg font-semibold text-gray-800 mb-2">
-                        Sản phẩm thời trang
+                        {{ item.productName }}
                       </h3>
                       <div class="flex flex-wrap gap-2">
-                        <!-- Item ID Badge -->
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700">
-                          <i class="pi pi-info-circle mr-1 text-xs"></i>
-                          ID: {{ item.id.substring(0, 8) }}...
+                        <!-- Size Badge -->
+                        <span v-if="item.size" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700">
+                          <i class="pi pi-tag mr-1 text-xs"></i>
+                          Size: {{ item.size }}
+                        </span>
+                        <!-- Stock Badge -->
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">
+                          <i class="pi pi-box mr-1 text-xs"></i>
+                          Còn: {{ item.availableStock }}
                         </span>
                       </div>
                     </div>
@@ -108,7 +103,7 @@
                           text
                           rounded
                           size="small"
-                          @click="updateQuantity(item, item.quantity - 1)"
+                          @click="updateQuantity(item.id, item.quantity - 1)"
                           :disabled="item.quantity <= 1"
                           class="!text-gray-600 hover:!bg-gray-200"
                         />
@@ -120,7 +115,8 @@
                           text
                           rounded
                           size="small"
-                          @click="updateQuantity(item, item.quantity + 1)"
+                          @click="updateQuantity(item.id, item.quantity + 1)"
+                          :disabled="item.quantity >= item.availableStock"
                           class="!text-gray-600 hover:!bg-gray-200"
                         />
                       </div>
@@ -186,14 +182,14 @@
               @click="handleCheckout"
             >
               <i class="pi pi-credit-card mr-2"></i>
-              Thanh toán ngay
+              Đặt hàng
             </Button>
 
             <div class="mt-4 text-center">
               <Button
                 text
                 class="!text-gray-600 hover:!text-purple-600"
-                @click="$router.push('/products')"
+                @click="$router.push('/user/home')"
               >
                 <i class="pi pi-arrow-left mr-2"></i>
                 Tiếp tục mua sắm
@@ -210,22 +206,17 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cartStore'
-import type { CartItem } from '@/api/cartApi'
 
 const cartStore = useCartStore()
 const router = useRouter()
 
-const updateQuantity = async (item: CartItem, quantity: number) => {
+const updateQuantity = async (cartItemId: string, quantity: number) => {
   if (quantity < 1) return
-  await cartStore.updateCartItem({
-    cartItemId: item.id,
-    quantity
-  })
+  await cartStore.updateCartItem(cartItemId, quantity)
 }
 
 const handleCheckout = () => {
-  // Navigate to checkout page or handle checkout logic
-  router.push('/checkout')
+  router.push('/user/checkout')
 }
 
 onMounted(async () => {

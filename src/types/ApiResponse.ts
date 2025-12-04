@@ -1,6 +1,6 @@
-// Backend ApiResponse type matching Spring Boot backend
 export type ApiResponse<T> = {
-  code: number
-  message?: string
+  code: string | number
   result: T
+  message?: string
+  success?: boolean
 }

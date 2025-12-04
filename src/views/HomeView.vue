@@ -148,8 +148,8 @@
           >
             <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
               <img
-                v-if="product.thumbnailUrl"
-                :src="product.thumbnailUrl"
+                v-if="product.thumbnailUrl || (product.imageUrls && product.imageUrls.length > 0)"
+                :src="product.thumbnailUrl || product.imageUrls?.[0] || ''"
                 :alt="product.name"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
@@ -227,6 +227,72 @@
               ></i>
               <h3 class="font-semibold text-2xl mb-2">Khám phá thêm</h3>
               <p class="text-gray-300 text-sm">Xem toàn bộ bộ sưu tập</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- News Section -->
+    <div class="w-full py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+          <h2 class="text-4xl md:text-5xl font-light text-gray-900 mb-4 tracking-tight">
+            Tin tức & Xu hướng
+          </h2>
+          <div class="w-24 h-px bg-gray-300 mx-auto mb-6"></div>
+          <p class="text-gray-600 text-lg font-light max-w-2xl mx-auto">
+            Cập nhật những xu hướng thời trang mới nhất
+          </p>
+        </div>
+
+        <!-- News Grid -->
+        <div v-if="newsStore.loading" class="flex justify-center items-center py-20">
+          <i class="pi pi-spin pi-spinner text-4xl text-gray-400"></i>
+          <span class="ml-4 text-gray-600">Đang tải tin tức...</span>
+        </div>
+
+        <div v-else-if="newsStore.newsList.length === 0" class="text-center py-20">
+          <i class="pi pi-inbox text-6xl text-gray-300 mb-4"></i>
+          <p class="text-gray-500 text-lg">Chưa có tin tức nào</p>
+        </div>
+
+        <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div
+            v-for="newsItem in newsStore.newsList"
+            :key="newsItem.id"
+            class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
+            @click="viewNews(newsItem.id)"
+          >
+            <div class="relative aspect-[16/10] overflow-hidden bg-gray-100">
+              <img
+                v-if="newsItem.imageUrl"
+                :src="newsItem.imageUrl"
+                :alt="newsItem.title"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100">
+                <i class="pi pi-newspaper text-6xl text-pink-400"></i>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="font-semibold text-xl text-gray-900 mb-3 line-clamp-2">
+                {{ newsItem.title }}
+              </h3>
+              <p class="text-gray-600 text-sm mb-4 line-clamp-3" v-html="newsItem.content?.substring(0, 150) + '...'"></p>
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-gray-500">
+                  {{ formatDate(newsItem.createdAt) }}
+                </span>
+                <Button
+                  label="Đọc thêm"
+                  icon="pi pi-arrow-right"
+                  iconPos="right"
+                  class="!text-pink-600 !bg-transparent !border-0 !p-0 !font-medium hover:!text-pink-700"
+                  @click.stop="viewNews(newsItem.id)"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -382,8 +448,12 @@ import Button from 'primevue/button'
 import { getProductsApi } from '@/api/productApi'
 import type { ProductListItem } from '@/types/Product'
 import FashionAdvisorDialog from '@/components/dialogs/FashionAdvisorDialog.vue'
+import { useNewsStore } from '@/stores/newsStore'
+import { useBannerStore } from '@/stores/bannerStore'
 
 const router = useRouter()
+const newsStore = useNewsStore()
+const bannerStore = useBannerStore()
 
 // Products fetched from API
 const featuredProducts = ref<ProductListItem[]>([])
@@ -439,9 +509,36 @@ const showFashionAdvisor = () => {
   showAdvisorDialog.value = true
 }
 
-// Fetch products on component mount
-onMounted(() => {
+const viewNews = (newsId: string) => {
+  router.push(`/user/news/${newsId}`)
+}
+
+const formatDate = (dateString: string) => {
+  if (!dateString) return ''
+  try {
+    const date = new Date(dateString)
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return ''
+    }
+    return new Intl.DateTimeFormat('vi-VN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }).format(date)
+  } catch (error) {
+    console.error('Error formatting date:', dateString, error)
+    return ''
+  }
+}
+
+// Fetch products and news on component mount
+onMounted(async () => {
   fetchProducts()
+  // Fetch news for homepage (latest 3 news items)
+  await newsStore.fetchPublishedNews(0, 3)
+  // Fetch active banner
+  await bannerStore.fetchActiveBanner()
 })
 </script>
 
