@@ -8,7 +8,6 @@ import {
   type CartItemResponse,
   type CartUpdateRequest
 } from '@/api/cartApi'
-import { useToast } from 'primevue/usetoast'
 
 interface State {
   cartItems: CartItemResponse[]
@@ -50,24 +49,11 @@ export const useCartStore = defineStore('cartStore', {
     },
 
     async addToCart(request: CartAddRequest) {
-      const toast = useToast()
       this.loading = true
       try {
         await addToCartApi(request)
         await this.getCart() // Refresh cart
-        toast.add({
-          severity: 'success',
-          summary: 'Thành công',
-          detail: 'Đã thêm sản phẩm vào giỏ hàng',
-          life: 3000
-        })
       } catch (error: any) {
-        toast.add({
-          severity: 'error',
-          summary: 'Lỗi',
-          detail: error.response?.data?.message || 'Không thể thêm sản phẩm vào giỏ hàng',
-          life: 3000
-        })
         throw error
       } finally {
         this.loading = false
@@ -75,18 +61,11 @@ export const useCartStore = defineStore('cartStore', {
     },
 
     async updateCartItem(cartItemId: string, quantity: number) {
-      const toast = useToast()
       this.loading = true
       try {
         await updateCartItemQuantityApi(cartItemId, { quantity })
         await this.getCart() // Refresh cart
       } catch (error: any) {
-        toast.add({
-          severity: 'error',
-          summary: 'Lỗi',
-          detail: error.response?.data?.message || 'Không thể cập nhật giỏ hàng',
-          life: 3000
-        })
         throw error
       } finally {
         this.loading = false
@@ -94,24 +73,11 @@ export const useCartStore = defineStore('cartStore', {
     },
 
     async removeFromCart(cartItemId: string) {
-      const toast = useToast()
       this.loading = true
       try {
         await removeFromCartApi(cartItemId)
         await this.getCart() // Refresh cart
-        toast.add({
-          severity: 'success',
-          summary: 'Thành công',
-          detail: 'Đã xóa sản phẩm khỏi giỏ hàng',
-          life: 3000
-        })
       } catch (error: any) {
-        toast.add({
-          severity: 'error',
-          summary: 'Lỗi',
-          detail: error.response?.data?.message || 'Không thể xóa sản phẩm',
-          life: 3000
-        })
         throw error
       } finally {
         this.loading = false

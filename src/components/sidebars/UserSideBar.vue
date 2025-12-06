@@ -6,7 +6,7 @@
     <Menubar class="w-full" :model="items">
       <template #end>
         <div class="flex">
-          <div class="relative">
+          <div class="relative" v-if="!isOrderPage">
             <Button
               icon="pi pi-shopping-cart"
               label="Giỏ hàng"
@@ -50,13 +50,16 @@
 <script setup lang="ts">
 import router from '@/router'
 import Menubar from 'primevue/menubar'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
 import { onClickOutside } from '@vueuse/core'
 import Button from 'primevue/button'
+import { useRoute } from 'vue-router'
+
 const { t } = useI18n()
+const route = useRoute()
 
 const authStore = useAuthStore()
 const cartStore = useCartStore()
@@ -65,6 +68,11 @@ const isScrolled = ref(false)
 const openProfile = ref(false)
 const toggleProfile = ref(null)
 onClickOutside(toggleProfile, () => (openProfile.value = false))
+
+// Check if current page is an order page
+const isOrderPage = computed(() => {
+  return route.name === 'user-orders' || route.name === 'user-order-detail'
+})
 
 const items = ref([
   {

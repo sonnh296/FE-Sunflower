@@ -165,7 +165,7 @@
           label="Quay về trang chủ"
           icon="pi pi-home"
           class="!bg-pink-500 hover:!bg-pink-600 !text-white !border-0 !rounded-xl"
-          @click="router.push({ name: 'user-home' })"
+          @click="router.push({ name: 'guest-home' })"
         />
       </div>
 

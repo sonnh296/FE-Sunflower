@@ -526,27 +526,14 @@ const openNewProductDialog = () => {
 const editProduct = async (product: Product) => {
   editMode.value = true
 
-  // First, fetch the latest product data to ensure we have all information including images and variants
-  await productStore.getProductById(product.id)
-  const latestProduct = productStore.product
-
-  if (!latestProduct) {
-    toast.add({
-      severity: 'error',
-      summary: 'Lỗi',
-      detail: 'Không thể tải thông tin sản phẩm',
-      life: 3000
-    })
-    return
-  }
-
-  // Deep copy the product data to avoid reactivity issues
+  // Use data from the product list directly - no need to call API again
+  // The list now includes variants and imageUrls from backend
   editedProduct.value = {
-    id: latestProduct.id,
-    name: latestProduct.name,
-    description: latestProduct.description,
-    variants: latestProduct.variants && latestProduct.variants.length > 0
-      ? JSON.parse(JSON.stringify(latestProduct.variants)) // Deep copy to avoid reference issues
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    variants: product.variants && product.variants.length > 0
+      ? JSON.parse(JSON.stringify(product.variants)) // Deep copy to avoid reference issues
       : [{ size: 'M', price: 0, stock: 0 }]
   }
 

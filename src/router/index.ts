@@ -65,7 +65,8 @@ const router = createRouter({
         {
           path: 'home',
           name: 'user-home',
-          component: () => import('../views/User/ClientHome.vue')
+          // Redirect to guest home - use the same component
+          redirect: { name: 'guest-home' }
         },
         {
           path: 'cart',
@@ -90,7 +91,8 @@ const router = createRouter({
         {
           path: 'product/:id',
           name: 'user-product',
-          component: () => import('../views/User/Product.vue')
+          // Redirect to guest product detail - use the same component
+          redirect: (to) => ({ name: 'product-guest', params: to.params })
         },
         {
           path: 'try-on/:id',

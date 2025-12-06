@@ -63,12 +63,68 @@ export const useAuthStore = defineStore({
           await this.getMe()
           this.identified = true
           console.log('Auth initialized successfully, identified:', this.identified)
+
+          // Set up cross-tab sync
+          this.setupCrossTabSync()
         } catch (error) {
           console.error('Failed to initialize auth:', error)
           // Token might be invalid, clear it
           await this.logout()
         }
+      } else {
+        // Still setup cross-tab sync even if not logged in
+        this.setupCrossTabSync()
       }
+    },
+
+    // Setup cross-tab synchronization
+    setupCrossTabSync() {
+      // Listen for storage changes from other tabs
+      window.addEventListener('storage', (event) => {
+        // Check if access token was added/removed
+        if (event.key === ACCESS_TOKEN_KEY) {
+          console.log('Access token changed in another tab')
+
+          if (event.newValue) {
+            // Token was added - user logged in another tab
+            console.log('User logged in another tab, syncing...')
+            this.initializeAuth()
+          } else if (event.oldValue && !event.newValue) {
+            // Token was removed - user logged out in another tab
+            console.log('User logged out in another tab, syncing...')
+            this.syncLogout()
+          }
+        }
+      })
+
+      // Use BroadcastChannel for better cross-tab communication
+      if (typeof BroadcastChannel !== 'undefined') {
+        const authChannel = new BroadcastChannel('auth-channel')
+
+        authChannel.onmessage = (event) => {
+          console.log('Received auth message from another tab:', event.data)
+
+          if (event.data.type === 'LOGIN') {
+            console.log('Login detected in another tab')
+            this.initializeAuth()
+          } else if (event.data.type === 'LOGOUT') {
+            console.log('Logout detected in another tab')
+            this.syncLogout()
+          }
+        }
+      }
+    },
+
+    // Sync logout from other tabs
+    syncLogout() {
+      Cookies.remove(ACCESS_TOKEN_KEY)
+      Cookies.remove(REFRESH_TOKEN_KEY)
+      Cookies.remove(ROLE)
+      Cookies.remove(USER_ID)
+      localStorage.clear()
+      this.identified = false
+      this.identity = null
+      window.location.reload()
     },
 
     async login(params: LoginRequest) {
@@ -106,12 +162,22 @@ export const useAuthStore = defineStore({
       console.log(Cookies.get(ACCESS_TOKEN_KEY))
       if (this.identity && Cookies.get(ACCESS_TOKEN_KEY))
         await logoutApi(Cookies.get(ACCESS_TOKEN_KEY) + '')
+
       Cookies.remove(ACCESS_TOKEN_KEY)
       Cookies.remove(REFRESH_TOKEN_KEY)
       Cookies.remove(ROLE)
       Cookies.remove(USER_ID)
       localStorage.clear()
       this.identified = false
+      this.identity = null
+
+      // Notify other tabs about logout
+      if (typeof BroadcastChannel !== 'undefined') {
+        const authChannel = new BroadcastChannel('auth-channel')
+        authChannel.postMessage({ type: 'LOGOUT' })
+        authChannel.close()
+      }
+
       window.location.replace(this.rootUrl)
     },
 
@@ -175,6 +241,14 @@ export const useAuthStore = defineStore({
       this.name = this.identity?.fullName ?? ''
       this.identified = true
       localStorage.setItem('avatar', this.identity?.avatarUrl ?? '/noavatar.png')
+
+      // Notify other tabs about login
+      if (typeof BroadcastChannel !== 'undefined') {
+        const authChannel = new BroadcastChannel('auth-channel')
+        authChannel.postMessage({ type: 'LOGIN', userId: this.identity?.id })
+        authChannel.close()
+      }
+
       if (role === 'user') {
         router.push('/user/home')
       }

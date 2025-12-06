@@ -1,7 +1,7 @@
 <template>
   <UserSideBar />
 
-  <div class="min-w-full pt-24 bg-[#5c6c99]">
+  <div class="min-w-full pt-24 bg-[#fffef5]">
     <div class="w-full h-full min-h-screen px-10">
       <RouterView />
     </div>

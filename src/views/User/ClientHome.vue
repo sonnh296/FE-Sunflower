@@ -389,7 +389,7 @@ const isLoadingProducts = ref(false)
 const showAdvisorDialog = ref(false)
 
 const navigateToProduct = (product: any) => {
-  router.push({ name: 'user-product', params: { id: product.id } })
+  router.push({ name: 'product-guest', params: { id: product.id } })
 }
 
 const scrollToNextSection = () => {

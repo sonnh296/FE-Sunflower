@@ -252,11 +252,13 @@ import Galleria from 'primevue/galleria'
 import { getProductByIdApi } from '@/api/productApi'
 import type { Product, ProductVariant } from '@/types/Product'
 import { useAuthStore } from '@/stores/authStore'
+import { useCartStore } from '@/stores/cartStore'
 import { useToast } from 'primevue/usetoast'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const cartStore = useCartStore()
 const toast = useToast()
 
 const loading = ref(true)
@@ -304,29 +306,58 @@ const goToTryOn = () => {
   }
 }
 
-const addToCart = () => {
+const addToCart = async () => {
+  // Check if variant is selected
   if (!selectedVariant.value) {
-    return alert('Vui lòng chọn kích cỡ trước khi thêm vào giỏ hàng!')
+    return toast.add({
+      severity: 'warn',
+      summary: 'Chưa chọn size',
+      detail: 'Vui lòng chọn kích cỡ trước khi thêm vào giỏ hàng!',
+      life: 3000
+    })
   }
 
   // Check authentication
-  if (!authStore.isAuthenticated) {
-    return toast.add({
+  if (!authStore.identified) {
+    toast.add({
       severity: 'warn',
       summary: 'Cần đăng nhập',
       detail: 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.',
       life: 3000
     })
+
+    // Redirect to login after 1 second
+    setTimeout(() => {
+      router.push({ name: 'login-screen' })
+    }, 1000)
+    return
   }
 
-  // Add to cart logic here
-  console.log('Add to cart:', {
-    product: product.value,
-    variant: selectedVariant.value,
-    quantity: quantity.value
-  })
-  // You can implement your cart store logic here
-  alert('Đã thêm vào giỏ hàng!')
+  // Add to cart
+  try {
+    await cartStore.addToCart({
+      cartItem: {
+        quantity: quantity.value,
+        productId: product.value!.id,
+        productVariantId: selectedVariant.value.id
+      }
+    })
+
+    toast.add({
+      severity: 'success',
+      summary: 'Thành công',
+      detail: `Đã thêm ${quantity.value} sản phẩm (${selectedVariant.value.size}) vào giỏ hàng!`,
+      life: 3000
+    })
+  } catch (error: any) {
+    console.error('Error adding to cart:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: error.response?.data?.message || 'Không thể thêm vào giỏ hàng. Vui lòng thử lại!',
+      life: 3000
+    })
+  }
 }
 
 const selectVariant = (variant: ProductVariant) => {
