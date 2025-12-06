@@ -154,15 +154,15 @@ const handleSubmit = async () => {
   try {
     const order = await orderStore.createOrder(formData.value)
 
+    // Reload cart from server FIRST to sync with backend (backend already cleared cart items)
+    await cartStore.getCart()
+
     toast.add({
       severity: 'success',
       summary: 'Thành công',
       detail: 'Đặt hàng thành công! Đơn hàng của bạn đang được xử lý.',
       life: 5000
     })
-
-    // Clear cart locally
-    cartStore.clearCartLocally()
 
     // Navigate to order detail page
     router.push(`/user/orders/${order.id}`)

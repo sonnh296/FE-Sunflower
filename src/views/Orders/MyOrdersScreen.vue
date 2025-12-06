@@ -6,11 +6,17 @@
       <ProgressSpinner />
     </div>
 
-    <div v-else-if="orderStore.error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+    <div
+      v-else-if="orderStore.error"
+      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded"
+    >
       {{ orderStore.error }}
     </div>
 
-    <div v-else-if="orderStore.orders.length === 0" class="bg-white rounded-lg shadow-md p-8 text-center">
+    <div
+      v-else-if="orderStore.orders.length === 0"
+      class="bg-white rounded-lg shadow-md p-8 text-center"
+    >
       <i class="pi pi-shopping-bag text-6xl text-gray-400 mb-4"></i>
       <p class="text-gray-500 mb-4">Bạn chưa có đơn hàng nào</p>
       <Button
@@ -33,7 +39,10 @@
               <h3 class="text-lg font-semibold">Đơn hàng #{{ order.id.substring(0, 8) }}</h3>
               <p class="text-sm text-gray-600">{{ formatDate(order.createdAt) }}</p>
             </div>
-            <span :class="getStatusClass(order.status)" class="px-4 py-2 rounded-full text-sm font-medium">
+            <span
+              :class="getStatusClass(order.status)"
+              class="px-4 py-2 rounded-full text-sm font-medium"
+            >
               {{ getStatusLabel(order.status) }}
             </span>
           </div>
@@ -46,44 +55,80 @@
             </div>
 
             <div class="mb-4">
-              <p class="text-sm text-gray-600 mb-2">Sản phẩm:</p>
-              <div class="space-y-2">
-                <div v-for="item in order.orderItems" :key="item.id" class="flex items-center gap-3">
+              <p class="text-sm text-gray-600 mb-3 font-semibold">Sản phẩm:</p>
+
+              <!-- Show message if no items -->
+              <div
+                v-if="!order.orderItems || order.orderItems.length === 0"
+                class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg"
+              >
+                <p class="text-sm text-yellow-800">
+                  <i class="pi pi-exclamation-triangle mr-2"></i>
+                  Không thể tải thông tin sản phẩm. Vui lòng xem chi tiết đơn hàng.
+                </p>
+              </div>
+
+              <!-- Show items if available -->
+              <div v-else class="space-y-3">
+                <div
+                  v-for="item in order.orderItems"
+                  :key="item.id"
+                  class="flex items-start gap-4 p-3 bg-gray-50 rounded-lg"
+                >
                   <img
                     :src="item.thumbnailUrl || '/noavatar.png'"
                     :alt="item.productName"
-                    class="w-12 h-12 object-cover rounded"
+                    class="w-20 h-20 object-cover rounded-md border border-gray-200"
                   />
                   <div class="flex-1">
-                    <p class="font-medium text-sm">{{ item.productName }}</p>
-                    <p class="text-xs text-gray-600" v-if="item.size">Size: {{ item.size }}</p>
-                    <p class="text-xs text-gray-600">Số lượng: {{ item.quantity }}</p>
+                    <p class="font-semibold text-base mb-1">{{ item.productName }}</p>
+                    <div class="space-y-1">
+                      <p class="text-sm text-gray-600" v-if="item.size">
+                        <span class="font-medium">Size:</span> {{ item.size }}
+                      </p>
+                      <p class="text-sm text-gray-600">
+                        <span class="font-medium">Số lượng:</span> {{ item.quantity }}
+                      </p>
+                      <p class="text-sm text-gray-600">
+                        <span class="font-medium">Đơn giá:</span>
+                        {{ formatPrice(item.priceAtOrder) }}
+                      </p>
+                    </div>
                   </div>
-                  <p class="font-semibold">{{ formatPrice(item.priceAtOrder * item.quantity) }}</p>
+                  <div class="text-right">
+                    <p class="font-bold text-primary text-lg">
+                      {{ formatPrice(item.priceAtOrder * item.quantity) }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div class="flex justify-between items-center pt-4 border-t">
               <span class="text-lg font-bold">Tổng cộng:</span>
-              <span class="text-2xl font-bold text-primary">{{ formatPrice(order.totalPrice) }}</span>
+              <span class="text-2xl font-bold text-primary">{{
+                formatPrice(order.totalPrice)
+              }}</span>
             </div>
 
-            <div class="flex gap-2 mt-4">
-              <Button
-                label="Xem chi tiết"
-                icon="pi pi-eye"
+            <div class="flex gap-3 mt-4">
+              <!-- Custom styled button using div -->
+              <div
                 @click="viewOrderDetail(order.id)"
-                class="!bg-primary !border-0"
-              />
-              <Button
+                class="px-4 py-2 bg-blue-500 text-white font-medium rounded-lg cursor-pointer hover:bg-blue-600 transition-colors flex items-center gap-2 shadow-md"
+              >
+                <i class="pi pi-eye"></i>
+                <span>Xem chi tiết</span>
+              </div>
+
+              <div
                 v-if="order.status === 'PLACED' || order.status === 'PENDING'"
-                label="Hủy đơn"
-                icon="pi pi-times"
-                severity="danger"
-                outlined
                 @click="confirmCancelOrder(order.id)"
-              />
+                class="px-4 py-2 bg-white text-red-600 font-medium rounded-lg cursor-pointer hover:bg-red-50 transition-colors flex items-center gap-2 border-2 border-red-600"
+              >
+                <i class="pi pi-times"></i>
+                <span>Hủy đơn</span>
+              </div>
             </div>
           </div>
         </div>
@@ -96,7 +141,9 @@
           :key="page"
           :label="String(page)"
           @click="changePage(page - 1)"
-          :class="currentPage === page - 1 ? '!bg-primary !text-white' : '!bg-gray-200 !text-gray-700'"
+          :class="
+            currentPage === page - 1 ? '!bg-primary !text-white' : '!bg-gray-200 !text-gray-700'
+          "
           class="!border-0"
         />
       </div>
@@ -195,6 +242,8 @@ const changePage = async (page: number) => {
 
 onMounted(async () => {
   await orderStore.fetchMyOrders(currentPage.value, pageSize.value)
+  // Debug: Log orders to see what data we're getting
+  console.log('Orders loaded:', orderStore.orders)
+  console.log('First order items:', orderStore.orders[0]?.orderItems)
 })
 </script>
-

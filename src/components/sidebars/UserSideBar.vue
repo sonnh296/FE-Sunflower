@@ -5,39 +5,46 @@
   >
     <Menubar class="w-full" :model="items">
       <template #end>
-        <div class="flex">
-          <div class="relative" v-if="!isOrderPage">
-            <Button
-              icon="pi pi-shopping-cart"
-              label="Giỏ hàng"
-              class="bg-green-400 mx-2"
-              @click.stop="navigate('/cart')"
-            />
-            <!-- Cart Item Count Badge -->
-            <span
-              v-if="cartStore.totalItems > 0"
-              class="absolute -top-2 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg"
-            >
-              {{ cartStore.totalItems }}
-            </span>
-          </div>
+        <div class="flex items-center gap-3">
           <button ref="toggleProfile" class="relative">
-            <div @click="openProfile = !openProfile" class="flex items-center pr-6 pb-1">
-              <span>{{ authStore.name || authStore.identity?.fullName || 'User' }}</span>
-              <i v-if="!openProfile" class="pi pi-angle-down pt-1" style="color: green"></i>
-              <i v-if="openProfile" class="pi pi-angle-up pt-1" style="color: green"></i>
+            <div
+              @click="openProfile = !openProfile"
+              class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            >
+              <span class="font-medium">{{
+                authStore.name || authStore.identity?.fullName || 'User'
+              }}</span>
+              <i
+                :class="openProfile ? 'pi pi-angle-up' : 'pi pi-angle-down'"
+                class="text-sm"
+                style="color: green"
+              ></i>
             </div>
             <div
               v-if="openProfile"
-              class="absolute -bottom-24 flex flex-col h-20 w-full bg-white text-start rounded-md shadow-md border border-gray-200"
+              class="absolute right-0 mt-2 w-56 bg-white text-start rounded-lg shadow-xl border border-gray-200 py-2 z-50"
             >
-              <div class="p-2" @click="navigate('/info')">
-                <i class="pi pi-user"></i>
-                <span class="font-bold ml-2">Hồ sơ</span>
+              <div
+                class="px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors flex items-center gap-3"
+                @click="navigate('/info')"
+              >
+                <i class="pi pi-user text-gray-600"></i>
+                <span class="font-medium">Hồ sơ</span>
               </div>
-              <div class="p-2 flex items-center" @click="authStore.logout()">
+              <div
+                class="px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors flex items-center gap-3"
+                @click="navigate('/orders')"
+              >
+                <i class="pi pi-shopping-bag text-gray-600"></i>
+                <span class="font-medium">Đơn hàng của tôi</span>
+              </div>
+              <div class="border-t border-gray-200 my-1"></div>
+              <div
+                class="px-4 py-3 hover:bg-red-50 cursor-pointer transition-colors flex items-center gap-3 text-red-600"
+                @click="authStore.logout()"
+              >
                 <i class="pi pi-sign-out"></i>
-                <span class="font-bold ml-2">Đăng xuất</span>
+                <span class="font-medium">Đăng xuất</span>
               </div>
             </div>
           </button>

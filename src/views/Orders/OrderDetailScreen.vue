@@ -43,25 +43,44 @@
       <!-- Order Items -->
       <div class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-xl font-semibold mb-4">Sản phẩm đã đặt</h2>
-        <div class="space-y-4">
+
+        <!-- Show message if no items -->
+        <div v-if="!order.orderItems || order.orderItems.length === 0" class="p-6 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
+          <i class="pi pi-exclamation-triangle text-4xl text-yellow-600 mb-3"></i>
+          <p class="text-yellow-800 font-medium">Không thể tải thông tin sản phẩm</p>
+          <p class="text-sm text-yellow-600 mt-2">Vui lòng thử tải lại trang hoặc liên hệ hỗ trợ</p>
+        </div>
+
+        <!-- Show items if available -->
+        <div v-else class="space-y-4">
           <div
             v-for="item in order.orderItems"
             :key="item.id"
-            class="flex items-center gap-4 pb-4 border-b last:border-b-0"
+            class="flex items-start gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
           >
             <img
               :src="item.thumbnailUrl || '/noavatar.png'"
               :alt="item.productName"
-              class="w-24 h-24 object-cover rounded"
+              class="w-28 h-28 object-cover rounded-md border-2 border-gray-300"
+              @error="(e) => (e.target as HTMLImageElement).src = '/noavatar.png'"
             />
             <div class="flex-1">
-              <h3 class="font-semibold text-lg">{{ item.productName }}</h3>
-              <p class="text-sm text-gray-600" v-if="item.size">Size: {{ item.size }}</p>
-              <p class="text-sm text-gray-600">Số lượng: {{ item.quantity }}</p>
-              <p class="text-sm text-gray-600">Đơn giá: {{ formatPrice(item.priceAtOrder) }}</p>
+              <h3 class="font-bold text-lg mb-2">{{ item.productName || 'Sản phẩm không xác định' }}</h3>
+              <div class="space-y-1">
+                <p class="text-sm text-gray-600" v-if="item.size">
+                  <span class="font-semibold">Size:</span> {{ item.size }}
+                </p>
+                <p class="text-sm text-gray-600">
+                  <span class="font-semibold">Số lượng:</span> {{ item.quantity }}
+                </p>
+                <p class="text-sm text-gray-600">
+                  <span class="font-semibold">Đơn giá:</span> {{ formatPrice(item.priceAtOrder) }}
+                </p>
+              </div>
             </div>
             <div class="text-right">
-              <p class="text-xl font-bold">{{ formatPrice(item.priceAtOrder * item.quantity) }}</p>
+              <p class="text-sm text-gray-500 mb-1">Thành tiền</p>
+              <p class="text-2xl font-bold text-primary">{{ formatPrice(item.priceAtOrder * item.quantity) }}</p>
             </div>
           </div>
         </div>
@@ -166,15 +185,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { onMounted, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useOrderStore } from '@/stores/orderStore'
 import { OrderStatus } from '@/api/orderApi'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 
 const route = useRoute()
-const router = useRouter()
 const orderStore = useOrderStore()
 const confirm = useConfirm()
 const toast = useToast()
@@ -192,8 +210,20 @@ const isStatusReached = (status: string) => {
   return currentIndex >= checkIndex
 }
 
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleString('vi-VN')
+const formatDate = (dateString: string | number[]) => {
+  try {
+    // Handle array format from backend [2025, 12, 6, 19, 13, 17, 710043000]
+    if (Array.isArray(dateString)) {
+      const [year, month, day, hour, minute, second] = dateString
+      const date = new Date(year, month - 1, day, hour, minute, second)
+      return date.toLocaleString('vi-VN')
+    }
+    // Handle ISO string format
+    return new Date(dateString).toLocaleString('vi-VN')
+  } catch (error) {
+    console.error('Error formatting date:', dateString, error)
+    return 'Ngày không hợp lệ'
+  }
 }
 
 const formatPrice = (price: number) => {
@@ -259,7 +289,10 @@ const confirmCancelOrder = () => {
 
 onMounted(async () => {
   const orderId = route.params.id as string
+  console.log('Loading order details for orderId:', orderId)
   await orderStore.fetchOrderById(orderId)
+  console.log('Order loaded:', order.value)
+  console.log('Order items:', order.value?.orderItems)
+  console.log('Number of items:', order.value?.orderItems?.length)
 })
 </script>
-
