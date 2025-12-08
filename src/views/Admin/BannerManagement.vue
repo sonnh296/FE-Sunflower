@@ -116,7 +116,11 @@
         </div>
       </div>
       <template #footer>
-        <Button label="Hủy" @click="showImageUpload = false" class="!bg-gray-200 !text-gray-700 !border-0" />
+        <Button
+          label="Hủy"
+          @click="showImageUpload = false"
+          class="!bg-gray-200 !text-gray-700 !border-0"
+        />
         <Button
           label="Tải lên"
           @click="uploadImage"
@@ -278,4 +282,3 @@ onMounted(async () => {
   await bannerStore.fetchActiveBanner()
 })
 </script>
-

@@ -5,7 +5,7 @@
         <div class="flex items-center space-x-2">
           <NotificationButton class="mr-2" />
           <button
-            @click="authStore.logout()"
+            @click="handleLogout"
             class="flex items-center px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-100 hover:text-red-800 transition duration-150 ease-in-out"
           >
             <i class="pi pi-sign-out mr-2"></i>
@@ -28,10 +28,14 @@ const { t } = useI18n()
 
 const authStore = useAuthStore()
 
+const handleLogout = async () => {
+  await authStore.logout()
+}
+
 const items = ref([
   {
-    label: t('common.home'),
-    icon: 'pi pi-th-large',
+    label: 'Trang chủ',
+    icon: 'pi pi-home',
     command: () => navigate('/home')
   },
   {
@@ -55,14 +59,9 @@ const items = ref([
     command: () => navigate('/banners')
   },
   {
-    label: t('sidebar.admin.users'),
+    label: 'Người dùng',
     icon: 'pi pi-users',
-    command: () => navigate('/')
-  },
-  {
-    label: t('sidebar.admin.posts'),
-    icon: 'pi pi-align-center',
-    command: () => navigate('/')
+    command: () => navigate('/users')
   }
 ])
 

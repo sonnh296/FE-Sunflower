@@ -197,7 +197,11 @@
           </label>
 
           <div class="space-y-3" v-if="editedProduct.variants && editedProduct.variants.length > 0">
-            <div v-for="(variant, index) in editedProduct.variants" :key="index" class="p-4 bg-gray-50 rounded-lg border border-gray-300">
+            <div
+              v-for="(variant, index) in editedProduct.variants"
+              :key="index"
+              class="p-4 bg-gray-50 rounded-lg border border-gray-300"
+            >
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <!-- Size Field -->
                 <div>
@@ -532,9 +536,10 @@ const editProduct = async (product: Product) => {
     id: product.id,
     name: product.name,
     description: product.description,
-    variants: product.variants && product.variants.length > 0
-      ? JSON.parse(JSON.stringify(product.variants)) // Deep copy to avoid reference issues
-      : [{ size: 'M', price: 0, stock: 0 }]
+    variants:
+      product.variants && product.variants.length > 0
+        ? JSON.parse(JSON.stringify(product.variants)) // Deep copy to avoid reference issues
+        : [{ size: 'M', price: 0, stock: 0 }]
   }
 
   console.log('Editing product with variants:', editedProduct.value.variants)
@@ -544,8 +549,8 @@ const editProduct = async (product: Product) => {
 const saveProduct = async () => {
   try {
     // Validate variants
-    const hasValidVariants = editedProduct.value.variants.every(v =>
-      v.size.trim() !== '' && v.price > 0 && v.stock >= 0
+    const hasValidVariants = editedProduct.value.variants.every(
+      (v) => v.size.trim() !== '' && v.price > 0 && v.stock >= 0
     )
 
     if (!hasValidVariants) {
@@ -562,7 +567,7 @@ const saveProduct = async () => {
     const productData = {
       name: editedProduct.value.name,
       description: editedProduct.value.description,
-      variants: editedProduct.value.variants.map(v => ({
+      variants: editedProduct.value.variants.map((v) => ({
         size: v.size,
         price: v.price,
         stock: v.stock
@@ -757,7 +762,9 @@ const deleteImage = async () => {
   if (!currentProduct.value || !imageToDelete.value) return
 
   // Find the image ID from the images array
-  const imageToRemove = currentProduct.value.images?.find(img => img.imageUrl === imageToDelete.value)
+  const imageToRemove = currentProduct.value.images?.find(
+    (img) => img.imageUrl === imageToDelete.value
+  )
 
   if (!imageToRemove) {
     toast.add({

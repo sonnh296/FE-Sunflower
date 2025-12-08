@@ -124,7 +124,10 @@
               @click="addProductToCart"
             />
             <!-- Info text about automatic selection -->
-            <p v-if="productItemStore.productItems.length > 0" class="text-sm text-gray-500 text-center">
+            <p
+              v-if="productItemStore.productItems.length > 0"
+              class="text-sm text-gray-500 text-center"
+            >
               Sản phẩm sẽ được thêm tự động với size/màu mặc định
             </p>
             <Button
@@ -170,15 +173,17 @@
       </div>
 
       <!-- Product Items Section (Variants) -->
-      <div v-if="product && productItemStore.productItems.length > 0" class="mt-16" id="product-items-section">
+      <div
+        v-if="product && productItemStore.productItems.length > 0"
+        class="mt-16"
+        id="product-items-section"
+      >
         <div class="text-center mb-12">
           <h2 class="text-3xl md:text-4xl font-light text-gray-900 mb-4 tracking-tight">
             Các phiên bản sản phẩm
           </h2>
           <div class="w-24 h-px bg-gray-300 mx-auto mb-6"></div>
-          <p class="text-gray-600 text-lg font-light">
-            Chọn size và màu sắc phù hợp với bạn
-          </p>
+          <p class="text-gray-600 text-lg font-light">Chọn size và màu sắc phù hợp với bạn</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -217,7 +222,11 @@
                       {{ item.gender }}
                     </h3>
                     <span class="text-xl font-bold text-pink-600">
-                      {{ new Intl.NumberFormat('vi-VN').format(parseInt((item.price ?? 0).toString())) }}₫
+                      {{
+                        new Intl.NumberFormat('vi-VN').format(
+                          parseInt((item.price ?? 0).toString())
+                        )
+                      }}₫
                     </span>
                   </div>
 
@@ -281,16 +290,14 @@
           ]"
         >
           <div class="flex gap-4">
-            <img
-              :src="item.url"
-              :alt="item.color"
-              class="w-20 h-20 object-contain rounded-lg"
-            />
+            <img :src="item.url" :alt="item.color" class="w-20 h-20 object-contain rounded-lg" />
             <div class="flex-1">
               <div class="flex items-center justify-between mb-2">
                 <h4 class="font-semibold text-gray-900">{{ item.gender }}</h4>
                 <span class="text-lg font-bold text-pink-600">
-                  {{ new Intl.NumberFormat('vi-VN').format(parseInt((item.price ?? 0).toString())) }}₫
+                  {{
+                    new Intl.NumberFormat('vi-VN').format(parseInt((item.price ?? 0).toString()))
+                  }}₫
                 </span>
               </div>
               <div class="space-y-1 text-sm text-gray-600">
@@ -478,7 +485,8 @@ const openAddToCartDialog = async () => {
         toast.add({
           severity: 'warn',
           summary: 'Chưa có phiên bản',
-          detail: 'Sản phẩm này chưa có phiên bản để thêm vào giỏ hàng. Vui lòng liên hệ quản trị viên.',
+          detail:
+            'Sản phẩm này chưa có phiên bản để thêm vào giỏ hàng. Vui lòng liên hệ quản trị viên.',
           life: 5000
         })
         return

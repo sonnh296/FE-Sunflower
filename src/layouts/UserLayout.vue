@@ -16,12 +16,15 @@ import UserSideBar from '@/components/sidebars/UserSideBar.vue'
 import { useAuthStore } from '@/stores/authStore'
 import ScrollTop from 'primevue/scrolltop'
 import { onMounted } from 'vue'
+import Cookies from 'js-cookie'
+import { ACCESS_TOKEN_KEY } from '@/constants/storage'
 
 const authStore = useAuthStore()
 
 onMounted(async () => {
-  // Ensure user identity is loaded
-  if (!authStore.identity) {
+  // Only fetch user info if token exists
+  const token = Cookies.get(ACCESS_TOKEN_KEY)
+  if (token && !authStore.identity) {
     await authStore.getMe()
   }
 })

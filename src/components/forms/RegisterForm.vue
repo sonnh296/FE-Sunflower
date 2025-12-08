@@ -126,6 +126,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { handleGoogleLogin } from '@/utils/googleOAuth'
 import type { RegisterRequest } from '@/api/authApi'
 import { ref } from 'vue'
+import { useToast } from 'primevue/usetoast'
 import ActionButton from '../buttons/ActionButton.vue'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -134,12 +135,11 @@ import Password from 'primevue/password'
 import ProgressBar from 'primevue/progressbar'
 
 const authStore = useAuthStore()
+const toast = useToast()
 
 const { t } = useI18n()
 
 const emit = defineEmits<(e: 'changeMode', id: 'login' | 'register') => void>()
-
-const userType = ref('Người dùng')
 
 const registerSuccess = ref(false)
 const errorMessage = ref('')
@@ -156,7 +156,7 @@ const schema = yup.object({
     ),
   phoneNumber: yup
     .string()
-    .required(t('validation.required'))
+    .optional()
     .matches(/^[0-9]*$/, t('validation.phoneNumber'))
     .max(11, 'Số điện thoại tối đa 11 số'),
   confirmPassword: yup
@@ -166,7 +166,7 @@ const schema = yup.object({
     .oneOf([yup.ref('password')], t('validation.passwordNotMatch'))
 })
 
-const { meta, errors, defineField, handleSubmit } = useForm<RegisterRequest>({
+const { meta, errors, defineField, handleSubmit, resetForm } = useForm<RegisterRequest>({
   initialValues: {
     userName: '',
     // role: 3,
@@ -186,12 +186,46 @@ const [confirmPassword] = defineField('confirmPassword')
 
 const submit = handleSubmit((values) => {
   authStore.register({ ...values }).then((response) => {
-    if (response.success) {
+    // Backend trả về {code: 1000, message, result}
+    // code = 1000 nghĩa là thành công
+    if (response.code === 1000) {
       registerSuccess.value = true
       errorMessage.value = ''
+
+      // Show success toast
+      toast.add({
+        severity: 'success',
+        summary: 'Đăng ký thành công!',
+        detail: 'Vui lòng kiểm tra email để xác nhận tài khoản. Bạn sẽ được chuyển đến trang đăng nhập.',
+        life: 5000
+      })
+
+      // Reset form
+      resetForm()
+
+      // Switch to login form after 2 seconds
+      setTimeout(() => {
+        emit('changeMode', 'login')
+      }, 2000)
     } else {
-      errorMessage.value = response.message
+      errorMessage.value = response.message || 'Đã có lỗi xảy ra'
+
+      // Show error toast
+      toast.add({
+        severity: 'error',
+        summary: 'Đăng ký thất bại',
+        detail: response.message || 'Đã có lỗi xảy ra, vui lòng thử lại',
+        life: 5000
+      })
     }
+  }).catch((error) => {
+    errorMessage.value = 'Đã có lỗi xảy ra, vui lòng thử lại'
+    toast.add({
+      severity: 'error',
+      summary: 'Lỗi',
+      detail: 'Không thể kết nối đến máy chủ',
+      life: 5000
+    })
   })
 })
 </script>

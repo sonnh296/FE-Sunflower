@@ -19,6 +19,16 @@ const router = createRouter({
           component: () => import('../views/Auth/LoginScreen.vue')
         },
         {
+          path: 'auth/verify-email',
+          name: 'verify-email',
+          component: () => import('../views/Auth/VerifyEmail.vue')
+        },
+        {
+          path: 'auth/check-email',
+          name: 'check-email',
+          component: () => import('../views/Auth/CheckEmail.vue')
+        },
+        {
           path: 'post/:id',
           name: 'post-detail-public',
           component: () => import('../views/Guest/PostBlog.vue')

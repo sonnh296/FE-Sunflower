@@ -96,7 +96,9 @@
           <!-- Product Variants (Size & Price) -->
           <div v-if="product.variants && product.variants.length > 0" class="space-y-6">
             <!-- Price Display -->
-            <div class="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-6 border border-pink-100">
+            <div
+              class="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-6 border border-pink-100"
+            >
               <div class="flex items-center gap-3">
                 <i class="pi pi-tag text-pink-600 text-xl"></i>
                 <div>
@@ -104,8 +106,8 @@
                     {{ formatPrice(selectedVariant?.price || product.variants[0]?.price) }}
                   </p>
                   <p class="text-sm text-gray-600">
-                    Kích cỏ: {{ selectedVariant?.size || product.variants[0]?.size }}
-                    • Còn lại: {{ selectedVariant?.stock || product.variants[0]?.stock }} sản phẩm
+                    Kích cỏ: {{ selectedVariant?.size || product.variants[0]?.size }} • Còn lại:
+                    {{ selectedVariant?.stock || product.variants[0]?.stock }} sản phẩm
                   </p>
                 </div>
               </div>
@@ -113,9 +115,7 @@
 
             <!-- Size Selection -->
             <div class="space-y-3">
-              <label class="block text-sm font-semibold text-gray-700">
-                Chọn kích cỡ:
-              </label>
+              <label class="block text-sm font-semibold text-gray-700"> Chọn kích cỡ: </label>
               <div class="grid grid-cols-4 gap-3">
                 <button
                   v-for="variant in product.variants"
@@ -125,13 +125,18 @@
                   class="relative p-3 rounded-xl border-2 transition-all duration-200 text-center"
                   :class="{
                     'border-pink-500 bg-pink-50 text-pink-900': selectedVariant?.id === variant.id,
-                    'border-gray-200 bg-white text-gray-700 hover:border-gray-300': selectedVariant?.id !== variant.id && variant.stock > 0,
-                    'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed': variant.stock === 0
+                    'border-gray-200 bg-white text-gray-700 hover:border-gray-300':
+                      selectedVariant?.id !== variant.id && variant.stock > 0,
+                    'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed':
+                      variant.stock === 0
                   }"
                 >
                   <div class="font-semibold text-lg">{{ variant.size }}</div>
                   <div class="text-xs mt-1">{{ formatPrice(variant.price) }}</div>
-                  <div v-if="variant.stock === 0" class="absolute inset-0 flex items-center justify-center">
+                  <div
+                    v-if="variant.stock === 0"
+                    class="absolute inset-0 flex items-center justify-center"
+                  >
                     <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">Hết hàng</span>
                   </div>
                 </button>
@@ -140,9 +145,7 @@
 
             <!-- Quantity Selection -->
             <div class="space-y-3">
-              <label class="block text-sm font-semibold text-gray-700">
-                Số lượng:
-              </label>
+              <label class="block text-sm font-semibold text-gray-700"> Số lượng: </label>
               <div class="flex items-center gap-3">
                 <button
                   @click="decreaseQuantity"

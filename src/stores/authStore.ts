@@ -159,26 +159,49 @@ export const useAuthStore = defineStore({
     },
 
     async logout() {
-      console.log(Cookies.get(ACCESS_TOKEN_KEY))
-      if (this.identity && Cookies.get(ACCESS_TOKEN_KEY))
-        await logoutApi(Cookies.get(ACCESS_TOKEN_KEY) + '')
+      try {
+        console.log('Logging out...')
+        const token = Cookies.get(ACCESS_TOKEN_KEY)
 
-      Cookies.remove(ACCESS_TOKEN_KEY)
-      Cookies.remove(REFRESH_TOKEN_KEY)
-      Cookies.remove(ROLE)
-      Cookies.remove(USER_ID)
-      localStorage.clear()
-      this.identified = false
-      this.identity = null
+        if (token) {
+          try {
+            await logoutApi(token)
+          } catch (error) {
+            console.error('Error calling logout API:', error)
+            // Continue with logout even if API call fails
+          }
+        }
 
-      // Notify other tabs about logout
-      if (typeof BroadcastChannel !== 'undefined') {
-        const authChannel = new BroadcastChannel('auth-channel')
-        authChannel.postMessage({ type: 'LOGOUT' })
-        authChannel.close()
+        // Clear all auth data
+        Cookies.remove(ACCESS_TOKEN_KEY)
+        Cookies.remove(REFRESH_TOKEN_KEY)
+        Cookies.remove(ROLE)
+        Cookies.remove(USER_ID)
+        localStorage.clear()
+        this.identified = false
+        this.identity = null
+
+        // Notify other tabs about logout
+        if (typeof BroadcastChannel !== 'undefined') {
+          const authChannel = new BroadcastChannel('auth-channel')
+          authChannel.postMessage({ type: 'LOGOUT' })
+          authChannel.close()
+        }
+
+        console.log('Logout complete, redirecting to home page')
+        window.location.replace('/')
+      } catch (error) {
+        console.error('Error during logout:', error)
+        // Force logout even if there's an error
+        Cookies.remove(ACCESS_TOKEN_KEY)
+        Cookies.remove(REFRESH_TOKEN_KEY)
+        Cookies.remove(ROLE)
+        Cookies.remove(USER_ID)
+        localStorage.clear()
+        this.identified = false
+        this.identity = null
+        window.location.replace('/')
       }
-
-      window.location.replace(this.rootUrl)
     },
 
     async getMe() {

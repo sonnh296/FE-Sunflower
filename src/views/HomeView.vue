@@ -272,7 +272,10 @@
                 :alt="newsItem.title"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
-              <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100">
+              <div
+                v-else
+                class="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100"
+              >
                 <i class="pi pi-newspaper text-6xl text-pink-400"></i>
               </div>
             </div>
@@ -280,7 +283,10 @@
               <h3 class="font-semibold text-xl text-gray-900 mb-3 line-clamp-2">
                 {{ newsItem.title }}
               </h3>
-              <p class="text-gray-600 text-sm mb-4 line-clamp-3" v-html="newsItem.content?.substring(0, 150) + '...'"></p>
+              <p
+                class="text-gray-600 text-sm mb-4 line-clamp-3"
+                v-html="newsItem.content?.substring(0, 150) + '...'"
+              ></p>
               <div class="flex items-center justify-between">
                 <span class="text-xs text-gray-500">
                   {{ formatDate(newsItem.createdAt) }}

@@ -28,6 +28,7 @@ interface ExpiredTokenRequest {
 }
 
 let refreshingToken = false
+let isLoggingOut = false
 let expiredTokenRequests: ExpiredTokenRequest[] = []
 
 const processExpiredTokenRequests = (error: unknown) => {
@@ -55,6 +56,11 @@ api.interceptors.response.use(
     const status = error.response?.status
     switch (status) {
       case 401: {
+        // Skip interceptor logic if we're in the middle of logging out
+        if (isLoggingOut) {
+          break
+        }
+
         if (error.config.url?.includes('/login')) {
           break
         }
@@ -81,7 +87,13 @@ api.interceptors.response.use(
 
           const refreshToken = Cookies.get(REFRESH_TOKEN_KEY)
           if (!refreshToken) {
-            return authStore.logout()
+            // Only logout if user was previously authenticated
+            if (authStore.identity) {
+              isLoggingOut = true
+              return authStore.logout()
+            }
+            // Otherwise just reject the request without logout
+            break
           }
           if (!refreshingToken) {
             try {
@@ -93,6 +105,7 @@ api.interceptors.response.use(
                 refreshToken: refreshToken
               })
               if (!data.success) {
+                isLoggingOut = true
                 return authStore.logout()
               }
               Cookies.set(ACCESS_TOKEN_KEY, data.data.token)
@@ -109,6 +122,7 @@ api.interceptors.response.use(
               Cookies.remove(ACCESS_TOKEN_KEY)
               Cookies.remove(REFRESH_TOKEN_KEY)
               processExpiredTokenRequests(e)
+              isLoggingOut = true
               return authStore.logout()
             } finally {
               refreshingToken = false
@@ -139,5 +153,9 @@ api.interceptors.response.use(
     return Promise.resolve(error.response)
   }
 )
+
+export const setLoggingOut = (value: boolean) => {
+  isLoggingOut = value
+}
 
 export default api

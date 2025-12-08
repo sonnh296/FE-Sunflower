@@ -65,7 +65,15 @@ export const logoutApi = async (token: string): Promise<AxiosResponse<MfResponse
 export const registerApi = async (
   params: RegisterRequest
 ): Promise<AxiosResponse<MfResponse<Object>>> => {
-  return await api.post('auth/register', { ...params, phoneNumber: params.phoneNumber.toString() })
+  // Use email as username for login consistency
+  const requestData = {
+    username: params.email, // Username = email để đăng nhập bằng email
+    email: params.email,
+    password: params.password,
+    fullName: params.userName,
+    ...(params.phoneNumber && { phoneNumber: params.phoneNumber })
+  }
+  return await api.post('auth/register', requestData)
 }
 
 export const changePassApi = async (
@@ -94,6 +102,18 @@ export const resetPassApi = async (
   params: ResetPasswordRequest
 ): Promise<AxiosResponse<MfResponse<Object>>> => {
   return await api.post('auths/new-password', params)
+}
+
+export const verifyEmailApi = async (
+  token: string
+): Promise<AxiosResponse<MfResponse<string>>> => {
+  return await api.get('auth/verify-email', { params: { token } })
+}
+
+export const resendVerificationEmailApi = async (
+  email: string
+): Promise<AxiosResponse<MfResponse<string>>> => {
+  return await api.post('auth/resend-verification', null, { params: { email } })
 }
 
 export const refreshTokenApi = async (
