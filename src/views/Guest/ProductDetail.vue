@@ -94,12 +94,19 @@
           </div>
 
           <!-- Product Variants (Size & Price) -->
-          <div v-if="product.optionsWithVariants && product.optionsWithVariants.length > 0" class="space-y-6">
+          <div
+            v-if="product.optionsWithVariants && product.optionsWithVariants.length > 0"
+            class="space-y-6"
+          >
             <!-- Variant Selection -->
             <div v-if="product.optionsWithVariants.length > 1" class="space-y-3">
               <label class="block text-sm font-semibold text-gray-700"> Chọn loại: </label>
               <div class="grid grid-cols-2 gap-3">
-                <div v-for="(variant, idx) in product.optionsWithVariants" :key="variant.optionId" class="relative">
+                <div
+                  v-for="(variant, idx) in product.optionsWithVariants"
+                  :key="variant.optionId"
+                  class="relative"
+                >
                   <button
                     @click="selectVariant(variant)"
                     class="w-full p-3 rounded-xl border-2 transition-all duration-200 text-center"
@@ -124,12 +131,13 @@
                 <i class="pi pi-tag text-pink-600 text-xl"></i>
                 <div>
                   <p class="font-semibold text-gray-900 text-2xl">
-                    {{ formatPrice(selectedSize?.price || selectedVariant?.variants[0]?.price) }}
+                    {{ formatPrice((selectedSize?.price || selectedVariant?.variants[0]?.price) ?? 0) }}
                   </p>
                   <p class="text-sm text-gray-600">
                     Loại: {{ selectedVariant?.optionName }} • Phiên bản:
-                    {{ selectedSize?.size || selectedVariant?.variants[0]?.size || 'Mặc định' }} • Còn lại:
-                    {{ selectedSize?.stock || selectedVariant?.variants[0]?.stock }} sản phẩm
+                    {{ selectedSize?.size || selectedVariant?.variants[0]?.size || 'Mặc định' }} •
+                    Còn lại: {{ selectedSize?.stock || selectedVariant?.variants[0]?.stock }} sản
+                    phẩm
                   </p>
                 </div>
               </div>

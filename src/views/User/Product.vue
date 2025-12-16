@@ -610,7 +610,7 @@ const addProductToCart = async () => {
       toast.add({
         severity: 'success',
         summary: 'Thành công',
-        detail: `Đã thêm "${product.value.name}" (Size: ${firstVariant.size}) vào giỏ hàng`,
+        detail: `Đã thêm "${product.value.name}" (Size: ${firstVariant.sizes[0]?.size || 'Mặc định'}) vào giỏ hàng`,
         life: 3000
       })
     } catch (error: any) {

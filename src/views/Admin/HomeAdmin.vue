@@ -486,6 +486,13 @@ import Message from 'primevue/message'
 import { useProductStore } from '@/stores/productStore'
 import { useToast } from 'primevue/usetoast'
 import type { Product, ProductVariant } from '@/types/Product'
+
+type FormVariant = {
+  id?: string
+  size: string
+  price: number
+  stock: number
+}
 import {
   uploadProductImagesApi,
   uploadProductSingleImageApi,
@@ -514,7 +521,7 @@ const editedProduct = ref<{
   id?: string
   name?: string
   description?: string
-  variants: ProductVariant[]
+  variants: FormVariant[]
   availableFrom?: string
   availableTo?: string
 }>({
@@ -563,8 +570,8 @@ const editProduct = async (product: Product) => {
     id: product.id,
     name: product.name,
     description: product.description,
-    variants: product.variants && product.variants.length > 0
-      ? product.variants.map(v => ({ id: v.id, size: v.size, price: v.price, stock: v.stock }))
+    variants: product.variants && product.variants.length > 0 && product.variants[0].sizes
+      ? product.variants[0].sizes.map(s => ({ id: s.sizeId, size: s.size, price: s.price, stock: s.stock }))
       : [{ size: 'M', price: 0, stock: 0 }],
     availableFrom: product.availableFrom ? product.availableFrom.slice(0, 10) : undefined,
     availableTo: product.availableTo ? product.availableTo.slice(0, 10) : undefined
@@ -600,7 +607,10 @@ const saveProduct = async () => {
     const productData: any = {
       name: editedProduct.value.name!,
       description: editedProduct.value.description!,
-      variants: editedProduct.value.variants.map(v => ({ size: v.size, price: v.price, stock: v.stock })),
+      variants: [{
+        variantName: 'Default',
+        sizes: editedProduct.value.variants.map(v => ({ sizeId: v.id, size: v.size, price: v.price, stock: v.stock }))
+      }],
       availableFrom: availableFromIso,
       availableTo: availableToIso
     }
