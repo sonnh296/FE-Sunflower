@@ -15,6 +15,7 @@ import {
   type RegisterRequest,
   type ResetPasswordRequest
 } from '@/api/authApi'
+import { GOOGLE_REDIRECT_URI } from '@/utils/googleOAuth'
 import Cookies from 'js-cookie'
 import { ACCESS_TOKEN_KEY, NAME, REFRESH_TOKEN_KEY, ROLE, USER_ID } from '@/constants/storage'
 import type { Identity } from '@/types/Identity'
@@ -146,7 +147,7 @@ export const useAuthStore = defineStore({
       try {
         this.loginError = false
         this.isLoggingIn = true
-        const { data } = await googleAuthApi(code)
+        const { data } = await googleAuthApi(code, GOOGLE_REDIRECT_URI)
         this.isLoggingIn = false
         await this.loginSuccessfully(data.result)
       } catch (e: unknown) {
@@ -162,6 +163,12 @@ export const useAuthStore = defineStore({
       try {
         console.log('Logging out...')
         const token = Cookies.get(ACCESS_TOKEN_KEY)
+
+        if (!token) {
+          console.log('No token found, skipping logout API call')
+          router.push('/')
+          return
+        }
 
         if (token) {
           try {
@@ -180,16 +187,17 @@ export const useAuthStore = defineStore({
         localStorage.clear()
         this.identified = false
         this.identity = null
-
         // Notify other tabs about logout
         if (typeof BroadcastChannel !== 'undefined') {
           const authChannel = new BroadcastChannel('auth-channel')
+
           authChannel.postMessage({ type: 'LOGOUT' })
           authChannel.close()
         }
+        console.log('Logout complete, redirecting to home page')
+        router.push('/')
 
         console.log('Logout complete, redirecting to home page')
-        window.location.replace('/')
       } catch (error) {
         console.error('Error during logout:', error)
         // Force logout even if there's an error
@@ -275,7 +283,7 @@ export const useAuthStore = defineStore({
       if (role === 'user') {
         router.push('/user/home')
       }
-      if (role === 'admin') router.push('/admin/home')
+      if (role === 'admin') router.push('/admin/products')
     }
   }
 })

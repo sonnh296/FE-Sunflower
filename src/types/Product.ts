@@ -1,8 +1,15 @@
 export type ProductVariant = {
   id?: string
-  size: string
-  price: number
-  stock: number
+  variantName: string // Name of the variant, e.g., color or type
+  sizes: {
+    sizeId?: string
+    size: string
+    price: number
+    stock: number
+  }[]
+  // Optional category information on a per-variant basis
+  categoryId?: string
+  categoryName?: string
 }
 
 export type ProductImage = {
@@ -14,11 +21,23 @@ export type Product = {
   id: string
   name: string
   description: string
+  // Category fields returned by backend
+  categoryId?: string
+  categoryName?: string
+  // Backward-compatible simple category string used in some places
+  category?: string
   imageUrl?: string
   imageUrls?: string[]
   thumbnailUrl?: string // Add thumbnailUrl
   images?: ProductImage[] // NEW: Include image IDs
   variants?: ProductVariant[] // New variants support
+  productOptions?: {
+    id: string
+    name: string
+    sizeIds: string[]
+    sizeNames: string[]
+  }[]
+  optionsWithVariants?: OptionWithVariants[]
   availableFrom?: string // ISO date string
   availableTo?: string // ISO date string
 }
@@ -44,6 +63,8 @@ export type ProductListItem = {
   id: string
   name: string
   description: string
+  categoryId?: string
+  categoryName?: string
   imageUrl?: string
   imageUrls?: string[]
   thumbnailUrl?: string // Add thumbnailUrl
@@ -57,6 +78,8 @@ export type ProductCreateRequest = {
   description: string
   imageUrl?: string
   productItem?: ProductItem[]
+  // Optional category assignment
+  categoryId?: string
 }
 
 export type ProductUpdateRequest = {
@@ -65,10 +88,27 @@ export type ProductUpdateRequest = {
   description: string
   imageUrl?: string
   productItem?: ProductItem[]
+  categoryId?: string
 }
 
 export type CartAddRequest = {
   productId: string
   productItemId?: string
   quantity: number
+}
+
+export type SizeVariant = {
+  id: string
+  sizeId: string
+  size: string
+  price: number
+  stock: number
+  productOptionId: string
+  productOptionName: string
+}
+
+export type OptionWithVariants = {
+  optionId: string
+  optionName: string
+  variants: SizeVariant[]
 }

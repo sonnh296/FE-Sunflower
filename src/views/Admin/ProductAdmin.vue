@@ -20,8 +20,8 @@
       dataKey="id"
     >
       <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-      <Column field="id" header="ID" sortable></Column>
-      <Column field="name" header="Tên sản phẩm" sortable></Column>
+      <Column field="id" header="ID" :sortable="true"></Column>
+      <Column field="name" header="Tên sản phẩm" :sortable="true"></Column>
       <Column header="Hình ảnh">
         <template #body="slotProps">
           <div class="flex gap-2">
@@ -188,11 +188,32 @@
           </div>
         </div>
 
+        <!-- Product Category Field -->
+        <div class="form-field">
+          <label for="category" class="block text-sm font-semibold text-gray-700 mb-2">
+            <i class="pi pi-tags text-gray-400 mr-2"></i>
+            Danh mục (Category)
+          </label>
+          <div class="relative">
+            <AutoComplete
+              id="category"
+              v-model="editedProduct.category"
+              :suggestions="categorySuggestions"
+              @complete="onCategoryComplete"
+              placeholder="Ví dụ: Thời Trang, Phụ kiện"
+              class="w-full p-3 border-2 rounded-lg focus:border-blue-500 transition-all"
+            />
+          </div>
+          <small class="text-gray-500 mt-1 block">
+            Nhập tên danh mục. Nếu danh mục chưa tồn tại, hệ thống sẽ tạo mới.
+          </small>
+        </div>
+
         <!-- Product Variants Section -->
         <div class="form-field">
           <label class="block text-sm font-semibold text-gray-700 mb-2">
             <i class="pi pi-list text-gray-400 mr-2"></i>
-            Kích cỡ và giá bán
+            Loại sản phẩm và kích cỡ
             <span class="text-red-500 ml-1">*</span>
           </label>
 
@@ -202,51 +223,95 @@
               :key="index"
               class="p-4 bg-gray-50 rounded-lg border border-gray-300"
             >
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Size Field -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Kích cỡ <span class="text-red-500">*</span>
-                  </label>
-                  <input
-                    v-model="variant.size"
-                    type="text"
-                    placeholder="S, M, L, XL..."
-                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <!-- Price Field -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Giá (VNĐ) <span class="text-red-500">*</span>
-                  </label>
-                  <input
-                    v-model.number="variant.price"
-                    type="number"
-                    min="0"
-                    step="1000"
-                    placeholder="100000"
-                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <!-- Stock Field -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Số lượng <span class="text-red-500">*</span>
-                  </label>
-                  <input
-                    v-model.number="variant.stock"
-                    type="number"
-                    min="0"
-                    placeholder="10"
-                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
+              <!-- Variant Name -->
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Tên loại <span class="text-red-500">*</span></label
+                >
+                <input
+                  v-model="variant.variantName"
+                  type="text"
+                  placeholder="Ví dụ: Màu đỏ, Kiểu A"
+                  class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
               </div>
 
-              <!-- Remove Button -->
+              <!-- Sizes for this variant -->
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Kích cỡ</label>
+                <div class="space-y-2" v-if="variant.sizes && variant.sizes.length > 0">
+                  <div
+                    v-for="(sizeItem, sizeIndex) in variant.sizes"
+                    :key="sizeIndex"
+                    class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 bg-white rounded border"
+                  >
+                    <!-- Size Field -->
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1"
+                        >Kích cỡ <span class="text-red-500">*</span></label
+                      >
+                      <AutoComplete
+                        v-model="sizeItem.size"
+                        :suggestions="(sizeSuggestionsByIndex[index] || []).map((s) => s.name)"
+                        placeholder="S, M, L, XL..."
+                        @input="onVariantSizeInput($event, index, sizeIndex)"
+                        class="w-full p-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+
+                    <!-- Price Field -->
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1"
+                        >Giá (VNĐ) <span class="text-red-500">*</span></label
+                      >
+                      <input
+                        v-model.number="sizeItem.price"
+                        type="number"
+                        min="0"
+                        step="1000"
+                        placeholder="100000"
+                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+
+                    <!-- Stock Field -->
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1"
+                        >Số lượng <span class="text-red-500">*</span></label
+                      >
+                      <input
+                        v-model.number="sizeItem.stock"
+                        type="number"
+                        min="0"
+                        placeholder="10"
+                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <button
+                  @click="addSize(index)"
+                  type="button"
+                  class="w-full p-2 border border-dashed border-gray-300 rounded hover:border-blue-400 hover:bg-blue-50 text-gray-600 hover:text-blue-600"
+                >
+                  <i class="pi pi-plus mr-1"></i>
+                  Thêm kích cỡ
+                </button>
+              </div>
+
+              <!-- Category Field -->
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
+                <AutoComplete
+                  v-model="(variant as any).categoryName"
+                  :suggestions="categories.map((c) => c.name)"
+                  placeholder="Chọn hoặc nhập danh mục"
+                  @input="onVariantCategoryInput($event, index)"
+                  class="w-full p-2 border border-gray-300 rounded-md"
+                />
+              </div>
+
+              <!-- Remove Variant Button -->
               <div v-if="editedProduct.variants.length > 1" class="mt-3 text-right">
                 <button
                   @click="removeVariant(index)"
@@ -254,7 +319,7 @@
                   class="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
                 >
                   <i class="pi pi-trash mr-1"></i>
-                  Xóa kích cỡ này
+                  Xóa loại này
                 </button>
               </div>
             </div>
@@ -266,7 +331,7 @@
               class="w-full p-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors text-gray-600 hover:text-blue-600 font-medium"
             >
               <i class="pi pi-plus mr-2"></i>
-              Thêm kích cỡ mới
+              Thêm loại mới
             </button>
           </div>
 
@@ -318,131 +383,6 @@
         </div>
       </template>
     </Dialog>
-
-    <!-- Image Manager Dialog -->
-    <Dialog
-      v-model:visible="imageManagerDialog"
-      :header="`Quản lý ảnh - ${currentProduct?.name}`"
-      :modal="true"
-      class="p-fluid"
-      style="width: 800px; max-height: 90vh"
-    >
-      <div class="space-y-4">
-        <!-- Upload Section -->
-        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-          <h3 class="text-lg font-semibold mb-4">Tải ảnh lên</h3>
-
-          <!-- Multiple Upload -->
-          <div class="mb-4">
-            <FileUpload
-              ref="multipleFileUpload"
-              mode="basic"
-              name="images[]"
-              accept="image/*"
-              :maxFileSize="10000000"
-              :multiple="true"
-              :auto="false"
-              chooseLabel="Chọn nhiều ảnh"
-              @select="handleMultipleFileSelect"
-            />
-            <Button
-              v-if="selectedFiles.length > 0"
-              :label="`Tải lên ${selectedFiles.length} ảnh`"
-              icon="pi pi-upload"
-              class="p-button-success mt-2"
-              @click="uploadMultipleImages"
-              :loading="isUploading"
-            />
-            <p class="text-xs text-gray-500 mt-2">
-              Tối đa 10MB mỗi ảnh, định dạng JPG, PNG, GIF, WEBP
-            </p>
-          </div>
-
-          <!-- Single Upload -->
-          <div class="mt-4 pt-4 border-t">
-            <FileUpload
-              ref="singleFileUpload"
-              mode="basic"
-              name="image"
-              accept="image/*"
-              :maxFileSize="10000000"
-              :auto="false"
-              chooseLabel="Thêm 1 ảnh"
-              @select="handleSingleFileSelect"
-            />
-            <Button
-              v-if="selectedSingleFile"
-              label="Tải lên ảnh này"
-              icon="pi pi-upload"
-              class="p-button-info mt-2"
-              @click="uploadSingleImage"
-              :loading="isUploading"
-            />
-          </div>
-        </div>
-
-        <!-- Image Gallery -->
-        <div v-if="currentProduct?.imageUrls && currentProduct.imageUrls.length > 0" class="mt-6">
-          <h3 class="text-lg font-semibold mb-4">
-            Ảnh hiện tại ({{ currentProduct.imageUrls.length }})
-          </h3>
-          <div class="grid grid-cols-3 gap-4">
-            <div
-              v-for="(imageUrl, index) in currentProduct.imageUrls"
-              :key="index"
-              class="relative group"
-            >
-              <img
-                :src="imageUrl"
-                :alt="`Product ${index + 1}`"
-                class="w-full h-40 object-cover rounded-lg"
-              />
-              <Button
-                icon="pi pi-trash"
-                class="p-button-danger p-button-sm absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                @click="confirmDeleteImage(imageUrl)"
-                v-tooltip.top="'Xóa ảnh'"
-              />
-            </div>
-          </div>
-        </div>
-        <div v-else class="text-center text-gray-500 py-8">
-          <i class="pi pi-images text-4xl mb-2"></i>
-          <p>Chưa có ảnh nào. Hãy tải ảnh lên!</p>
-        </div>
-
-        <!-- Status Message -->
-        <Message v-if="statusMessage" :severity="statusType" @close="statusMessage = ''">
-          {{ statusMessage }}
-        </Message>
-      </div>
-
-      <template #footer>
-        <Button
-          label="Đóng"
-          icon="pi pi-times"
-          class="p-button-text"
-          @click="imageManagerDialog = false"
-        />
-      </template>
-    </Dialog>
-
-    <!-- Delete Image Confirmation Dialog -->
-    <Dialog v-model:visible="deleteImageDialog" header="Xác nhận xóa ảnh" :modal="true">
-      <div class="confirmation-content">
-        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-        <span>Bạn có chắc chắn muốn xóa ảnh này?</span>
-      </div>
-      <template #footer>
-        <Button
-          label="Không"
-          icon="pi pi-times"
-          class="p-button-text"
-          @click="deleteImageDialog = false"
-        />
-        <Button label="Có" icon="pi pi-check" class="p-button-danger" @click="deleteImage" />
-      </template>
-    </Dialog>
   </div>
 </template>
 
@@ -453,11 +393,12 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
-import InputNumber from 'primevue/inputnumber'
+import AutoComplete from 'primevue/autocomplete'
 import Textarea from 'primevue/textarea'
 import FileUpload from 'primevue/fileupload'
 import Message from 'primevue/message'
 import { useProductStore } from '@/stores/productStore'
+import { getCategoriesApi, getSizesApi, type Category, type Size } from '@/api/categoryApi'
 import { useToast } from 'primevue/usetoast'
 import type { Product, ProductVariant } from '@/types/Product'
 import {
@@ -488,12 +429,91 @@ const editedProduct = ref<{
   id?: string
   name: string
   description: string
+  category?: string
   variants: ProductVariant[]
 }>({
   name: '',
   description: '',
-  variants: [{ size: 'M', price: 0, stock: 0 }]
+  category: '',
+  variants: [{ variantName: 'Default', sizes: [{ size: 'M', price: 0, stock: 0 }] }]
 })
+
+// Categories & sizes for per-variant selection
+const categories = ref<Category[]>([])
+const sizeSuggestionsByIndex = ref<Record<number, Size[]>>({})
+// Suggestions for product-level category AutoComplete (string names)
+const categorySuggestions = ref<string[]>([])
+
+const updateCategorySuggestions = () => {
+  const cats = productStore.products.map((p: any) => p.categoryName ?? p.category).filter(Boolean)
+  // also include categories fetched from the API (ensures we show names when product list lacks them)
+  const apiCats = categories.value.map((c) => c.name).filter(Boolean)
+  categorySuggestions.value = Array.from(new Set([...cats, ...apiCats]))
+}
+
+const onCategoryComplete = (event: any) => {
+  const q = (event.query || '').toString().toLowerCase()
+  if (!q) {
+    updateCategorySuggestions()
+    return
+  }
+  categorySuggestions.value = (
+    productStore.products.map((p: any) => p.categoryName ?? p.category).filter(Boolean) as string[]
+  ).filter((c) => c.toLowerCase().includes(q))
+}
+
+const fetchCategories = async () => {
+  try {
+    const { data } = await getCategoriesApi()
+    categories.value = data.result ?? []
+    // Update string suggestions used by existing AutoComplete for product-level category
+    updateCategorySuggestions()
+  } catch (err) {
+    console.warn('Failed to fetch categories', err)
+  }
+}
+
+const fetchSizesForCategory = async (categoryId: string | undefined, index: number) => {
+  try {
+    const { data } = await getSizesApi(categoryId)
+    sizeSuggestionsByIndex.value = {
+      ...sizeSuggestionsByIndex.value,
+      [index]: data.result ?? []
+    }
+  } catch (err) {
+    console.warn('Failed to fetch sizes for category', categoryId, err)
+    sizeSuggestionsByIndex.value = { ...sizeSuggestionsByIndex.value, [index]: [] }
+  }
+}
+
+const onCategoryChangeForVariant = (value: string, index: number) => {
+  const cat = categories.value.find((c) => c.name === value)
+  if (cat) {
+    // set categoryId/name for variant and load sizes
+    ;(editedProduct.value.variants[index] as any).categoryId = cat.id
+    ;(editedProduct.value.variants[index] as any).categoryName = cat.name
+    fetchSizesForCategory(cat.id, index)
+  } else {
+    // new category name typed, clear sizes for this variant
+    delete (editedProduct.value.variants[index] as any).categoryId
+    ;(editedProduct.value.variants[index] as any).categoryName = value
+    sizeSuggestionsByIndex.value = { ...sizeSuggestionsByIndex.value, [index]: [] }
+  }
+}
+
+const onSizeSelectedForVariant = (value: string, index: number, sizeIndex?: number) => {
+  const sizes = sizeSuggestionsByIndex.value[index] ?? []
+  const selected = sizes.find((s) => s.name === value)
+  if (selected && sizeIndex !== undefined) {
+    editedProduct.value.variants[index].sizes[sizeIndex].sizeId = selected.id
+    editedProduct.value.variants[index].sizes[sizeIndex].size = selected.name
+    // ensure variant knows its category
+    if (!editedProduct.value.variants[index].categoryId && selected.categoryId) {
+      editedProduct.value.variants[index].categoryId = selected.categoryId
+      editedProduct.value.variants[index].categoryName = selected.categoryName ?? ''
+    }
+  }
+}
 
 // Image upload
 const selectedFiles = ref<File[]>([])
@@ -507,7 +527,10 @@ const singleFileUpload = ref()
 
 // Variant management functions
 const addVariant = () => {
-  editedProduct.value.variants.push({ size: '', price: 0, stock: 0 })
+  editedProduct.value.variants.push({ variantName: '', sizes: [{ size: '', price: 0, stock: 0 }] })
+  // initialize empty suggestions for new index
+  const idx = editedProduct.value.variants.length - 1
+  sizeSuggestionsByIndex.value = { ...sizeSuggestionsByIndex.value, [idx]: [] }
 }
 
 const removeVariant = (index: number) => {
@@ -516,31 +539,103 @@ const removeVariant = (index: number) => {
   }
 }
 
+const addSize = (variantIndex: number) => {
+  editedProduct.value.variants[variantIndex].sizes.push({ size: '', price: 0, stock: 0 })
+}
+
+const removeSize = (variantIndex: number, sizeIndex: number) => {
+  if (editedProduct.value.variants[variantIndex].sizes.length > 1) {
+    editedProduct.value.variants[variantIndex].sizes.splice(sizeIndex, 1)
+  }
+}
+
+// New typed template handlers to avoid implicit-any in templates
+const onVariantCategoryInput = (val: string, index: number) => {
+  onCategoryChangeForVariant(val, index)
+}
+
+const onVariantSizeInput = (val: string, index: number, sizeIndex?: number) => {
+  if (sizeIndex !== undefined) {
+    onSizeSelectedForVariant(val, index, sizeIndex)
+  }
+}
+
 // Product CRUD
-const openNewProductDialog = () => {
+const openNewProductDialog = async () => {
   editMode.value = false
   editedProduct.value = {
     name: '',
     description: '',
-    variants: [{ size: 'M', price: 0, stock: 0 }]
+    category: '',
+    variants: [{ variantName: 'Default', sizes: [{ size: 'M', price: 0, stock: 0 }] }]
   }
+  // ensure we have categories from API for suggestions
+  await fetchCategories()
+  updateCategorySuggestions()
   productDialog.value = true
 }
 
 const editProduct = async (product: Product) => {
   editMode.value = true
 
-  // Use data from the product list directly - no need to call API again
-  // The list now includes variants and imageUrls from backend
-  editedProduct.value = {
-    id: product.id,
-    name: product.name,
-    description: product.description,
-    variants:
-      product.variants && product.variants.length > 0
-        ? JSON.parse(JSON.stringify(product.variants)) // Deep copy to avoid reference issues
-        : [{ size: 'M', price: 0, stock: 0 }]
+  // Fetch latest product details from backend to ensure category, sizes and images are present
+  try {
+    await productStore.getProductById(product.id)
+  } catch (err) {
+    // fallback to provided product if fetch fails
+    console.warn('Failed to fetch latest product details, using provided list item', err)
   }
+
+  const fullProduct = productStore.product ?? product
+
+  editedProduct.value = {
+    id: fullProduct.id,
+    name: fullProduct.name,
+    description: fullProduct.description,
+    // Use categoryName returned by backend, fallback to legacy category field
+    category: (fullProduct as any).categoryName ?? (fullProduct as any).category ?? '',
+    variants:
+      fullProduct.optionsWithVariants && fullProduct.optionsWithVariants.length > 0
+        ? fullProduct.optionsWithVariants.map((option) => ({
+            variantName: option.optionName || 'Default',
+            sizes: option.variants.map((v) => ({
+              sizeId: v.sizeId,
+              size: v.size || 'Mặc định',
+              price: v.price,
+              stock: v.stock
+            })),
+            productOptionId: option.optionId
+          }))
+        : [{ variantName: 'Default', sizes: [{ size: 'M', price: 0, stock: 0 }] }]
+  }
+
+  // prepare variant-level size suggestions (fetch sizes for variants that have categoryId)
+  editedProduct.value.variants.forEach((v, i) => {
+    // try to use variant.categoryId -> fetch sizes for its category if known
+    const categoryId = v.categoryId ?? null
+    if (categoryId) {
+      fetchSizesForCategory(categoryId, i)
+    } else {
+      sizeSuggestionsByIndex.value = { ...sizeSuggestionsByIndex.value, [i]: [] }
+    }
+  })
+
+  // fetch categories list
+  await fetchCategories()
+
+  // If backend returned only categoryId (no categoryName), map it to the category name we fetched
+  if (!editedProduct.value.category && (fullProduct as any).categoryId) {
+    const cat = categories.value.find((c) => c.id === (fullProduct as any).categoryId)
+    if (cat) editedProduct.value.category = cat.name
+  }
+
+  // Ensure each variant has categoryName when backend provided only categoryId
+  editedProduct.value.variants.forEach((v) => {
+    if (!v.categoryName && v.categoryId) {
+      const cat = categories.value.find((c) => c.id === v.categoryId)
+      if (cat) v.categoryName = cat.name
+    }
+  })
 
   console.log('Editing product with variants:', editedProduct.value.variants)
   productDialog.value = true
@@ -550,28 +645,70 @@ const saveProduct = async () => {
   try {
     // Validate variants
     const hasValidVariants = editedProduct.value.variants.every(
-      (v) => v.size.trim() !== '' && v.price > 0 && v.stock >= 0
+      (v) =>
+        v.variantName.trim() !== '' &&
+        v.sizes.every((s) => s.size.trim() !== '' && s.price > 0 && s.stock >= 0)
     )
 
     if (!hasValidVariants) {
       toast.add({
         severity: 'error',
         summary: 'Lỗi',
-        detail: 'Vui lòng điền đầy đủ thông tin kích cỡ, giá và số lượng',
+        detail: 'Vui lòng điền đầy đủ thông tin loại, kích cỡ, giá và số lượng',
         life: 3000
       })
       return
     }
 
     // IMPORTANT: Don't include imageUrls when updating - this prevents images from being deleted
+    // Prefer sending category id if the selected category matches a known category name
+    const matchedCategory = categories.value.find((c) => c.name === editedProduct.value.category)
+    const categoryToSend = matchedCategory ? matchedCategory.id : editedProduct.value.category
     const productData = {
       name: editedProduct.value.name,
       description: editedProduct.value.description,
-      variants: editedProduct.value.variants.map((v) => ({
-        size: v.size,
-        price: v.price,
-        stock: v.stock
-      }))
+      // Send category name or id (backend accepts id or name; if it's a name it will create/find)
+      categoryId: categoryToSend,
+      // Backend expects a flat list of variant entries (one per size). Convert
+      // the grouped frontend model into the backend DTO shape ProductVariantRequest:
+      // { sizeId, size, price, stock, productOptionId, productOptionName }
+      variants: editedProduct.value.variants.flatMap((v: any) =>
+        (v.sizes || []).map((s: any) => ({
+          sizeId: s.sizeId ?? undefined,
+          size: s.size,
+          price: s.price,
+          stock: s.stock,
+          // Map the variant group name to productOptionName so the server can
+          // link this size to the option (if any). Leave undefined for Default.
+          productOptionName:
+            v.variantName && v.variantName !== 'Default' ? v.variantName : undefined,
+          productOptionId: (v as any).productOptionId ?? undefined
+        }))
+      ),
+      // Also send productOptions derived from variant groups so the backend
+      // can create or update ProductOption entities (e.g., "DRESS"). We
+      // include size names for convenience so the server can attach sizes.
+      productOptions: (() => {
+        const groups = editedProduct.value.variants || []
+        const names = Array.from(
+          new Set(
+            groups
+              .map((g: any) => g.variantName || 'Default')
+              .filter((n: string) => n && n !== 'Default')
+          )
+        )
+        return names.map((name: string) => ({
+          name,
+          // collect all distinct size names under this option
+          sizes: Array.from(
+            new Set(
+              groups
+                .filter((g: any) => g.variantName === name)
+                .flatMap((g: any) => (g.sizes || []).map((s: any) => s.size).filter(Boolean))
+            )
+          )
+        }))
+      })()
       // DON'T send imageUrls here - let the backend keep existing images
     }
 
@@ -816,6 +953,8 @@ const deleteImage = async () => {
 
 onMounted(async () => {
   await productStore.getProducts()
+  updateCategorySuggestions()
+  await fetchCategories()
 })
 </script>
 

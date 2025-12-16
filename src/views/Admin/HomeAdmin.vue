@@ -576,7 +576,7 @@ const saveProduct = async () => {
   try {
     // Validate variants
     const hasValidVariants = editedProduct.value.variants.every(v =>
-      v.size.trim() !== '' && v.price > 0 && v.stock >= 0
+      (v.size ?? '').toString().trim() !== '' && v.price > 0 && v.stock >= 0
     )
 
     if (!hasValidVariants) {

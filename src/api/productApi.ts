@@ -16,6 +16,7 @@ export type ProductCreateRequest = {
   imageUrls?: string[]
   availableFrom?: string
   availableTo?: string
+  categoryId?: string
 }
 
 export type ProductUpdateRequest = {
@@ -26,6 +27,7 @@ export type ProductUpdateRequest = {
   imageUrls?: string[]
   availableFrom?: string
   availableTo?: string
+  categoryId?: string
 }
 
 export type ProductResponse = {

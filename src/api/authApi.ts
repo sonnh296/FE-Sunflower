@@ -1,5 +1,6 @@
 import type { AxiosResponse } from 'axios'
 import api from './api'
+import { GOOGLE_REDIRECT_URI } from '@/utils/googleOAuth'
 import type { MfResponse } from '@/types/MatchFinderResponse'
 import type { RefreshResponse } from './types/ResreshResponse'
 import type { Identity } from '@/types/Identity'
@@ -128,9 +129,10 @@ export const getMeApi = async (): Promise<AxiosResponse<MfResponse<Identity>>> =
 
 // Google OAuth
 export const googleAuthApi = async (
-  code: string
+  code: string,
+  redirectUri: string = GOOGLE_REDIRECT_URI
 ): Promise<AxiosResponse<MfResponse<LoginResponse>>> => {
   return await api.post('auth/outbound/authentication', null, {
-    params: { code }
+    params: { code, redirect_uri: redirectUri }
   })
 }

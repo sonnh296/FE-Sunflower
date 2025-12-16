@@ -151,7 +151,7 @@ const router = createRouter({
         {
           path: 'home',
           name: 'admin-home',
-          component: () => import('../views/Admin/HomeAdmin.vue')
+          redirect: { name: 'admin-products' }
         },
         {
           path: 'products',

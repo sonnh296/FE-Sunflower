@@ -94,7 +94,28 @@
           </div>
 
           <!-- Product Variants (Size & Price) -->
-          <div v-if="product.variants && product.variants.length > 0" class="space-y-6">
+          <div v-if="product.optionsWithVariants && product.optionsWithVariants.length > 0" class="space-y-6">
+            <!-- Variant Selection -->
+            <div v-if="product.optionsWithVariants.length > 1" class="space-y-3">
+              <label class="block text-sm font-semibold text-gray-700"> Chọn loại: </label>
+              <div class="grid grid-cols-2 gap-3">
+                <div v-for="(variant, idx) in product.optionsWithVariants" :key="variant.optionId" class="relative">
+                  <button
+                    @click="selectVariant(variant)"
+                    class="w-full p-3 rounded-xl border-2 transition-all duration-200 text-center"
+                    :class="{
+                      'border-pink-500 bg-pink-50 text-pink-900':
+                        selectedVariant?.optionId === variant.optionId,
+                      'border-gray-200 bg-white text-gray-700 hover:border-gray-300':
+                        selectedVariant?.optionId !== variant.optionId
+                    }"
+                  >
+                    <div class="font-semibold text-lg">{{ variant.optionName }}</div>
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <!-- Price Display -->
             <div
               class="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-6 border border-pink-100"
@@ -103,11 +124,12 @@
                 <i class="pi pi-tag text-pink-600 text-xl"></i>
                 <div>
                   <p class="font-semibold text-gray-900 text-2xl">
-                    {{ formatPrice(selectedVariant?.price || product.variants[0]?.price) }}
+                    {{ formatPrice(selectedSize?.price || selectedVariant?.variants[0]?.price) }}
                   </p>
                   <p class="text-sm text-gray-600">
-                    Kích cỏ: {{ selectedVariant?.size || product.variants[0]?.size }} • Còn lại:
-                    {{ selectedVariant?.stock || product.variants[0]?.stock }} sản phẩm
+                    Loại: {{ selectedVariant?.optionName }} • Phiên bản:
+                    {{ selectedSize?.size || selectedVariant?.variants[0]?.size || 'Mặc định' }} • Còn lại:
+                    {{ selectedSize?.stock || selectedVariant?.variants[0]?.stock }} sản phẩm
                   </p>
                 </div>
               </div>
@@ -115,124 +137,141 @@
 
             <!-- Size Selection -->
             <div class="space-y-3">
-              <label class="block text-sm font-semibold text-gray-700"> Chọn kích cỡ: </label>
+              <label class="block text-sm font-semibold text-gray-700"> Chọn phiên bản: </label>
               <div class="grid grid-cols-4 gap-3">
-                <button
-                  v-for="variant in product.variants"
-                  :key="variant.id"
-                  @click="selectVariant(variant)"
-                  :disabled="variant.stock === 0"
-                  class="relative p-3 rounded-xl border-2 transition-all duration-200 text-center"
-                  :class="{
-                    'border-pink-500 bg-pink-50 text-pink-900': selectedVariant?.id === variant.id,
-                    'border-gray-200 bg-white text-gray-700 hover:border-gray-300':
-                      selectedVariant?.id !== variant.id && variant.stock > 0,
-                    'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed':
-                      variant.stock === 0
-                  }"
+                <div
+                  v-for="sizeItem in selectedVariant?.variants || []"
+                  :key="sizeItem.id"
+                  class="relative"
                 >
-                  <div class="font-semibold text-lg">{{ variant.size }}</div>
-                  <div class="text-xs mt-1">{{ formatPrice(variant.price) }}</div>
-                  <div
-                    v-if="variant.stock === 0"
-                    class="absolute inset-0 flex items-center justify-center"
+                  <button
+                    @click="selectSize(sizeItem)"
+                    :disabled="sizeItem.stock === 0"
+                    class="w-full p-3 rounded-xl border-2 transition-all duration-200 text-center"
+                    :class="{
+                      'border-pink-500 bg-pink-50 text-pink-900':
+                        selectedSize?.size === sizeItem.size,
+                      'border-gray-200 bg-white text-gray-700 hover:border-gray-300':
+                        selectedSize?.size !== sizeItem.size && sizeItem.stock > 0,
+                      'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed':
+                        sizeItem.stock === 0
+                    }"
                   >
-                    <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">Hết hàng</span>
-                  </div>
-                </button>
+                    <div class="font-semibold text-lg">{{ sizeItem.size || 'Mặc định' }}</div>
+                    <div class="text-xs mt-1">{{ formatPrice(sizeItem.price) }}</div>
+                    <div
+                      v-if="sizeItem.stock === 0"
+                      class="absolute inset-0 flex items-center justify-center"
+                    >
+                      <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded"
+                        >Hết hàng</span
+                      >
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
 
-            <!-- Quantity Selection -->
-            <div class="space-y-3">
-              <label class="block text-sm font-semibold text-gray-700"> Số lượng: </label>
-              <div class="flex items-center gap-3">
-                <button
-                  @click="decreaseQuantity"
-                  :disabled="quantity <= 1"
-                  class="w-10 h-10 rounded-full border-2 border-gray-200 flex items-center justify-center hover:border-pink-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <i class="pi pi-minus text-sm"></i>
-                </button>
-                <span class="w-16 text-center text-lg font-semibold">{{ quantity }}</span>
-                <button
-                  @click="increaseQuantity"
-                  :disabled="quantity >= (selectedVariant?.stock || 0)"
-                  class="w-10 h-10 rounded-full border-2 border-gray-200 flex items-center justify-center hover:border-pink-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <i class="pi pi-plus text-sm"></i>
-                </button>
-                <span class="text-sm text-gray-500 ml-2">
-                  Tối đa {{ selectedVariant?.stock || 0 }} sản phẩm
-                </span>
-              </div>
-            </div>
+            <!-- Admin edit icon - disabled -->
+            <!-- <div v-if="isAdmin" class="absolute top-1 right-1">
+                    <Button
+                      icon="pi pi-pencil"
+                      class="p-button-rounded p-button-text p-button-sm"
+                      v-tooltip.top="'Chỉnh sửa phiên bản'
+                      "
+                      @click="() => openEditVariantDialog(variant, idx)"
+                    />
+                  </div> -->
           </div>
+        </div>
 
-          <!-- No variants available -->
-          <div v-else class="bg-yellow-50 border border-yellow-200 rounded-2xl p-6">
-            <div class="flex items-center gap-3">
-              <i class="pi pi-exclamation-triangle text-yellow-600 text-xl"></i>
-              <div>
-                <p class="font-semibold text-yellow-900">Sản phẩm chưa có thông tin kích cỡ</p>
-                <p class="text-sm text-yellow-800">Vui lòng liên hệ để biết thêm chi tiết.</p>
-              </div>
-            </div>
+        <!-- Quantity Selection -->
+        <div class="space-y-3">
+          <label class="block text-sm font-semibold text-gray-700"> Số lượng: </label>
+          <div class="flex items-center gap-3">
+            <button
+              @click="decreaseQuantity"
+              :disabled="quantity <= 1"
+              class="w-10 h-10 rounded-full border-2 border-gray-200 flex items-center justify-center hover:border-pink-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <i class="pi pi-minus text-sm"></i>
+            </button>
+            <span class="w-16 text-center text-lg font-semibold">{{ quantity }}</span>
+            <button
+              @click="increaseQuantity"
+              :disabled="quantity >= (selectedSize?.stock || 0)"
+              class="w-10 h-10 rounded-full border-2 border-gray-200 flex items-center justify-center hover:border-pink-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <i class="pi pi-plus text-sm"></i>
+            </button>
+            <span class="text-sm text-gray-500 ml-2">
+              Tối đa {{ selectedSize?.stock || 0 }} sản phẩm
+            </span>
           </div>
-
-          <!-- Image Count Info -->
-          <div
-            class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100"
-          >
-            <div class="flex items-center gap-3">
-              <i class="pi pi-images text-blue-600 text-xl"></i>
-              <div>
-                <p class="font-semibold text-gray-900">
-                  {{ product.imageUrls?.length || 0 }} hình ảnh sản phẩm
-                </p>
-                <p class="text-sm text-gray-600">Xem chi tiết từ nhiều góc độ</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="space-y-4 pt-6">
-            <Button
-              icon="pi pi-sparkles"
-              label="Thử đồ với AI"
-              class="w-full !bg-gradient-to-r !from-pink-500 !via-purple-500 !to-indigo-500 hover:!from-pink-600 hover:!via-purple-600 hover:!to-indigo-600 !text-white !border-0 !font-semibold !py-4 !text-lg !rounded-2xl !shadow-xl hover:!shadow-2xl !transition-all !duration-300 hover:!scale-105 hover:!-translate-y-1"
-              @click="goToTryOn"
-            />
-            <Button
-              icon="pi pi-shopping-cart"
-              label="Thêm vào giỏ hàng"
-              class="w-full !bg-white hover:!bg-gray-50 !text-gray-900 !border-2 !border-gray-200 hover:!border-gray-300 !font-semibold !py-4 !text-lg !rounded-2xl !transition-all !duration-300"
-              @click="addToCart"
-            />
-          </div>
-
-          <!-- Product Features -->
-          <div class="grid grid-cols-2 gap-4 pt-6">
-            <div class="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100">
-              <i class="pi pi-truck text-pink-500 text-2xl"></i>
-              <div>
-                <p class="font-semibold text-sm text-gray-900">Miễn phí vận chuyển</p>
-                <p class="text-xs text-gray-600">Đơn từ 300.000đ</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100">
-              <i class="pi pi-refresh text-pink-500 text-2xl"></i>
-              <div>
-                <p class="font-semibold text-sm text-gray-900">Đổi trả dễ dàng</p>
-                <p class="text-xs text-gray-600">Trong vòng 7 ngày</p>
-              </div>
-            </div>
+        </div>
+      </div>
+      <div v-else class="bg-yellow-50 border border-yellow-200 rounded-2xl p-6">
+        <!-- No variants available -->
+        <div class="flex items-center gap-3">
+          <i class="pi pi-exclamation-triangle text-yellow-600 text-xl"></i>
+          <div>
+            <p class="font-semibold text-yellow-900">Sản phẩm chưa có thông tin kích cỡ</p>
+            <p class="text-sm text-yellow-800">Vui lòng liên hệ để biết thêm chi tiết.</p>
           </div>
         </div>
       </div>
 
-      <!-- Product not found -->
-      <div v-else class="text-center py-20">
+      <!-- Image Count Info -->
+      <div
+        class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100"
+      >
+        <div class="flex items-center gap-3">
+          <i class="pi pi-images text-blue-600 text-xl"></i>
+          <div>
+            <p class="font-semibold text-gray-900">
+              {{ product?.imageUrls?.length || 0 }} hình ảnh sản phẩm
+            </p>
+            <p class="text-sm text-gray-600">Xem chi tiết từ nhiều góc độ</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-4 pt-6">
+        <Button
+          icon="pi pi-sparkles"
+          label="Thử đồ với AI"
+          class="w-full !bg-gradient-to-r !from-pink-500 !via-purple-500 !to-indigo-500 hover:!from-pink-600 hover:!via-purple-600 hover:!to-indigo-600 !text-white !border-0 !font-semibold !py-4 !text-lg !rounded-2xl !shadow-xl hover:!shadow-2xl !transition-all !duration-300 hover:!scale-105 hover:!-translate-y-1"
+          @click="goToTryOn"
+        />
+        <Button
+          icon="pi pi-shopping-cart"
+          label="Thêm vào giỏ hàng"
+          class="w-full !bg-white hover:!bg-gray-50 !text-gray-900 !border-2 !border-gray-200 hover:!border-gray-300 !font-semibold !py-4 !text-lg !rounded-2xl !transition-all !duration-300"
+          @click="addToCart"
+        />
+      </div>
+
+      <!-- Product Features -->
+      <div class="grid grid-cols-2 gap-4 pt-6">
+        <div class="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100">
+          <i class="pi pi-truck text-pink-500 text-2xl"></i>
+          <div>
+            <p class="font-semibold text-sm text-gray-900">Miễn phí vận chuyển</p>
+            <p class="text-xs text-gray-600">Đơn từ 300.000đ</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100">
+          <i class="pi pi-refresh text-pink-500 text-2xl"></i>
+          <div>
+            <p class="font-semibold text-sm text-gray-900">Đổi trả dễ dàng</p>
+            <p class="text-xs text-gray-600">Trong vòng 7 ngày</p>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="!product" class="text-center py-20">
+        <!-- Product not found -->
         <i class="pi pi-exclamation-circle text-6xl text-gray-400 mb-4"></i>
         <h2 class="text-2xl font-semibold text-gray-800 mb-2">Không tìm thấy sản phẩm</h2>
         <p class="text-gray-600 mb-6">Sản phẩm bạn tìm kiếm không tồn tại hoặc đã bị xóa.</p>
@@ -252,8 +291,13 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import Galleria from 'primevue/galleria'
+import AutoComplete from 'primevue/autocomplete'
+import Dialog from 'primevue/dialog'
+import InputText from 'primevue/inputtext'
+import { getCategoriesApi, getSizesApi, type Category, type Size } from '@/api/categoryApi'
+import { useProductStore } from '@/stores/productStore'
 import { getProductByIdApi } from '@/api/productApi'
-import type { Product, ProductVariant } from '@/types/Product'
+import type { Product, ProductVariant, OptionWithVariants, SizeVariant } from '@/types/Product'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
 import { useToast } from 'primevue/usetoast'
@@ -263,11 +307,31 @@ const router = useRouter()
 const authStore = useAuthStore()
 const cartStore = useCartStore()
 const toast = useToast()
-
+const productStore = useProductStore()
 const loading = ref(true)
 const product = ref<Product | null>(null)
-const selectedVariant = ref<ProductVariant | null>(null)
+const selectedVariant = ref<OptionWithVariants | null>(null)
+const selectedSize = ref<SizeVariant | null>(null)
 const quantity = ref(1)
+
+// Admin variant edit dialog
+const editVariantDialog = ref(false)
+const editingVariantIndex = ref<number | null>(null)
+const editingVariant = ref<ProductVariant | null>(null)
+const editingVariantPrice = ref<number | null>(null)
+const editingVariantStock = ref<number | null>(null)
+const categories = ref<Category[]>([])
+const sizeSuggestions = ref<Size[]>([])
+const selectedCategoryName = ref('')
+const selectedSizeName = ref('')
+
+// identity.user_roles[0].role.roleName holds role string like 'admin' or 'user'
+const isAdmin = computed(() => {
+  const roles = (authStore.identity as any)?.user_roles
+  if (!roles || !Array.isArray(roles) || roles.length === 0) return false
+  const roleName = roles[0]?.role?.roleName
+  return roleName === 'admin'
+})
 
 // Computed property for gallery images
 const galleryImages = computed(() => {
@@ -291,7 +355,8 @@ const loadProduct = async () => {
 
     if (response.data.code === 1000 && response.data.result) {
       product.value = response.data.result
-      selectedVariant.value = response.data.result.variants?.[0] || null
+      selectedVariant.value = response.data.result.optionsWithVariants?.[0] || null
+      selectedSize.value = selectedVariant.value?.variants[0] || null
     } else {
       product.value = null
     }
@@ -342,14 +407,14 @@ const addToCart = async () => {
       cartItem: {
         quantity: quantity.value,
         productId: product.value!.id,
-        productVariantId: selectedVariant.value.id
+        productVariantId: selectedSize.value!.id
       }
     })
 
     toast.add({
       severity: 'success',
       summary: 'Thành công',
-      detail: `Đã thêm ${quantity.value} sản phẩm (${selectedVariant.value.size}) vào giỏ hàng!`,
+      detail: `Đã thêm ${quantity.value} sản phẩm (${selectedSize.value?.size || 'Mặc định'}) vào giỏ hàng!`,
       life: 3000
     })
   } catch (error: any) {
@@ -363,13 +428,19 @@ const addToCart = async () => {
   }
 }
 
-const selectVariant = (variant: ProductVariant) => {
+const selectVariant = (variant: OptionWithVariants) => {
   selectedVariant.value = variant
+  selectedSize.value = variant.variants[0] || null
   quantity.value = 1 // Reset quantity when changing variant
 }
 
+const selectSize = (size: SizeVariant) => {
+  selectedSize.value = size
+  quantity.value = 1 // Reset quantity when changing size
+}
+
 const increaseQuantity = () => {
-  if (quantity.value < (selectedVariant.value?.stock || 0)) {
+  if (quantity.value < (selectedSize.value?.stock || 0)) {
     quantity.value++
   }
 }
@@ -388,8 +459,32 @@ const formatPrice = (price: number) => {
   }).format(price)
 }
 
+const fetchCategories = async () => {
+  try {
+    const { data } = await getCategoriesApi()
+    categories.value = data.result ?? []
+  } catch (err) {
+    console.warn('Failed to fetch categories', err)
+  }
+}
+
+const fetchSizesForCategory = async (categoryId?: string) => {
+  try {
+    const { data } = await getSizesApi(categoryId)
+    sizeSuggestions.value = data.result ?? []
+  } catch (err) {
+    console.warn('Failed to fetch sizes', err)
+    sizeSuggestions.value = []
+  }
+}
+
+const openEditVariantDialog = async (variant: ProductVariant, index: number) => {
+  // disabled
+}
+
 onMounted(() => {
   loadProduct()
+  fetchCategories()
 })
 </script>
 
@@ -409,4 +504,8 @@ onMounted(() => {
 .animate-fade-in {
   animation: fadeIn 0.6s ease-out;
 }
+
+/* variant edit dialog styles */
 </style>
+
+<!-- Add Edit Variant Dialog UI in template near variant list -->

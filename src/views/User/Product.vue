@@ -82,7 +82,7 @@
           <div>
             <div class="flex items-center gap-2 mb-3">
               <span class="bg-pink-100 text-pink-800 text-sm font-medium px-3 py-1 rounded-full">
-                Thời Trang
+                {{ product.categoryName ?? product.category ?? 'Thời Trang' }}
               </span>
             </div>
             <h1 class="text-4xl md:text-5xl font-light text-gray-900 mb-4 tracking-tight">
@@ -672,11 +672,12 @@ const addSelectedVariantToCart = async () => {
   }
 
   try {
-    // Use the productItemId from the selected variant
+    // Use productVariantId for the selected variant and include productId as well
     await cartStore.addToCart({
       cartItem: {
         quantity: quantity.value,
-        productId: selectedVariant.value.id as string
+        productId: product.value?.id,
+        productVariantId: selectedVariant.value.id as string
       }
     })
 

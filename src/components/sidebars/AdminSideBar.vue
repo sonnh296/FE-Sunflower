@@ -34,11 +34,6 @@ const handleLogout = async () => {
 
 const items = ref([
   {
-    label: 'Trang chủ',
-    icon: 'pi pi-home',
-    command: () => navigate('/home')
-  },
-  {
     label: 'Sản phẩm',
     icon: 'pi pi-shopping-bag',
     command: () => navigate('/products')
